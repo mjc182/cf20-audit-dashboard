@@ -311,13 +311,7 @@ c4.markdown(f"""
   <div class="sub">Current dashboard assessment</div>
 </div>
 """, unsafe_allow_html=True)
-    col.markdown(f"""
-    <div class="metric-card">
-      <div class="label">{label}</div>
-      <div class="value {status_class if label == "Audit status" else ""}">{value}</div>
-      <div class="sub">{sub}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    
 
 st.write("")
 left, right = st.columns([1.45, 1])
@@ -325,19 +319,20 @@ left, right = st.columns([1.45, 1])
 with left:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Minted Supply Over Time")
+
     if df.empty:
         st.warning("No mint data loaded.")
     else:
         ts = df.sort_values("time").copy()
 
-# Scale huge raw token units down so Streamlit/Arrow can chart safely
-SCALE = 10**18
-ts["amount_scaled"] = ts["amount"].apply(lambda x: int(x) / SCALE)
-ts["cumulative"] = ts["amount_scaled"].cumsum()
+        SCALE = 10**18
+        ts["amount_scaled"] = ts["amount"].apply(lambda x: int(x) / SCALE)
+        ts["cumulative"] = ts["amount_scaled"].cumsum()
 
-st.line_chart(ts.set_index("time")["cumulative"], height=310)
-st.caption("Chart values are scaled by 1e18 raw units.")
-st.markdown("</div>", unsafe_allow_html=True)
+        st.line_chart(ts.set_index("time")["cumulative"], height=310)
+        st.caption("Chart values are scaled by 1e18 raw units.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
