@@ -486,6 +486,12 @@ effective_locked = total_locked + bridge_supply
 adjusted_diff = total_minted - effective_locked
 adjusted_diff_tokens = adjusted_diff / SCALE
 
+# 🔍 DEBUG (temporary)
+st.write("Minted:", total_minted)
+st.write("Locked:", total_locked)
+st.write("Bridge supply:", bridge_supply)
+st.write("Adjusted diff:", adjusted_diff)
+
 bridge_movements = [e for e in events if e.get("from") in bridge_wallets]
 
 recent_bridge_moves = [
