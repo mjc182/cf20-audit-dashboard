@@ -301,8 +301,14 @@ with left:
         st.warning("No mint data loaded.")
     else:
         ts = df.sort_values("time").copy()
-        ts["cumulative"] = ts["amount"].cumsum()
-        st.line_chart(ts.set_index("time")["cumulative"], height=310)
+
+# Scale huge raw token units down so Streamlit/Arrow can chart safely
+SCALE = 10**18
+ts["amount_scaled"] = ts["amount"].apply(lambda x: int(x) / SCALE)
+ts["cumulative"] = ts["amount_scaled"].cumsum()
+
+st.line_chart(ts.set_index("time")["cumulative"], height=310)
+st.caption("Chart values are scaled by 1e18 raw units.")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
