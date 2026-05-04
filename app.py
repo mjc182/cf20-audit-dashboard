@@ -541,7 +541,7 @@ with left:
 
         chart_df = ts[["time", "Minted", "Locked", "Delta"]].copy()
         chart_df["time"] = pd.to_datetime(chart_df["time"], errors="coerce")
-        chart_df = chart_df.dropna()
+        chart_df = chart_df.dropna().tail(200)
 
         base = alt.Chart(chart_df).encode(
             x=alt.X("time:T", title=None)
