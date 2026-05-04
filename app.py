@@ -516,6 +516,35 @@ elif adjusted_diff > 0:
 else:
     status, status_class = "Locked > Minted", "yellow"
 
+st.markdown("## 🔎 Proof of Backing Verdict")
+
+if abs(diff) < 10**12:
+    verdict = "✅ Backing Verified"
+    verdict_color = "green"
+elif bridge_candidates_df.empty:
+    verdict = "⚠️ No Verifiable On-Chain Backing Found"
+    verdict_color = "red"
+else:
+    verdict = "⚠️ Partial / Unclear Backing"
+    verdict_color = "yellow"
+
+st.markdown(f"""
+<div style="
+    padding:20px;
+    border-radius:12px;
+    background-color:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.1);
+">
+<h2 style="color:{verdict_color};">{verdict}</h2>
+<p>
+This verdict is based on:
+<br>• Minted vs Locked comparison
+<br>• Bridge wallet detection (ETH + BSC)
+<br>• Flow analysis and clustering signals
+</p>
+</div>
+""", unsafe_allow_html=True)
+
 # KPI Cards
 st.write("")
 
