@@ -723,6 +723,9 @@ e1.metric("Detected bridge wallets", len(bridge_wallets))
 e2.metric("Bridge wallet movements", len(bridge_movements))
 e3.metric("Proof of backing score", f"{backing_score}/100")
 
+# 🔥 ADD THIS
+st.progress(backing_score / 100)
+
 st.markdown(
     f"""
 <div class="statusbar">
