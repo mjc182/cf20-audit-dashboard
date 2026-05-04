@@ -4,3 +4,5 @@ requests
 web3
 networkx
 streamlit-agraph
+streamlit-agraph
+networkx
