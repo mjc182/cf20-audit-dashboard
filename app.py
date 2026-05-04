@@ -471,13 +471,7 @@ st.session_state["events"] = events
 wallet_df = label_wallets(df)
 val_df = validator_stats(df)
 
-# 🔥 ADD THIS
 bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
-
-bridge_supply = bridge_candidates_df["amount"].sum() if not bridge_candidates_df.empty else 0
-effective_locked = total_locked + bridge_supply
-adjusted_diff = total_minted - effective_locked
-adjusted_diff_tokens = adjusted_diff / SCALE
 
 total_minted = int(df["amount"].sum()) if not df.empty else 0
 eth_burned = safe_burn_total(eth_rpc, ETH_TOKEN, int(start_block_eth)) if use_rpc else 0
@@ -487,21 +481,20 @@ total_locked = eth_burned + bsc_burned
 diff = total_minted - total_locked
 diff_tokens = diff / SCALE
 
-# 🔥 ADD THIS RIGHT HERE
 bridge_supply = bridge_candidates_df["amount"].sum() if not bridge_candidates_df.empty else 0
 effective_locked = total_locked + bridge_supply
 adjusted_diff = total_minted - effective_locked
 adjusted_diff_tokens = adjusted_diff / SCALE
 
-bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
 bridge_movements = [e for e in events if e.get("from") in bridge_wallets]
+
 recent_bridge_moves = [
     e for e in bridge_movements
-    if e.get("time") and (pd.Timestamp.utcnow() - pd.to_datetime(e["time"])).seconds < 600
+    if e.get("time") and (pd.Timestamp.utcnow() - pd.to_datetime(e["time"])).total_seconds() < 600
 ]
 
 backing_score = proof_of_backing_score(
-    diff,
+    adjusted_diff,
     total_minted,
     bridge_candidates_df,
     val_df,
@@ -510,9 +503,9 @@ backing_score = proof_of_backing_score(
 
 if not use_rpc:
     status, status_class = "RPC Disabled", "yellow"
-elif abs(diff) < 10**12:
+elif abs(adjusted_diff) < 10**12:
     status, status_class = "Balanced", "green"
-elif diff > 0:
+elif adjusted_diff > 0:
     status, status_class = "Drift", "red"
 else:
     status, status_class = "Locked > Minted", "yellow"
