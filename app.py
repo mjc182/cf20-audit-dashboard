@@ -276,13 +276,40 @@ else:
     status_class = "status-warn"
 
 st.write("")
+    diff_tokens = diff / 1e18
 c1, c2, c3, c4 = st.columns(4)
-for col, label, value, sub in [
-    (c1, "CF20 minted", fmt_num(total_minted), "Zerochain DATUM_TOKEN_EMISSION"),
-    (c2, "ETH/BSC locked", fmt_num(total_locked), "Burn/lock scan via RPC"),
-    (c3, "Difference", fmt_num(diff), "Minted minus locked"),
-    (c4, "Audit status", status, "Current dashboard assessment"),
-]:
+
+c1.markdown(f"""
+<div class="metric-card">
+  <div class="label">CF20 minted</div>
+  <div class="value">{fmt_num(total_minted)}</div>
+  <div class="sub">Zerochain DATUM_TOKEN_EMISSION</div>
+</div>
+""", unsafe_allow_html=True)
+
+c2.markdown(f"""
+<div class="metric-card">
+  <div class="label">ETH/BSC locked</div>
+  <div class="value">{fmt_num(total_locked)}</div>
+  <div class="sub">Burn/lock scan via RPC</div>
+</div>
+""", unsafe_allow_html=True)
+
+c3.markdown(f"""
+<div class="metric-card">
+  <div class="label">Difference</div>
+  <div class="value">{diff_tokens:,.2f} tokens</div>
+  <div class="sub">Minted minus locked</div>
+</div>
+""", unsafe_allow_html=True)
+
+c4.markdown(f"""
+<div class="metric-card">
+  <div class="label">Audit status</div>
+  <div class="value {status_class}">{status}</div>
+  <div class="sub">Current dashboard assessment</div>
+</div>
+""", unsafe_allow_html=True)
     col.markdown(f"""
     <div class="metric-card">
       <div class="label">{label}</div>
