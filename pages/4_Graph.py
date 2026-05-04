@@ -156,6 +156,20 @@ c4.metric("Suspicious wallets", len(suspicious_nodes))
 st.markdown('<div class="panel">', unsafe_allow_html=True)
 st.subheader("Selected Wallet Inspector")
 
+import pandas as pd
+
+def safe_flow_table(rows):
+    df = pd.DataFrame(rows[:100])
+
+    if df.empty:
+        return df
+
+    if "amount" in df.columns:
+        df["amount"] = df["amount"].astype(str)
+
+    return df.astype(str)
+
+
 if selected:
     st.code(selected)
     incoming = [e for e in events if e.get("to") == selected]
@@ -164,13 +178,18 @@ if selected:
     a, b, c = st.columns(3)
     a.metric("Incoming txs", len(incoming))
     b.metric("Outgoing txs", len(outgoing))
-    c.metric("Net flow", f"{sum(int(e.get('amount', 0)) for e in incoming) - sum(int(e.get('amount', 0)) for e in outgoing):,}")
+    c.metric(
+        "Net flow",
+        f"{sum(int(e.get('amount', 0)) for e in incoming) - sum(int(e.get('amount', 0)) for e in outgoing):,}"
+    )
 
     st.markdown("### Incoming")
-    st.dataframe(incoming[:100], use_container_width=True)
+    st.dataframe(safe_flow_table(incoming), use_container_width=True)
 
     st.markdown("### Outgoing")
-    st.dataframe(outgoing[:100], use_container_width=True)
+    st.dataframe(safe_flow_table(outgoing), use_container_width=True)
+
 else:
     st.info("Click a node in the graph to inspect wallet flows.")
+
 st.markdown("</div>", unsafe_allow_html=True)
