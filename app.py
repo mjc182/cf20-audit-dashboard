@@ -725,6 +725,12 @@ e3.metric("Proof of backing score", f"{backing_score}/100")
 
 # 🔥 ADD THIS
 st.progress(backing_score / 100)
+if backing_score >= 80:
+    st.success("🟢 Strong cryptographic backing confidence")
+elif backing_score >= 50:
+    st.warning("🟡 Moderate backing confidence")
+else:
+    st.error("🔴 Weak backing confidence")
 
 st.markdown(
     f"""
