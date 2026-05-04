@@ -710,7 +710,19 @@ else:
 
 st.write("### Key Wallet Flows")
 if not wallet_df.empty:
-    st.dataframe(wallet_df.sort_values("amount", ascending=False).head(20))
+    show_wallets = wallet_df.sort_values("amount", ascending=False).head(20).copy()
+
+if "amount" in show_wallets.columns:
+    show_wallets["amount"] = show_wallets["amount"].apply(lambda x: f"{float(x) / 1e18:,.2f}")
+
+if "share" in show_wallets.columns:
+    show_wallets["share"] = show_wallets["share"].apply(lambda x: f"{float(x):.2%}")
+
+for col in show_wallets.columns:
+    if show_wallets[col].dtype == "object":
+        show_wallets[col] = show_wallets[col].astype(str)
+
+st.dataframe(show_wallets, use_container_width=True, hide_index=True)
 else:
     st.info("No wallet flow data available")
 
