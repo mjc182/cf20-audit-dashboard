@@ -481,6 +481,10 @@ diff_tokens = diff / SCALE
 
 bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
 bridge_movements = [e for e in events if e.get("from") in bridge_wallets]
+recent_bridge_moves = [
+    e for e in bridge_movements
+    if e.get("time") and (pd.Timestamp.utcnow() - pd.to_datetime(e["time"])).seconds < 600
+]
 
 backing_score = proof_of_backing_score(
     diff,
