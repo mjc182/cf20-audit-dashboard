@@ -471,6 +471,9 @@ st.session_state["events"] = events
 wallet_df = label_wallets(df)
 val_df = validator_stats(df)
 
+# 🔥 ADD THIS
+bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
+
 total_minted = int(df["amount"].sum()) if not df.empty else 0
 eth_burned = safe_burn_total(eth_rpc, ETH_TOKEN, int(start_block_eth)) if use_rpc else 0
 bsc_burned = safe_burn_total(bsc_rpc, BSC_TOKEN, int(start_block_bsc)) if use_rpc else 0
