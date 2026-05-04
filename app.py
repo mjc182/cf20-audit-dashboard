@@ -602,9 +602,14 @@ with right:
     if wallet_df.empty:
         st.info("No wallet data.")
     else:
-        dist = wallet_df.groupby("label")["amount"].sum().reset_index()
-        dist["tokens"] = dist["amount"] / SCALE
-        dist["share"] = dist["amount"] / max(dist["amount"].sum(), 1)
+dist_raw = wallet_df.groupby("label")["amount"].sum().reset_index()
+total_amount = max(dist_raw["amount"].sum(), 1)
+
+dist = pd.DataFrame({
+    "label": dist_raw["label"].astype(str),
+    "tokens": dist_raw["amount"].apply(lambda x: int(x) / SCALE),
+    "share": dist_raw["amount"].apply(lambda x: int(x) / total_amount),
+})
 
         donut = alt.Chart(dist).mark_arc(
             innerRadius=70,
