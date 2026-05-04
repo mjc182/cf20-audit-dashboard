@@ -686,6 +686,23 @@ with right:
         ).properties(height=260)
 
         st.altair_chart(donut, use_container_width=True)
+# ===============================
+# 📊 ON-CHAIN EVIDENCE SECTION
+# ===============================
+
+st.markdown("## 📊 On-Chain Evidence")
+
+st.write("### Top Bridge Candidates (Detected)")
+if not bridge_candidates_df.empty:
+    st.dataframe(bridge_candidates_df.head(20))
+else:
+    st.info("No bridge candidates detected")
+
+st.write("### Key Wallet Flows")
+if not wallet_df.empty:
+    st.dataframe(wallet_df.sort_values("amount", ascending=False).head(20))
+else:
+    st.info("No wallet flow data available")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
