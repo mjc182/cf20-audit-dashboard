@@ -276,7 +276,8 @@ else:
     status_class = "status-warn"
 
 st.write("")
-    diff_tokens = diff / 1e18
+diff = total_minted - total_locked
+diff_tokens = diff / 1e18
 c1, c2, c3, c4 = st.columns(4)
 
 c1.markdown(f"""
