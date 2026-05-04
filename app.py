@@ -1,4 +1,3 @@
-
 import math
 from collections import Counter, defaultdict
 from datetime import datetime
@@ -28,12 +27,8 @@ CSS = """
         radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 28%),
         #070b12;
 }
-[data-testid="stSidebar"] {
-    background: #0b1220;
-}
-.block-container {
-    padding-top: 1.8rem;
-}
+[data-testid="stSidebar"] { background: #0b1220; }
+.block-container { padding-top: 1.8rem; }
 .hero {
     border: 1px solid rgba(148,163,184,0.22);
     border-radius: 24px;
@@ -41,16 +36,8 @@ CSS = """
     background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(17,24,39,0.82));
     box-shadow: 0 18px 60px rgba(0,0,0,0.36);
 }
-.hero h1 {
-    margin: 0;
-    font-size: 2.4rem;
-    letter-spacing: -0.04em;
-}
-.hero p {
-    color: #94a3b8;
-    margin-top: 8px;
-    font-size: 1.02rem;
-}
+.hero h1 { margin: 0; font-size: 2.4rem; letter-spacing: -0.04em; }
+.hero p { color: #94a3b8; margin-top: 8px; font-size: 1.02rem; }
 .badge {
     display: inline-block;
     padding: 6px 11px;
@@ -69,21 +56,9 @@ CSS = """
     min-height: 118px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.24);
 }
-.metric-card .label {
-    color: #94a3b8;
-    font-size: .86rem;
-}
-.metric-card .value {
-    color: #f8fafc;
-    font-size: 1.65rem;
-    font-weight: 800;
-    margin-top: 8px;
-}
-.metric-card .sub {
-    color: #64748b;
-    font-size: .78rem;
-    margin-top: 7px;
-}
+.metric-card .label { color: #94a3b8; font-size: .86rem; }
+.metric-card .value { color: #f8fafc; font-size: 1.65rem; font-weight: 800; margin-top: 8px; }
+.metric-card .sub { color: #64748b; font-size: .78rem; margin-top: 7px; }
 .panel {
     border: 1px solid rgba(148,163,184,0.2);
     background: rgba(15,23,42,0.78);
@@ -91,22 +66,15 @@ CSS = """
     padding: 18px 20px;
     box-shadow: 0 10px 32px rgba(0,0,0,0.24);
 }
-.status-ok {
-    color: #86efac;
-}
-.status-warn {
-    color: #fde68a;
-}
-.status-bad {
-    color: #fca5a5;
-}
-small {
-    color: #94a3b8;
-}
+.status-ok { color: #86efac; }
+.status-warn { color: #fde68a; }
+.status-bad { color: #fca5a5; }
+small { color: #94a3b8; }
 </style>
 """
 
 st.markdown(CSS, unsafe_allow_html=True)
+
 
 def fmt_num(n):
     try:
@@ -114,14 +82,15 @@ def fmt_num(n):
     except Exception:
         return "0"
     if abs(n) >= 1e18:
-        return f"{n/1e18:,.2f}e18"
+        return f"{n / 1e18:,.2f}e18"
     if abs(n) >= 1e12:
-        return f"{n/1e12:,.2f}T"
+        return f"{n / 1e12:,.2f}T"
     if abs(n) >= 1e9:
-        return f"{n/1e9:,.2f}B"
+        return f"{n / 1e9:,.2f}B"
     if abs(n) >= 1e6:
-        return f"{n/1e6:,.2f}M"
+        return f"{n / 1e6:,.2f}M"
     return f"{n:,.0f}"
+
 
 @st.cache_data(ttl=300, show_spinner=False)
 def fetch_zerochain_mints(pages=40, limit=40):
@@ -152,6 +121,7 @@ def fetch_zerochain_mints(pages=40, limit=40):
                     validators = d.get("valid_sign_hashes", []) or [
                         s.get("pkey_hash") for s in d.get("data", []) if s.get("pkey_hash")
                     ]
+
                     row = {
                         "time": datum.get("created"),
                         "token": d.get("ticker", "UNKNOWN"),
@@ -162,7 +132,9 @@ def fetch_zerochain_mints(pages=40, limit=40):
                         "validator_count": len(validators),
                         "validators": validators,
                     }
+
                     rows.append(row)
+
                     raw_events.append({
                         "from": "MINT_AUTHORITY",
                         "to": row["to"],
@@ -176,18 +148,22 @@ def fetch_zerochain_mints(pages=40, limit=40):
     df = pd.DataFrame(rows)
     if not df.empty:
         df["time"] = pd.to_datetime(df["time"], errors="coerce")
+
     return df, raw_events
+
 
 @st.cache_data(ttl=600, show_spinner=False)
 def safe_burn_total(rpc, token, start_block):
     if not rpc:
         return 0
+
     try:
         w3 = Web3(Web3.HTTPProvider(rpc))
         latest = w3.eth.block_number
         step = 50_000
         total = 0
         target_topic = Web3.to_hex(Web3.to_bytes(hexstr=BURN).rjust(32, b"\x00"))
+
         for block in range(start_block, latest + 1, step):
             logs = w3.eth.get_logs({
                 "fromBlock": block,
@@ -195,15 +171,27 @@ def safe_burn_total(rpc, token, start_block):
                 "address": Web3.to_checksum_address(token),
                 "topics": [TRANSFER_TOPIC, None, target_topic],
             })
-            total += sum(int(log["data"].hex() if hasattr(log["data"], "hex") else log["data"], 16) for log in logs)
+
+            total += sum(
+                int(log["data"].hex() if hasattr(log["data"], "hex") else log["data"], 16)
+                for log in logs
+            )
+
         return total
+
     except Exception:
         return 0
+
 
 def label_wallets(df):
     if df.empty:
         return pd.DataFrame(columns=["address", "label", "amount", "txs", "share"])
-    g = df.groupby("to").agg(amount=("amount", "sum"), txs=("amount", "count")).reset_index()
+
+    g = df.groupby("to").agg(
+        amount=("amount", "sum"),
+        txs=("amount", "count"),
+    ).reset_index()
+
     total = max(g["amount"].sum(), 1)
     g["share"] = g["amount"] / total
 
@@ -219,16 +207,78 @@ def label_wallets(df):
     g["label"] = g.apply(label, axis=1)
     return g.rename(columns={"to": "address"}).sort_values("amount", ascending=False)
 
+
 def validator_stats(df):
     c = Counter()
+
     if not df.empty and "validators" in df.columns:
         for vals in df["validators"]:
             for v in vals or []:
                 c[v] += 1
+
     out = pd.DataFrame(c.items(), columns=["validator", "sign_count"])
+
     if not out.empty:
         out = out.sort_values("sign_count", ascending=False)
+
     return out
+
+
+def build_bridge_wallet_detector(wallet_df, events):
+    if wallet_df.empty:
+        return [], pd.DataFrame()
+
+    scored = wallet_df.copy()
+    scored["tokens"] = scored["amount"] / 1e18
+
+    outgoing_counts = Counter(
+        e.get("from") for e in events if e.get("from")
+    )
+
+    scored["outgoing_events"] = scored["address"].apply(
+        lambda x: outgoing_counts.get(x, 0)
+    )
+
+    scored["bridge_score"] = 0
+
+    scored.loc[scored["share"] > 0.20, "bridge_score"] += 40
+    scored.loc[scored["share"] > 0.10, "bridge_score"] += 20
+    scored.loc[scored["txs"] >= 5, "bridge_score"] += 20
+    scored.loc[scored["outgoing_events"] <= 2, "bridge_score"] += 20
+
+    scored["bridge_score"] = scored["bridge_score"].clip(0, 100)
+
+    candidates = scored[
+        scored["bridge_score"] >= 60
+    ].sort_values("bridge_score", ascending=False)
+
+    return candidates["address"].tolist(), candidates
+
+
+def proof_of_backing_score(diff, total_minted, bridge_candidates_df, val_df, bridge_movements):
+    score = 100
+
+    if total_minted > 0:
+        imbalance_ratio = max(diff, 0) / total_minted
+        score -= min(45, imbalance_ratio * 100)
+
+    if not bridge_candidates_df.empty:
+        bridge_share = bridge_candidates_df["share"].sum()
+        score += min(20, bridge_share * 20)
+    else:
+        score -= 20
+
+    if not val_df.empty:
+        top3 = val_df["sign_count"].head(3).sum()
+        total = max(val_df["sign_count"].sum(), 1)
+        validator_concentration = top3 / total
+        score -= min(25, validator_concentration * 25)
+
+    if bridge_movements:
+        score -= 15
+
+    return max(0, min(100, round(score, 1)))
+
 
 st.sidebar.title("CF20 Audit")
 pages_to_scan = st.sidebar.slider("Zerochain pages to scan", 5, 200, 40, 5)
@@ -236,8 +286,8 @@ start_block_eth = st.sidebar.number_input("ETH start block", min_value=0, value=
 start_block_bsc = st.sidebar.number_input("BSC start block", min_value=0, value=30_000_000, step=100_000)
 use_rpc = st.sidebar.checkbox("Enable ETH/BSC RPC burn scan", value=False)
 
-eth_rpc = st.secrets.get("ETH_RPC", "") if hasattr(st, "secrets") else ""
-bsc_rpc = st.secrets.get("BSC_RPC", "https://bsc-dataseed.binance.org/") if hasattr(st, "secrets") else ""
+eth_rpc = st.secrets.get("ETH_RPC", "")
+bsc_rpc = st.secrets.get("BSC_RPC", "https://bsc-dataseed.binance.org/")
 
 st.markdown("""
 <div class="hero">
@@ -250,7 +300,6 @@ st.markdown("""
 with st.spinner("Loading Zerochain emissions..."):
     df, events = fetch_zerochain_mints(pages=pages_to_scan)
 
-# persist for graph page
 st.session_state["events"] = events
 
 wallet_df = label_wallets(df)
@@ -261,6 +310,22 @@ eth_burned = safe_burn_total(eth_rpc, ETH_TOKEN, int(start_block_eth)) if use_rp
 bsc_burned = safe_burn_total(bsc_rpc, BSC_TOKEN, int(start_block_bsc)) if use_rpc else 0
 total_locked = eth_burned + bsc_burned
 diff = total_minted - total_locked
+diff_tokens = diff / 1e18
+
+bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
+
+bridge_movements = [
+    e for e in events
+    if e.get("from") in bridge_wallets
+]
+
+backing_score = proof_of_backing_score(
+    diff,
+    total_minted,
+    bridge_candidates_df,
+    val_df,
+    bridge_movements,
+)
 
 if not use_rpc:
     status = "RPC scan disabled"
@@ -276,8 +341,6 @@ else:
     status_class = "status-warn"
 
 st.write("")
-diff = total_minted - total_locked
-diff_tokens = diff / 1e18
 c1, c2, c3, c4 = st.columns(4)
 
 c1.markdown(f"""
@@ -311,7 +374,20 @@ c4.markdown(f"""
   <div class="sub">Current dashboard assessment</div>
 </div>
 """, unsafe_allow_html=True)
-    
+
+st.write("")
+r1, r2, r3 = st.columns(3)
+
+r1.metric("Detected bridge wallets", len(bridge_wallets))
+r2.metric("Bridge wallet movements", len(bridge_movements))
+r3.metric("Proof of backing score", f"{backing_score}/100")
+
+if backing_score >= 75:
+    st.success("✅ Strong backing confidence")
+elif backing_score >= 50:
+    st.warning("⚠️ Medium backing confidence")
+else:
+    st.error("🚨 Weak backing confidence")
 
 st.write("")
 left, right = st.columns([1.45, 1])
@@ -337,6 +413,7 @@ with left:
 with right:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Validator Power")
+
     if val_df.empty:
         st.info("No validator signatures found in loaded data.")
     else:
@@ -345,6 +422,7 @@ with right:
         concentration = top3 / total_signs
         st.metric("Top 3 signature share", f"{concentration:.1%}")
         st.bar_chart(val_df.set_index("validator").head(10), height=245)
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.write("")
@@ -353,6 +431,7 @@ a, b = st.columns([1, 1])
 with a:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Wallet Intelligence")
+
     if wallet_df.empty:
         st.info("No wallets loaded.")
     else:
@@ -360,22 +439,45 @@ with a:
         show["amount"] = show["amount"].map(fmt_num)
         show["share"] = show["share"].map(lambda x: f"{x:.2%}")
         st.dataframe(show, use_container_width=True, hide_index=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 with b:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
+    st.subheader("Bridge Wallet Detector")
+
+    if bridge_candidates_df.empty:
+        st.info("No likely bridge wallets detected in loaded sample.")
+    else:
+        show_bridge = bridge_candidates_df[
+            ["address", "label", "tokens", "share", "txs", "outgoing_events", "bridge_score"]
+        ].copy()
+
+        show_bridge["share"] = show_bridge["share"].map(lambda x: f"{x:.2%}")
+        show_bridge["tokens"] = show_bridge["tokens"].map(lambda x: f"{x:,.2f}")
+
+        st.dataframe(show_bridge, use_container_width=True, hide_index=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.write("")
+with st.container():
+    st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Suspicious Mint Events")
+
     if df.empty:
         st.info("No mint events.")
     else:
         threshold = max(df["amount"].mean() * 10, df["amount"].quantile(0.95))
         spikes = df[df["amount"] >= threshold].sort_values("amount", ascending=False)
+
         if spikes.empty:
             st.success("No major mint spikes in loaded sample.")
         else:
             tmp = spikes[["time", "token", "amount", "to", "validator_count"]].head(20).copy()
             tmp["amount"] = tmp["amount"].map(fmt_num)
             st.dataframe(tmp, use_container_width=True, hide_index=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.write("")
@@ -384,7 +486,7 @@ st.markdown("""
 <h3>Methodology & Limitations</h3>
 <small>
 Mint activity is extracted from Zerochain <code>DATUM_TOKEN_EMISSION</code> records. Validator concentration is inferred from emission signature hashes.
-Wallet labels and suspicious-flow detection are heuristic. A direct cryptographic source-chain tx reference was not observed in the sample emission records, so cross-chain backing is assessed by supply math and behavior rather than direct proof.
+Wallet labels, bridge-wallet detection, proof-of-backing scoring, and suspicious-flow detection are heuristic. A direct cryptographic source-chain transaction reference was not observed in the sample emission records, so cross-chain backing is assessed by supply math and behavior rather than direct proof.
 </small>
 </div>
 """, unsafe_allow_html=True)
