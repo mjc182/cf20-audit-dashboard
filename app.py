@@ -527,6 +527,9 @@ for col, label, value, sub, icon, color_class, icon_class in kpi_data:
         unsafe_allow_html=True,
     )
 
+if recent_bridge_moves:
+    st.error(f"🚨 {len(recent_bridge_moves)} recent bridge wallet movements detected (last 10 min)")
+
 # Middle
 st.write("")
 left, right = st.columns([1.55, 1])
