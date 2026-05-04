@@ -309,7 +309,7 @@ ts["cumulative"] = ts["amount_scaled"].cumsum()
 
 st.line_chart(ts.set_index("time")["cumulative"], height=310)
 st.caption("Chart values are scaled by 1e18 raw units.")
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
