@@ -602,50 +602,36 @@ with right:
     if wallet_df.empty:
         st.info("No wallet data.")
     else:
-dist_raw = wallet_df.groupby("label")["amount"].sum().reset_index()
-total_amount = max(dist_raw["amount"].sum(), 1)
+        dist_raw = wallet_df.groupby("label")["amount"].sum().reset_index()
+        total_amount = max(dist_raw["amount"].sum(), 1)
 
-dist = pd.DataFrame({
-    "label": dist_raw["label"].astype(str),
-    "tokens": dist_raw["amount"].apply(lambda x: int(x) / SCALE),
-    "share": dist_raw["amount"].apply(lambda x: int(x) / total_amount),
-})
+        dist = pd.DataFrame({
+            "label": dist_raw["label"].astype(str),
+            "tokens": dist_raw["amount"].apply(lambda x: int(x) / SCALE),
+            "share": dist_raw["amount"].apply(lambda x: int(x) / total_amount),
+        })
 
         donut = alt.Chart(dist).mark_arc(
             innerRadius=70,
-            outerRadius=115,
+            outerRadius=115
         ).encode(
             theta=alt.Theta("tokens:Q"),
             color=alt.Color(
                 "label:N",
                 scale=alt.Scale(
-                    range=["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#a855f7"],
+                    range=["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#a855f7"]
                 ),
-                legend=alt.Legend(orient="bottom"),
+                legend=alt.Legend(orient="bottom")
             ),
             tooltip=[
                 alt.Tooltip("label:N", title="Wallet Type"),
                 alt.Tooltip("tokens:Q", title="Tokens", format=",.2f"),
-                alt.Tooltip("share:Q", title="Share", format=".2%"),
-            ],
-        ).properties(
-            height=260,
-        ).configure_view(
-            strokeWidth=0,
-        ).configure_legend(
-            labelColor="#cbd5e1",
-            titleColor="#cbd5e1",
-        )
+                alt.Tooltip("share:Q", title="Share", format=".2%")
+            ]
+        ).properties(height=260)
 
         st.altair_chart(donut, use_container_width=True)
 
-        for _, row in dist.sort_values("amount", ascending=False).iterrows():
-            st.markdown(
-                f"<small>■ <b>{row['label']} Wallets</b> — {row['tokens']:,.2f} ({row['share']:.1%})</small>",
-                unsafe_allow_html=True,
-            )
-
-    st.markdown("<br><small>Last updated: " + datetime.utcnow().strftime("%H:%M:%S UTC") + " ↻</small>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Bottom cards
