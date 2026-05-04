@@ -268,7 +268,21 @@ with left:
         ts["CF20 Minted (Zerochain)"] = (ts["amount"] / SCALE).cumsum()
         ts["Locked/Burned (ETH + BSC)"] = total_locked / SCALE if total_locked > 0 else 0
         ts["Difference"] = ts["CF20 Minted (Zerochain)"] - ts["Locked/Burned (ETH + BSC)"]
-        st.line_chart(ts.set_index("time")[["CF20 Minted (Zerochain)", "Locked/Burned (ETH + BSC)", "Difference"]], height=330)
+        chart_df = ts[["time", "CF20 Minted (Zerochain)", "Locked/Burned (ETH + BSC)", "Difference"]].copy()
+
+chart_df["time"] = chart_df["time"].astype(str)
+chart_df["CF20 Minted (Zerochain)"] = pd.to_numeric(chart_df["CF20 Minted (Zerochain)"], errors="coerce")
+chart_df["Locked/Burned (ETH + BSC)"] = pd.to_numeric(chart_df["Locked/Burned (ETH + BSC)"], errors="coerce")
+chart_df["Difference"] = pd.to_numeric(chart_df["Difference"], errors="coerce")
+
+chart_df = chart_df.dropna()
+
+st.line_chart(
+    chart_df,
+    x="time",
+    y=["CF20 Minted (Zerochain)", "Locked/Burned (ETH + BSC)", "Difference"],
+    height=330,
+)
     st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
