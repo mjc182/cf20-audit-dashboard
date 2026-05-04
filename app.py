@@ -283,7 +283,7 @@ st.line_chart(
     y=["CF20 Minted (Zerochain)", "Locked/Burned (ETH + BSC)", "Difference"],
     height=330,
 )
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
