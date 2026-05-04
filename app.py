@@ -694,7 +694,17 @@ st.markdown("## 📊 On-Chain Evidence")
 
 st.write("### Top Bridge Candidates (Detected)")
 if not bridge_candidates_df.empty:
-    st.dataframe(bridge_candidates_df.head(20))
+    show_bridge = bridge_candidates_df.head(20).copy()
+
+for col in show_bridge.columns:
+    if show_bridge[col].dtype == "object":
+        show_bridge[col] = show_bridge[col].astype(str)
+
+for col in ["amount", "tokens"]:
+    if col in show_bridge.columns:
+        show_bridge[col] = show_bridge[col].apply(lambda x: f"{float(x) / 1e18:,.2f}" if str(x).isdigit() else str(x))
+
+st.dataframe(show_bridge, use_container_width=True, hide_index=True)
 else:
     st.info("No bridge candidates detected")
 
