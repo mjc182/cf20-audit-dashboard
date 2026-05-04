@@ -479,6 +479,12 @@ total_locked = eth_burned + bsc_burned
 diff = total_minted - total_locked
 diff_tokens = diff / SCALE
 
+# 🔥 ADD THIS RIGHT HERE
+bridge_supply = bridge_candidates_df["amount"].sum() if not bridge_candidates_df.empty else 0
+effective_locked = total_locked + bridge_supply
+adjusted_diff = total_minted - effective_locked
+adjusted_diff_tokens = adjusted_diff / SCALE
+
 bridge_wallets, bridge_candidates_df = build_bridge_wallet_detector(wallet_df, events)
 bridge_movements = [e for e in events if e.get("from") in bridge_wallets]
 recent_bridge_moves = [
