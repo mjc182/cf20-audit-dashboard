@@ -511,12 +511,18 @@ else:
 
 # KPI Cards
 st.write("")
+
+bridge_supply = bridge_candidates_df["amount"].sum() if not bridge_candidates_df.empty else 0
+effective_locked = total_locked + bridge_supply
+adjusted_diff = total_minted - effective_locked
+adjusted_diff_tokens = adjusted_diff / SCALE
+
 k1, k2, k3, k4 = st.columns(4)
 
 kpi_data = [
     (k1, "Total CF20 Minted ⓘ", fmt_tokens(total_minted), "live Zerochain sample", "🪶", "blue", "icon-blue"),
     (k2, "Total Locked / Burned ⓘ", fmt_tokens(total_locked), "ETH + BSC scan", "🔒", "green", "icon-green"),
-    (k3, "Difference (Δ) ⓘ", f"{diff_tokens:,.2f}", "Minted minus locked", "⚖", "yellow" if diff >= 0 else "green", "icon-yellow"),
+    (k3, "Adjusted Δ ⓘ", f"{adjusted_diff_tokens:,.2f}", "Minted vs (locked + bridge)", "⚖", "yellow" if adjusted_diff >= 0 else "green", "icon-yellow"),
     (k4, "System Status ⓘ", status, f"Backing score {backing_score}/100", "🛡", status_class, "icon-green" if status_class == "green" else "icon-yellow" if status_class == "yellow" else "icon-red"),
 ]
 
