@@ -9,9 +9,13 @@ st.set_page_config(page_title="CF20 Audit | Home Verdict", page_icon="🛡️", 
 
 MISSING_SUMMARY = Path("missing_cell_summary.json")
 MISSING_WALLETS = Path("missing_cell_wallets.csv")
-OFFICIAL_ILLEGAL_MTOKENS = 1295
-CELL_PER_MTOKEN = 12500
-OFFICIAL_CELL_EQUIV = OFFICIAL_ILLEGAL_MTOKENS * CELL_PER_MTOKEN
+# Unit conversion used throughout the audit.
+# Cellframe mCELL conversion:
+# 1 mCELL = 1,000 CELL
+CELL_PER_MCELL = 1000
+
+OFFICIAL_ILLEGAL_MCELL = 1295
+OFFICIAL_CELL_EQUIV = OFFICIAL_ILLEGAL_MCELL * CELL_PER_MCELL
 
 st.markdown("""
 <style>
