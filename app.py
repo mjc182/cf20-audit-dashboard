@@ -5,11 +5,20 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="CF20 Audit | Home Verdict", page_icon="🛡️", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(
+    page_title="CF20 Audit | Home Verdict",
+    page_icon="🛡️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 MASTER = Path("audit_master_summary.json")
 MISSING_WALLETS_DEDUPED = Path("missing_cell_wallets_deduped.csv")
 MISSING_WALLETS = Path("missing_cell_wallets.csv")
+MISSING_EVENTS_DEDUPED = Path("missing_cell_events_deduped.csv")
+MISSING_EVENTS_RAW = Path("missing_cell_events.csv")
+EVIDENCE_HASHES = Path("evidence_hashes.csv")
+MARKET_PATHS = Path("cell_market_paths.csv")
 
 CELL_PER_MCELL = 1000
 
@@ -34,6 +43,7 @@ html, body, [class*="css"] { font-family: Inter, system-ui, -apple-system, Blink
 </style>
 """, unsafe_allow_html=True)
 
+
 def load_json(path, default=None):
     if default is None:
         default = {}
@@ -42,32 +52,56 @@ def load_json(path, default=None):
     except Exception:
         return default
 
+
 def load_csv(path):
     try:
         return pd.read_csv(path) if path.exists() else pd.DataFrame()
     except Exception:
         return pd.DataFrame()
 
+
 def fmt_num(n):
     try:
         n = float(n)
     except Exception:
         return "—"
+
     if abs(n) >= 1_000_000:
-        return f"{n/1_000_000:,.2f}M"
+        return f"{n / 1_000_000:,.2f}M"
     if abs(n) >= 1_000:
-        return f"{n/1_000:,.2f}K"
+        return f"{n / 1_000:,.2f}K"
     return f"{n:,.2f}"
 
+
 def metric(label, value, sub="", color=""):
-    st.markdown(f'<div class="kpi-card"><div class="label">{label}</div><div class="value {color}">{value}</div><div class="sub">{sub}</div></div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="kpi-card">
+            <div class="label">{label}</div>
+            <div class="value {color}">{value}</div>
+            <div class="sub">{sub}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 def sidebar():
-    st.sidebar.markdown('<div class="sidebar-brand">🛡️ CF20 Audit</div>', unsafe_allow_html=True)
-    st.sidebar.markdown('<div class="sidebar-section">Main</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(
+        '<div class="sidebar-brand">🛡️ CF20 Audit</div>',
+        unsafe_allow_html=True,
+    )
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Main</div>',
+        unsafe_allow_html=True,
+    )
     st.sidebar.page_link("app.py", label="Home / Verdict")
 
-    st.sidebar.markdown('<div class="sidebar-section">Evidence</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Evidence</div>',
+        unsafe_allow_html=True,
+    )
+
     page_links = [
         ("pages/1_Investigation_Graph.py", "Investigation Graph"),
         ("pages/2_Verified_Wallets.py", "Verified Wallets"),
@@ -77,13 +111,17 @@ def sidebar():
         ("pages/6_Evidence_Downloads.py", "Evidence Downloads"),
         ("pages/7_Assumptions_Limitations.py", "Assumptions & Limitations"),
         ("pages/8_Evidence_Hashes.py", "Evidence Hashes"),
+        ("pages/9_Linked_Evidence.py", "Linked Evidence"),
     ]
 
     for page, label in page_links:
         if Path(page).exists():
             st.sidebar.page_link(page, label=label)
 
-    st.sidebar.markdown('<div class="sidebar-section">Status</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Status</div>',
+        unsafe_allow_html=True,
+    )
     st.sidebar.markdown(
         """
         <div style="color:#cbd5e1;font-size:.82rem;">
@@ -93,6 +131,85 @@ def sidebar():
         """,
         unsafe_allow_html=True,
     )
+
+
+def get_file_hash(filename, hashes_df):
+    if hashes_df.empty or "file" not in hashes_df.columns or "sha256" not in hashes_df.columns:
+        return ""
+
+    match = hashes_df[hashes_df["file"].astype(str).str.endswith(filename)]
+
+    if match.empty:
+        return ""
+
+    return str(match.iloc[0]["sha256"])
+
+
+def verify_transaction_row(row, event_file, bridge):
+    checks = []
+
+    datum_hash = str(row.get("datum_hash", "") or "")
+    atom_hash = str(row.get("atom_hash", "") or "")
+    mint_to = str(row.get("mint_to", "") or "")
+    match_status = str(row.get("match_status", "unmatched") or "unmatched").lower()
+
+    if datum_hash.startswith("0x") and len(datum_hash) >= 20:
+        checks.append("✅ datum_hash present")
+    else:
+        checks.append("⚠️ datum_hash missing")
+
+    if atom_hash.startswith("0x") and len(atom_hash) >= 20:
+        checks.append("✅ atom_hash present")
+    else:
+        checks.append("⚠️ atom_hash missing")
+
+    if match_status == "unmatched":
+        checks.append("✅ unmatched after bridge/deposit cross-check")
+    else:
+        checks.append(f"⚠️ match_status={match_status}")
+
+    if event_file.name == "missing_cell_events_deduped.csv":
+        checks.append("✅ deduped evidence file")
+    else:
+        checks.append("⚠️ raw evidence file, not deduped")
+
+    bridge_source = bridge.get("source_wallet", "")
+
+    if bridge_source and mint_to == bridge_source:
+        checks.append("✅ linked to bridge-out DATUM_TX")
+    else:
+        checks.append("— no direct bridge-out link loaded")
+
+    return " | ".join(checks)
+
+
+def transaction_confidence(row, event_file, bridge):
+    datum_hash = str(row.get("datum_hash", "") or "")
+    atom_hash = str(row.get("atom_hash", "") or "")
+    mint_to = str(row.get("mint_to", "") or "")
+
+    score = 0
+
+    if datum_hash.startswith("0x"):
+        score += 35
+
+    if atom_hash.startswith("0x"):
+        score += 25
+
+    if event_file.name == "missing_cell_events_deduped.csv":
+        score += 25
+
+    if bridge.get("source_wallet", "") and mint_to == bridge.get("source_wallet", ""):
+        score += 15
+
+    if score >= 80:
+        return "High"
+
+    if score >= 50:
+        return "Medium"
+
+    return "Review"
+
 
 sidebar()
 
@@ -108,7 +225,6 @@ wallets = load_csv(wallet_file)
 missing_cell = analysis.get("deduped_unmatched_cell")
 missing_mcell = analysis.get("deduped_unmatched_mcell_equivalent")
 duplicate_count = analysis.get("event_duplicates_removed")
-top5_share = analysis.get("top5_share_percent")
 official_mcell = official.get("illegal_mcell", 1295)
 official_cell = official.get("cell_equivalent", 1295000)
 
@@ -120,16 +236,23 @@ missing_display = fmt_num(missing_cell) if missing_cell is not None else "15.8M�
 missing_mcell_display = fmt_num(missing_mcell) if missing_mcell is not None else "15.8K–16.0K"
 
 st.markdown("# CF20 / mCELL Audit Command Center")
-st.caption("Evidence-led dashboard for unmatched CELL emissions, bridge-out activity, and unresolved market tracing.")
+st.caption(
+    "Evidence-led dashboard for unmatched CELL emissions, bridge-out activity, "
+    "and unresolved market tracing."
+)
 
 if not MASTER.exists():
-    st.warning("audit_master_summary.json not found. Run `python3 build_audit_master_summary.py` for deduped, audit-grade figures.")
+    st.warning(
+        "audit_master_summary.json not found. Run `python3 build_audit_master_summary.py` "
+        "for deduped, audit-grade figures."
+    )
 
 st.markdown("## 🧾 Executive Verdict")
 st.info(
     "Unit note: 1 mCELL = 1,000 CELL. "
     "Therefore, 1,295 mCELL equals 1,295,000 CELL-equivalent. "
-    "The independent unmatched-emission estimate of approximately 15.8M–16.0M CELL equals approximately 15,800–16,000 mCELL-equivalent."
+    "The independent unmatched-emission estimate of approximately 15.8M–16.0M CELL "
+    "equals approximately 15,800–16,000 mCELL-equivalent."
 )
 
 st.markdown(f"""
@@ -155,37 +278,213 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.write("")
-c1,c2,c3,c4,c5 = st.columns(5)
-with c1: metric("Deduped unmatched CELL", missing_display, "Master summary / current evidence", "bad")
-with c2: metric("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "bad")
-with c3: metric("Official illegal mCELL", f"{official_mcell:,}", "Cellframe statement", "warn")
-with c4: metric("Official CELL-equivalent", fmt_num(official_cell), "1,295 × 1,000", "purple")
-with c5: metric("Proven market sale", "Unresolved", "Requires BSC/DEX trace", "warn")
+
+c1, c2, c3, c4, c5 = st.columns(5)
+
+with c1:
+    metric("Deduped unmatched CELL", missing_display, "Master summary / current evidence", "bad")
+with c2:
+    metric("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "bad")
+with c3:
+    metric("Official illegal mCELL", f"{official_mcell:,}", "Cellframe statement", "warn")
+with c4:
+    metric("Official CELL-equivalent", fmt_num(official_cell), "1,295 × 1,000", "purple")
+with c5:
+    metric("Proven market sale", "Unresolved", "Requires BSC/DEX trace", "warn")
 
 st.markdown("## ✅ Evidence Status")
-st.dataframe(pd.DataFrame([
-    {"Finding":"Unmatched CELL/mCELL emissions", "Status":"High confidence", "Evidence":f"{missing_display} CELL / {missing_mcell_display} mCELL-equivalent"},
-    {"Finding":"Duplicate handling", "Status":"Applied if master summary exists", "Evidence":f"{duplicate_count if duplicate_count is not None else '—'} duplicate events removed"},
-    {"Finding":"Official illegal mCELL disclosure", "Status":"Disclosed by Cellframe statement", "Evidence":f"{official_mcell:,} mCELL × 1,000 CELL = {official_cell:,.0f} CELL-equivalent"},
-    {"Finding":"Official vs independent discrepancy", "Status":"Unresolved", "Evidence":"Independent unmatched estimate materially exceeds official 1,295 mCELL figure"},
-    {"Finding":"Top unmatched wallet bridge-out", "Status":"Supported by DATUM_TX", "Evidence":"BRIDGE OUT BEP20 to 0x1fa634..."},
-    {"Finding":"Sold on open market", "Status":"Not yet quantified", "Evidence":"Requires BSC/DEX/OTC destination trace"},
-]), use_container_width=True, hide_index=True)
+st.dataframe(
+    pd.DataFrame(
+        [
+            {
+                "Finding": "Unmatched CELL/mCELL emissions",
+                "Status": "High confidence",
+                "Evidence": f"{missing_display} CELL / {missing_mcell_display} mCELL-equivalent",
+            },
+            {
+                "Finding": "Duplicate handling",
+                "Status": "Applied if master summary exists",
+                "Evidence": f"{duplicate_count if duplicate_count is not None else '—'} duplicate events removed",
+            },
+            {
+                "Finding": "Official illegal mCELL disclosure",
+                "Status": "Disclosed by Cellframe statement",
+                "Evidence": f"{official_mcell:,} mCELL × 1,000 CELL = {official_cell:,.0f} CELL-equivalent",
+            },
+            {
+                "Finding": "Official vs independent discrepancy",
+                "Status": "Unresolved",
+                "Evidence": "Independent unmatched estimate materially exceeds official 1,295 mCELL figure",
+            },
+            {
+                "Finding": "Top unmatched wallet bridge-out",
+                "Status": "Supported by DATUM_TX",
+                "Evidence": "BRIDGE OUT BEP20 to 0x1fa634...",
+            },
+            {
+                "Finding": "Sold on open market",
+                "Status": "Not yet quantified",
+                "Evidence": "Requires BSC/DEX/OTC destination trace",
+            },
+        ]
+    ),
+    use_container_width=True,
+    hide_index=True,
+)
 
-left,right = st.columns([1.35,1])
+# =============================
+# TRANSACTION VERIFICATION LEDGER
+# =============================
+
+st.markdown("## 🔍 Transaction Verification Ledger")
+st.caption(
+    "Search and verify each deduped unmatched CELL emission by wallet, datum hash, atom hash, "
+    "amount, and linked bridge/market evidence."
+)
+
+event_file = MISSING_EVENTS_DEDUPED if MISSING_EVENTS_DEDUPED.exists() else MISSING_EVENTS_RAW
+events_df = load_csv(event_file)
+hashes_df = load_csv(EVIDENCE_HASHES)
+market_paths_df = load_csv(MARKET_PATHS)
+
+if events_df.empty:
+    st.warning(
+        "No transaction-level file found. Upload `missing_cell_events_deduped.csv` "
+        "or `missing_cell_events.csv`."
+    )
+else:
+    tx = events_df.copy()
+
+    if "mint_amount_tokens" in tx.columns:
+        tx["mint_amount_tokens"] = pd.to_numeric(
+            tx["mint_amount_tokens"],
+            errors="coerce",
+        ).fillna(0)
+
+        tx["mint_amount_mcell_equivalent"] = tx["mint_amount_tokens"] / CELL_PER_MCELL
+
+    tx["verification_status"] = tx.apply(
+        lambda row: verify_transaction_row(row, event_file, bridge),
+        axis=1,
+    )
+
+    tx["verification_confidence"] = tx.apply(
+        lambda row: transaction_confidence(row, event_file, bridge),
+        axis=1,
+    )
+
+    source_hash = get_file_hash(event_file.name, hashes_df)
+
+    if source_hash:
+        st.success(f"Evidence source: `{event_file.name}` · SHA256: `{source_hash}`")
+    else:
+        st.info(f"Evidence source: `{event_file.name}`")
+
+    search = st.text_input(
+        "Search transaction evidence",
+        placeholder="Paste wallet, datum_hash, atom_hash, token, or amount...",
+    )
+
+    filtered = tx.copy()
+
+    if search:
+        s = search.lower().strip()
+
+        searchable = filtered.astype(str).apply(
+            lambda col: col.str.lower(),
+            axis=0,
+        )
+
+        mask = searchable.apply(
+            lambda row: row.str.contains(s, na=False).any(),
+            axis=1,
+        )
+
+        filtered = filtered[mask]
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.metric("Transactions shown", f"{len(filtered):,}")
+
+    if "mint_amount_tokens" in filtered.columns:
+        shown_cell = filtered["mint_amount_tokens"].sum()
+    else:
+        shown_cell = 0
+
+    if "mint_amount_mcell_equivalent" in filtered.columns:
+        shown_mcell = filtered["mint_amount_mcell_equivalent"].sum()
+    else:
+        shown_mcell = 0
+
+    c2.metric("Unmatched CELL shown", f"{shown_cell:,.2f}")
+    c3.metric("mCELL equivalent shown", f"{shown_mcell:,.2f}")
+    c4.metric("High-confidence rows", f"{int((filtered['verification_confidence'] == 'High').sum()):,}")
+
+    st.markdown("### Verified Transaction Rows")
+
+    preferred_cols = [
+        "mint_time",
+        "time",
+        "token",
+        "mint_amount_tokens",
+        "mint_amount_mcell_equivalent",
+        "mint_to",
+        "to",
+        "datum_hash",
+        "atom_hash",
+        "match_status",
+        "verification_confidence",
+        "verification_status",
+    ]
+
+    cols = [c for c in preferred_cols if c in filtered.columns]
+
+    if not cols:
+        cols = filtered.columns.tolist()
+
+    st.dataframe(
+        filtered[cols].head(500),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    csv_bytes = filtered[cols].to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        "Download filtered verified transaction rows",
+        data=csv_bytes,
+        file_name="filtered_verified_transaction_rows.csv",
+        mime="text/csv",
+        use_container_width=True,
+    )
+
+    st.warning(
+        "Transaction verification confirms that a row exists in the deduped unmatched emission evidence. "
+        "It does not, by itself, prove open-market sale. Market-sale proof requires BSC/DEX/exchange route tracing."
+    )
+
+left, right = st.columns([1.35, 1])
+
 with left:
     st.markdown("## Top Unmatched CELL Recipients")
+
     if wallets.empty:
         st.info("missing_cell_wallets_deduped.csv or missing_cell_wallets.csv not found.")
     else:
         show = wallets.head(10).copy()
+
         if "missing_cell" in show.columns:
             show["missing_cell"] = pd.to_numeric(show["missing_cell"], errors="coerce")
             show["missing_mcell_equivalent"] = show["missing_cell"] / CELL_PER_MCELL
             show["missing_cell"] = show["missing_cell"].map(lambda x: f"{x:,.2f}")
             show["missing_mcell_equivalent"] = show["missing_mcell_equivalent"].map(lambda x: f"{x:,.2f}")
+
         if "share_of_missing" in show.columns:
-            show["share_of_missing"] = pd.to_numeric(show["share_of_missing"], errors="coerce").map(lambda x: f"{x:,.2f}%")
+            show["share_of_missing"] = pd.to_numeric(
+                show["share_of_missing"],
+                errors="coerce",
+            ).map(lambda x: f"{x:,.2f}%")
+
         st.dataframe(show, use_container_width=True, hide_index=True)
 
 with right:
@@ -198,12 +497,18 @@ with right:
 - Status: external-chain destination identified; BSC/DEX/OTC sale path unresolved.
 """)
 
-if not wallets.empty and {"mint_to","missing_cell"}.issubset(wallets.columns):
+if not wallets.empty and {"mint_to", "missing_cell"}.issubset(wallets.columns):
     st.markdown("## 📊 Unmatched CELL Distribution")
+
     chart_df = wallets.head(15).copy()
     chart_df["missing_cell"] = pd.to_numeric(chart_df["missing_cell"], errors="coerce")
     chart_df["missing_mcell_equivalent"] = chart_df["missing_cell"] / CELL_PER_MCELL
-    chart_df["wallet_short"] = chart_df["mint_to"].astype(str).str[:10] + "..." + chart_df["mint_to"].astype(str).str[-6:]
+    chart_df["wallet_short"] = (
+        chart_df["mint_to"].astype(str).str[:10]
+        + "..."
+        + chart_df["mint_to"].astype(str).str[-6:]
+    )
+
     chart = alt.Chart(chart_df).mark_bar().encode(
         x=alt.X("missing_cell:Q", title="Unmatched CELL"),
         y=alt.Y("wallet_short:N", title=None, sort="-x"),
@@ -213,21 +518,32 @@ if not wallets.empty and {"mint_to","missing_cell"}.issubset(wallets.columns):
             alt.Tooltip("missing_mcell_equivalent:Q", title="mCELL Equivalent", format=",.2f"),
         ],
     ).properties(height=420)
+
     st.altair_chart(chart, use_container_width=True)
 
 st.markdown("## 📁 Evidence Downloads")
+
 for label, filename in [
-    ("Audit Master Summary","audit_master_summary.json"),
-    ("Deduped Missing CELL Wallets","missing_cell_wallets_deduped.csv"),
-    ("Deduped Missing CELL Events","missing_cell_events_deduped.csv"),
-    ("Evidence Hashes","evidence_hashes.csv"),
-    ("Missing CELL Wallets","missing_cell_wallets.csv"),
-    ("Missing CELL Events","missing_cell_events.csv"),
-    ("Mint Cross-Check","cf20_mint_crosscheck.csv"),
-    ("Bridge-Out Activity Raw","zerochain_missing_cell_activity_raw.csv"),
+    ("Audit Master Summary", "audit_master_summary.json"),
+    ("Deduped Missing CELL Wallets", "missing_cell_wallets_deduped.csv"),
+    ("Deduped Missing CELL Events", "missing_cell_events_deduped.csv"),
+    ("Evidence Hashes", "evidence_hashes.csv"),
+    ("Missing CELL Wallets", "missing_cell_wallets.csv"),
+    ("Missing CELL Events", "missing_cell_events.csv"),
+    ("Mint Cross-Check", "cf20_mint_crosscheck.csv"),
+    ("Bridge-Out Activity Raw", "zerochain_missing_cell_activity_raw.csv"),
+    ("CELL Wallet Universe", "cell_wallet_universe.csv"),
+    ("CELL Transfer Edges", "cell_transfer_edges.csv"),
+    ("CELL Market Paths", "cell_market_paths.csv"),
 ]:
-    p=Path(filename)
+    p = Path(filename)
+
     if p.exists():
-        st.download_button(f"Download {label}", p.read_bytes(), file_name=filename, mime="text/csv" if filename.endswith(".csv") else "application/json")
+        st.download_button(
+            f"Download {label}",
+            p.read_bytes(),
+            file_name=filename,
+            mime="text/csv" if filename.endswith(".csv") else "application/json",
+        )
     else:
         st.caption(f"Missing: {filename}")
