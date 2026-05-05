@@ -1,5 +1,5 @@
 
-import json
+import gzip
 import math
 import random
 from collections import Counter, defaultdict
@@ -22,8 +22,8 @@ st.set_page_config(
 
 SCALE = 10**18
 DATA_DIR = Path("data")
-ETH_FILE = DATA_DIR / "eth_transfers.jsonl"
-BSC_FILE = DATA_DIR / "bsc_transfers.jsonl"
+ETH_FILE = DATA_DIR / "eth_transfers.jsonl.gz"
+BSC_FILE = DATA_DIR / "bsc_transfers.jsonl.gz"
 VERIFIED_BALANCES_FILE = Path("verified_wallet_balances.json")
 VERIFIED_WALLETS_FILE = Path("verified_wallets.json")
 
