@@ -1,0 +1,14 @@
+{
+  "target_tokens": [
+    "CELL",
+    "CF20",
+    "mCELL"
+  ],
+  "total_cell_minted_scanned": 16022167.644240461,
+  "matched_cell": 0,
+  "missing_cell": 16022167.644240461,
+  "missing_percent": 100.0,
+  "matched_events": 0,
+  "missing_events": 7467,
+  "recipient_count": 451
+}

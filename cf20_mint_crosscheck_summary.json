@@ -1,0 +1,11 @@
+{
+  "mint_events": 10534,
+  "total_minted_tokens": 2001771584473.0288,
+  "matched_events": 0,
+  "unmatched_events": 10534,
+  "matched_amount_tokens": 0,
+  "unmatched_amount_tokens": 2001771584473.0288,
+  "matched_amount_percent": 0.0,
+  "unmatched_amount_percent": 100.0,
+  "note": "This is amount-only matching against known deposit wallets. It flags mints that do not match observed deposits in loaded data."
+}
