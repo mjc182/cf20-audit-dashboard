@@ -1,6 +1,8 @@
+import json
 import math
 from collections import Counter
 from datetime import datetime
+from pathlib import Path
 
 import altair as alt
 import pandas as pd
@@ -17,9 +19,9 @@ st.set_page_config(
 
 ZEROCHAIN_API = "https://2.api.explorer.cellframe.net/atoms/Backbone/zerochain/"
 ETH_TOKEN = "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099"
-BSC_TOKEN = "0xf3e1449ddb6b218da2c9463d4594ceccc8934346"
+BSC_TOKEN = "0xd98438889Ae7364c7E2A3540547Fad042FB24642"
 BURN = "0x000000000000000000000000000000000000dead"
-TRANSFER_TOPIC = Web3.keccak(text="Transfer(address,address,uint256)").hex()
+TRANSFER_TOPIC = Web3.to_hex(Web3.keccak(text="Transfer(address,address,uint256)"))
 SCALE = 10**18
 
 CSS = """
@@ -243,6 +245,26 @@ def fmt_compact_tokens(raw):
 def short_addr(addr):
     s = str(addr)
     return s if len(s) <= 16 else s[:8] + "..." + s[-7:]
+
+
+def load_verified_wallet_balances():
+    path = Path("verified_wallet_balances.json")
+
+    if not path.exists():
+        return pd.DataFrame()
+
+    try:
+        rows = json.loads(path.read_text())
+        return pd.DataFrame(rows)
+    except Exception:
+        return pd.DataFrame()
+
+
+def safe_amount_to_tokens(value):
+    try:
+        return f"{float(value) / SCALE:,.2f}"
+    except Exception:
+        return str(value)
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -486,12 +508,6 @@ effective_locked = total_locked + bridge_supply
 adjusted_diff = total_minted - effective_locked
 adjusted_diff_tokens = adjusted_diff / SCALE
 
-# 🔍 DEBUG (temporary)
-st.write("Minted:", total_minted)
-st.write("Locked:", total_locked)
-st.write("Bridge supply:", bridge_supply)
-st.write("Adjusted diff:", adjusted_diff)
-
 bridge_movements = [e for e in events if e.get("from") in bridge_wallets]
 
 recent_bridge_moves = [
@@ -518,7 +534,7 @@ else:
 
 st.markdown("## 🔎 Proof of Backing Verdict")
 
-if abs(diff) < 10**12:
+if abs(diff) < 10**12 and use_rpc:
     verdict = "✅ Backing Verified"
     verdict_color = "green"
 elif bridge_candidates_df.empty:
@@ -540,6 +556,7 @@ st.markdown(f"""
 This verdict is based on:
 <br>• Minted vs Locked comparison
 <br>• Bridge wallet detection (ETH + BSC)
+<br>• Verified wallet balance tracking
 <br>• Flow analysis and clustering signals
 </p>
 </div>
@@ -547,12 +564,6 @@ This verdict is based on:
 
 # KPI Cards
 st.write("")
-
-bridge_supply = bridge_candidates_df["amount"].sum() if not bridge_candidates_df.empty else 0
-effective_locked = total_locked + bridge_supply
-adjusted_diff = total_minted - effective_locked
-adjusted_diff_tokens = adjusted_diff / SCALE
-
 k1, k2, k3, k4 = st.columns(4)
 
 kpi_data = [
@@ -686,6 +697,9 @@ with right:
         ).properties(height=260)
 
         st.altair_chart(donut, use_container_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
 # ===============================
 # 📊 ON-CHAIN EVIDENCE SECTION
 # ===============================
@@ -693,40 +707,95 @@ with right:
 st.markdown("## 📊 On-Chain Evidence")
 
 st.write("### Top Bridge Candidates (Detected)")
+
 if not bridge_candidates_df.empty:
     show_bridge = bridge_candidates_df.head(20).copy()
 
-for col in show_bridge.columns:
-    if show_bridge[col].dtype == "object":
-        show_bridge[col] = show_bridge[col].astype(str)
+    if "amount" in show_bridge.columns:
+        show_bridge["amount"] = show_bridge["amount"].apply(safe_amount_to_tokens)
 
-for col in ["amount", "tokens"]:
-    if col in show_bridge.columns:
-        show_bridge[col] = show_bridge[col].apply(lambda x: f"{float(x) / 1e18:,.2f}" if str(x).isdigit() else str(x))
+    if "tokens" in show_bridge.columns:
+        show_bridge["tokens"] = show_bridge["tokens"].apply(lambda x: f"{float(x):,.2f}")
 
-st.dataframe(show_bridge, use_container_width=True, hide_index=True)
+    if "share" in show_bridge.columns:
+        show_bridge["share"] = show_bridge["share"].apply(lambda x: f"{float(x):.2%}")
+
+    for col in show_bridge.columns:
+        if show_bridge[col].dtype == "object":
+            show_bridge[col] = show_bridge[col].astype(str)
+
+    st.dataframe(show_bridge, use_container_width=True, hide_index=True)
 else:
     st.info("No bridge candidates detected")
 
 st.write("### Key Wallet Flows")
+
 if not wallet_df.empty:
     show_wallets = wallet_df.sort_values("amount", ascending=False).head(20).copy()
 
-if "amount" in show_wallets.columns:
-    show_wallets["amount"] = show_wallets["amount"].apply(lambda x: f"{float(x) / 1e18:,.2f}")
+    if "amount" in show_wallets.columns:
+        show_wallets["amount"] = show_wallets["amount"].apply(safe_amount_to_tokens)
 
-if "share" in show_wallets.columns:
-    show_wallets["share"] = show_wallets["share"].apply(lambda x: f"{float(x):.2%}")
+    if "share" in show_wallets.columns:
+        show_wallets["share"] = show_wallets["share"].apply(lambda x: f"{float(x):.2%}")
 
-for col in show_wallets.columns:
-    if show_wallets[col].dtype == "object":
-        show_wallets[col] = show_wallets[col].astype(str)
+    for col in show_wallets.columns:
+        if show_wallets[col].dtype == "object":
+            show_wallets[col] = show_wallets[col].astype(str)
 
-st.dataframe(show_wallets, use_container_width=True, hide_index=True)
+    st.dataframe(show_wallets, use_container_width=True, hide_index=True)
 else:
     st.info("No wallet flow data available")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+# ===============================
+# ✅ VERIFIED WALLET BALANCE TRACKING
+# ===============================
+
+st.markdown("## ✅ Verified Wallet Balance Tracking")
+
+verified_balances_df = load_verified_wallet_balances()
+
+if verified_balances_df.empty:
+    st.info("No verified wallet balances found. Run track_verified_wallets.py first and commit verified_wallet_balances.json.")
+else:
+    show_verified = verified_balances_df.copy()
+
+    show_verified["balance_tokens"] = show_verified["balance_tokens"].apply(
+        lambda x: f"{float(x):,.2f}"
+    )
+
+    show_verified["supply_percent"] = show_verified["supply_percent"].apply(
+        lambda x: f"{float(x):.4f}%"
+    )
+
+    st.dataframe(
+        show_verified[
+            ["chain", "group", "label", "address", "balance_tokens", "supply_percent"]
+        ],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    st.markdown("### Category Totals")
+
+    category_totals = verified_balances_df.groupby(["chain", "group"]).agg(
+        balance_tokens=("balance_tokens", "sum"),
+        supply_percent=("supply_percent", "sum"),
+    ).reset_index()
+
+    category_totals["balance_tokens"] = category_totals["balance_tokens"].apply(
+        lambda x: f"{float(x):,.2f}"
+    )
+
+    category_totals["supply_percent"] = category_totals["supply_percent"].apply(
+        lambda x: f"{float(x):.4f}%"
+    )
+
+    st.dataframe(
+        category_totals,
+        use_container_width=True,
+        hide_index=True,
+    )
 
 # Bottom cards
 st.write("")
@@ -810,8 +879,8 @@ e1.metric("Detected bridge wallets", len(bridge_wallets))
 e2.metric("Bridge wallet movements", len(bridge_movements))
 e3.metric("Proof of backing score", f"{backing_score}/100")
 
-# 🔥 ADD THIS
 st.progress(backing_score / 100)
+
 if backing_score >= 80:
     st.success("🟢 Strong cryptographic backing confidence")
 elif backing_score >= 50:
@@ -823,7 +892,7 @@ st.markdown(
     f"""
 <div class="statusbar">
   <div><span class="dot"></span>Zerochain: Connected &nbsp;&nbsp;&nbsp; <span class="dot"></span>Ethereum: {'Connected' if eth_rpc else 'RPC missing'} &nbsp;&nbsp;&nbsp; <span class="dot"></span>BSC: Connected</div>
-  <div>Auto-refresh: ON ●</div>
+  <div>Verified wallet tracking enabled ●</div>
 </div>
 """,
     unsafe_allow_html=True,
