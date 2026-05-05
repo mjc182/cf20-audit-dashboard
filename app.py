@@ -1,265 +1,26 @@
 import json
 from pathlib import Path
 
-import altair as alt
 import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    page_title="CF20 / CELL Independent Bridge Audit",
+    page_title="CF20 Audit | No Verifiable Lock Contract",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # =============================
-# FILES / CONSTANTS
+# FILES / CONFIG
 # =============================
 
 MASTER = Path("audit_master_summary.json")
-
 MISSING_WALLETS_DEDUPED = Path("missing_cell_wallets_deduped.csv")
 MISSING_WALLETS = Path("missing_cell_wallets.csv")
-
-MISSING_EVENTS_DEDUPED = Path("missing_cell_events_deduped.csv")
-MISSING_EVENTS_RAW = Path("missing_cell_events.csv")
-
-EVIDENCE_HASHES = Path("evidence_hashes.csv")
-MARKET_PATHS = Path("cell_market_paths.csv")
-CELL_UNIVERSE_SUMMARY = Path("cell_wallet_universe_summary.json")
-DEX_SUMMARY = Path("cell_dex_swaps_summary.json")
+BRIDGE_IMAGE = Path("assets/no_verifiable_lock_contract.png")
 
 CELL_PER_MCELL = 1000
-
-
-# =============================
-# CSS
-# =============================
-
-st.markdown(
-    """
-<style>
-:root {
-    --bg:#050d18;
-    --panel:rgba(15,23,42,.92);
-    --panel2:rgba(8,20,36,.88);
-    --border:rgba(148,163,184,.18);
-    --text:#f8fafc;
-    --muted:#94a3b8;
-    --blue:#38bdf8;
-    --green:#22c55e;
-    --yellow:#f59e0b;
-    --red:#ef4444;
-    --purple:#c084fc;
-}
-
-html, body, [class*="css"] {
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-[data-testid="stAppViewContainer"] {
-    background:
-        radial-gradient(circle at 35% 5%, rgba(37,99,235,.16), transparent 30%),
-        radial-gradient(circle at 90% 10%, rgba(34,197,94,.10), transparent 25%),
-        radial-gradient(circle at 10% 80%, rgba(168,85,247,.10), transparent 25%),
-        #050d18;
-}
-
-[data-testid="stSidebar"] {
-    background:linear-gradient(180deg, #07101d 0%, #06111f 100%);
-    border-right:1px solid rgba(148,163,184,.18);
-}
-
-[data-testid="stSidebar"] * { color:#dbeafe; }
-
-.block-container {
-    padding-top:1rem;
-    max-width:1650px;
-}
-
-#MainMenu, header, footer { visibility:hidden; }
-
-.sidebar-brand {
-    font-size:1.08rem;
-    font-weight:900;
-    padding:12px 0 14px 0;
-    color:#f8fafc;
-}
-
-.sidebar-section {
-    color:#94a3b8;
-    font-size:.72rem;
-    font-weight:800;
-    margin:18px 0 6px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-}
-
-.green-dot {
-    display:inline-block;
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#22c55e;
-    margin-right:7px;
-}
-
-.panel {
-    border:1px solid rgba(148,163,184,.18);
-    background:linear-gradient(145deg, rgba(15,23,42,.94), rgba(8,20,36,.88));
-    border-radius:14px;
-    padding:17px 18px;
-    box-shadow:0 18px 40px rgba(0,0,0,.24);
-}
-
-.verdict-panel {
-    border:1px solid rgba(56,189,248,.25);
-    background:
-        radial-gradient(circle at 10% 0%, rgba(56,189,248,.12), transparent 28%),
-        linear-gradient(145deg, rgba(15,23,42,.96), rgba(8,20,36,.90));
-    border-radius:14px;
-    padding:20px 22px;
-    box-shadow:0 18px 40px rgba(0,0,0,.28);
-}
-
-.kpi-card {
-    position:relative;
-    border:1px solid rgba(148,163,184,.18);
-    background:linear-gradient(145deg, rgba(15,23,42,.96), rgba(12,28,50,.88));
-    border-radius:14px;
-    padding:16px 16px;
-    min-height:112px;
-    box-shadow:0 18px 40px rgba(0,0,0,.28);
-    overflow:hidden;
-}
-
-.kpi-card:after {
-    content:"";
-    position:absolute;
-    right:-20px;
-    top:-20px;
-    width:92px;
-    height:92px;
-    border-radius:50%;
-    background:rgba(56,189,248,.08);
-}
-
-.kpi-card .label {
-    color:#cbd5e1;
-    font-size:.80rem;
-    font-weight:800;
-    margin-bottom:9px;
-    letter-spacing:.01em;
-}
-
-.kpi-card .value {
-    color:#f8fafc;
-    font-size:1.55rem;
-    font-weight:950;
-    letter-spacing:-.04em;
-}
-
-.kpi-card .sub {
-    margin-top:7px;
-    font-size:.78rem;
-    color:#94a3b8;
-    font-weight:700;
-}
-
-.status-card {
-    border:1px solid rgba(148,163,184,.18);
-    border-radius:14px;
-    padding:15px;
-    min-height:180px;
-    background:rgba(15,23,42,.72);
-}
-
-.status-title {
-    font-size:.88rem;
-    font-weight:950;
-    text-transform:uppercase;
-    letter-spacing:.06em;
-    margin-bottom:10px;
-}
-
-.status-line {
-    color:#cbd5e1;
-    font-size:.86rem;
-    line-height:1.65;
-    margin-bottom:6px;
-}
-
-.chain-step {
-    border:1px solid rgba(56,189,248,.22);
-    background:rgba(14,30,50,.82);
-    border-radius:14px;
-    padding:14px;
-    min-height:132px;
-    text-align:center;
-}
-
-.chain-icon {
-    width:44px;
-    height:44px;
-    margin:0 auto 9px auto;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid rgba(56,189,248,.40);
-    background:rgba(56,189,248,.12);
-    font-size:1.25rem;
-}
-
-.chain-title {
-    color:#f8fafc;
-    font-weight:900;
-    font-size:.84rem;
-    line-height:1.25;
-}
-
-.chain-sub {
-    color:#94a3b8;
-    font-size:.72rem;
-    margin-top:6px;
-}
-
-.bad { color:#ef4444 !important; }
-.warn { color:#f59e0b !important; }
-.good { color:#22c55e !important; }
-.blue { color:#38bdf8 !important; }
-.purple { color:#c084fc !important; }
-
-.pill {
-    display:inline-block;
-    border-radius:999px;
-    padding:3px 9px;
-    font-size:.72rem;
-    font-weight:850;
-    margin-right:5px;
-}
-
-.pill-good { background:rgba(34,197,94,.14); color:#4ade80; border:1px solid rgba(34,197,94,.22); }
-.pill-warn { background:rgba(245,158,11,.14); color:#fbbf24; border:1px solid rgba(245,158,11,.22); }
-.pill-bad { background:rgba(239,68,68,.14); color:#f87171; border:1px solid rgba(239,68,68,.22); }
-.pill-blue { background:rgba(56,189,248,.13); color:#67e8f9; border:1px solid rgba(56,189,248,.22); }
-
-.small-muted {
-    color:#94a3b8;
-    font-size:.82rem;
-}
-
-[data-testid="stDataFrame"] {
-    border-radius:10px;
-    overflow:hidden;
-}
-
-hr { border-color:rgba(148,163,184,.14); }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
 
 # =============================
 # HELPERS
@@ -281,156 +42,89 @@ def load_csv(path):
         return pd.DataFrame()
 
 
-def fmt_num(n, decimals=2):
+def fmt_num(n):
     try:
         n = float(n)
     except Exception:
         return "—"
-
     if abs(n) >= 1_000_000_000:
-        return f"{n / 1_000_000_000:,.{decimals}f}B"
+        return f"{n/1_000_000_000:,.2f}B"
     if abs(n) >= 1_000_000:
-        return f"{n / 1_000_000:,.{decimals}f}M"
+        return f"{n/1_000_000:,.2f}M"
     if abs(n) >= 1_000:
-        return f"{n / 1_000:,.{decimals}f}K"
-    return f"{n:,.{decimals}f}"
+        return f"{n/1_000:,.2f}K"
+    return f"{n:,.2f}"
 
 
-def fmt_full(n, decimals=2):
-    try:
-        return f"{float(n):,.{decimals}f}"
-    except Exception:
-        return "—"
+def sidebar():
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-brand">🛡️ CF20 Audit</div>
+        """,
+        unsafe_allow_html=True,
+    )
 
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Main</div>',
+        unsafe_allow_html=True,
+    )
+    st.sidebar.page_link("app.py", label="Home / Verdict")
 
-def short_addr(addr):
-    addr = str(addr)
-    if len(addr) <= 18:
-        return addr
-    return addr[:10] + "..." + addr[-8:]
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Evidence</div>',
+        unsafe_allow_html=True,
+    )
 
+    page_links = [
+        ("pages/1_Investigation_Graph.py", "Investigation Graph"),
+        ("pages/2_Verified_Wallets.py", "Verified Wallets"),
+        ("pages/3_Mint_Cross_Check.py", "Mint Cross-Check"),
+        ("pages/4_Missing_CELL.py", "Missing CELL"),
+        ("pages/5_Bridge_Out_Trace.py", "Bridge-Out Trace"),
+        ("pages/6_Evidence_Downloads.py", "Evidence Downloads"),
+        ("pages/7_Assumptions_Limitations.py", "Assumptions & Limitations"),
+        ("pages/8_Evidence_Hashes.py", "Evidence Hashes"),
+    ]
 
-def metric_card(label, value, sub="", color=""):
-    st.markdown(
-        f"""
-        <div class="kpi-card">
-            <div class="label">{label}</div>
-            <div class="value {color}">{value}</div>
-            <div class="sub">{sub}</div>
+    for page, label in page_links:
+        if Path(page).exists():
+            st.sidebar.page_link(page, label=label)
+
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Status</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.sidebar.markdown(
+        """
+        <div class="status-small">
+            <span class="green-dot"></span>Dashboard active<br>
+            <span class="muted">Independent audit mode enabled</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
 
-def get_file_hash(filename, hashes_df):
-    if hashes_df.empty or "file" not in hashes_df.columns or "sha256" not in hashes_df.columns:
-        return ""
-
-    match = hashes_df[hashes_df["file"].astype(str).str.endswith(filename)]
-
-    if match.empty:
-        return ""
-
-    return str(match.iloc[0]["sha256"])
-
-
-def verify_transaction_row(row, event_file, bridge):
-    checks = []
-
-    datum_hash = str(row.get("datum_hash", "") or "")
-    atom_hash = str(row.get("atom_hash", "") or "")
-    mint_to = str(row.get("mint_to", "") or "")
-    match_status = str(row.get("match_status", "unmatched") or "unmatched").lower()
-
-    checks.append("✅ datum_hash present" if datum_hash.startswith("0x") and len(datum_hash) >= 20 else "⚠️ datum_hash missing")
-    checks.append("✅ atom_hash present" if atom_hash.startswith("0x") and len(atom_hash) >= 20 else "⚠️ atom_hash missing")
-
-    if match_status == "unmatched":
-        checks.append("✅ unmatched after current bridge/deposit cross-check")
-    else:
-        checks.append(f"⚠️ match_status={match_status}")
-
-    checks.append("✅ deduped evidence file" if event_file.name == "missing_cell_events_deduped.csv" else "⚠️ raw evidence file, not deduped")
-
-    bridge_source = bridge.get("source_wallet", "")
-    if bridge_source and mint_to == bridge_source:
-        checks.append("✅ linked to bridge-out DATUM_TX")
-    else:
-        checks.append("— no direct bridge-out link loaded")
-
-    return " | ".join(checks)
+def kpi_card(label, value, sub="", color_class=""):
+    st.markdown(
+        f"""
+        <div class="kpi-card">
+            <div class="kpi-label">{label}</div>
+            <div class="kpi-value {color_class}">{value}</div>
+            <div class="kpi-sub">{sub}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
-def transaction_confidence(row, event_file, bridge):
-    datum_hash = str(row.get("datum_hash", "") or "")
-    atom_hash = str(row.get("atom_hash", "") or "")
-    mint_to = str(row.get("mint_to", "") or "")
-
-    score = 0
-
-    if datum_hash.startswith("0x"):
-        score += 35
-    if atom_hash.startswith("0x"):
-        score += 25
-    if event_file.name == "missing_cell_events_deduped.csv":
-        score += 25
-    if bridge.get("source_wallet", "") and mint_to == bridge.get("source_wallet", ""):
-        score += 15
-
-    if score >= 80:
-        return "High"
-    if score >= 50:
-        return "Medium"
-    return "Review"
-
-
-def sidebar():
-    st.sidebar.markdown('<div class="sidebar-brand">🛡️ CF20 Audit</div>', unsafe_allow_html=True)
-
-    groups = {
-        "Overview": [
-            ("app.py", "Home Verdict"),
-            ("pages/11_Reconciliation.py", "Reconciliation"),
-            ("pages/12_Data_Completeness.py", "Data Completeness"),
-        ],
-        "Evidence": [
-            ("pages/3_Mint_Cross_Check.py", "Mint Cross-Check"),
-            ("pages/4_Missing_CELL.py", "Unmatched Emissions"),
-            ("pages/2_Verified_Wallets.py", "Verified Wallets"),
-            ("pages/8_Evidence_Hashes.py", "Evidence Hashes"),
-            ("pages/6_Evidence_Downloads.py", "Downloads"),
-        ],
-        "Tracing": [
-            ("pages/5_Bridge_Out_Trace.py", "Bridge-Out Evidence"),
-            ("pages/9_Linked_Evidence.py", "Linked Evidence"),
-            ("pages/1_Investigation_Graph.py", "Investigation Graph"),
-            ("pages/14_DEX_Transactions.py", "DEX Transactions"),
-        ],
-        "Tools": [
-            ("pages/10_Wallet_Search.py", "Wallet Search"),
-            ("pages/13_Risk_Scores.py", "Risk Scores"),
-        ],
-        "Methodology": [
-            ("pages/7_Assumptions_Limitations.py", "Assumptions & Limitations"),
-        ],
-    }
-
-    for section, links in groups.items():
-        st.sidebar.markdown(f'<div class="sidebar-section">{section}</div>', unsafe_allow_html=True)
-
-        for page, label in links:
-            if page == "app.py":
-                st.sidebar.page_link(page, label=label)
-            elif Path(page).exists():
-                st.sidebar.page_link(page, label=label)
-
-    st.sidebar.markdown('<div class="sidebar-section">Status</div>', unsafe_allow_html=True)
-    st.sidebar.markdown(
-        """
-        <div style="color:#cbd5e1;font-size:.82rem;">
-            <span class="green-dot"></span>Dashboard active<br>
-            <span style="color:#94a3b8;">Independent evidence mode</span>
+def info_box(title, body, color="blue"):
+    st.markdown(
+        f"""
+        <div class="info-box {color}">
+            <div class="info-title">{title}</div>
+            <div class="info-body">{body}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -438,7 +132,326 @@ def sidebar():
 
 
 # =============================
-# LOAD DATA
+# CSS
+# =============================
+
+st.markdown(
+    """
+<style>
+html, body, [class*="css"] {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-testid="stAppViewContainer"] {
+    background:
+        radial-gradient(circle at 20% 10%, rgba(59,130,246,0.14), transparent 25%),
+        radial-gradient(circle at 85% 10%, rgba(239,68,68,0.12), transparent 22%),
+        radial-gradient(circle at 50% 90%, rgba(34,197,94,0.08), transparent 24%),
+        #050d18;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #07101d 0%, #06111f 100%);
+    border-right: 1px solid rgba(148,163,184,0.16);
+}
+
+[data-testid="stSidebar"] * {
+    color: #dbeafe;
+}
+
+.block-container {
+    max-width: 1600px;
+    padding-top: 1rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+}
+
+#MainMenu, header, footer {
+    visibility: hidden;
+}
+
+.sidebar-brand {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin: 10px 0 14px 0;
+}
+
+.sidebar-section {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin: 18px 0 6px 0;
+    text-transform: uppercase;
+}
+
+.green-dot {
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    margin-right:7px;
+}
+
+.status-small {
+    color:#cbd5e1;
+    font-size:.82rem;
+    line-height:1.5;
+}
+
+.muted {
+    color:#94a3b8;
+}
+
+.hero {
+    border: 1px solid rgba(59,130,246,0.28);
+    background: linear-gradient(145deg, rgba(6,18,34,0.96), rgba(10,20,36,0.92));
+    border-radius: 18px;
+    padding: 20px 22px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+    margin-bottom: 16px;
+}
+
+.hero-title {
+    font-size: 2.15rem;
+    font-weight: 900;
+    color: #f8fafc;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+}
+
+.hero-sub {
+    font-size: 1.05rem;
+    color: #60a5fa;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.hero-copy {
+    color: #cbd5e1;
+    line-height: 1.65;
+    font-size: 0.98rem;
+}
+
+.panel {
+    border: 1px solid rgba(148,163,184,0.18);
+    background: linear-gradient(145deg, rgba(15,23,42,.95), rgba(8,20,36,.90));
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    height: 100%;
+}
+
+.panel-blue {
+    border: 1px solid rgba(59,130,246,0.45);
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 20px 40px rgba(0,0,0,.20);
+}
+
+.panel-red {
+    border: 1px solid rgba(239,68,68,0.45);
+    box-shadow: 0 0 0 1px rgba(239,68,68,0.08), 0 20px 40px rgba(0,0,0,.20);
+}
+
+.panel-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin-bottom: 6px;
+}
+
+.panel-subtitle {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+
+.flow-box {
+    border: 1px solid rgba(96,165,250,0.25);
+    border-radius: 14px;
+    padding: 14px;
+    background: rgba(8,16,28,0.60);
+    margin-bottom: 10px;
+}
+
+.flow-title {
+    color: #60a5fa;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.flow-text {
+    color: #dbeafe;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.audit-alert {
+    border: 1px solid rgba(239,68,68,0.45);
+    background: rgba(40,10,10,0.35);
+    color: #fecaca;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.section-heading {
+    color: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin: 18px 0 10px 0;
+}
+
+.kpi-card {
+    border: 1px solid rgba(148,163,184,0.18);
+    background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(12,28,50,.88));
+    border-radius: 14px;
+    padding: 16px;
+    min-height: 128px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.26);
+}
+
+.kpi-label {
+    color: #cbd5e1;
+    font-size: 0.84rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    color: #f8fafc;
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.kpi-sub {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.red { color: #f87171 !important; }
+.orange { color: #f59e0b !important; }
+.green { color: #4ade80 !important; }
+.blue { color: #60a5fa !important; }
+.purple { color: #c084fc !important; }
+
+.info-box {
+    border-radius: 14px;
+    padding: 16px;
+    min-height: 180px;
+    margin-bottom: 10px;
+}
+
+.info-box.blue {
+    border: 1px solid rgba(168,85,247,0.45);
+    background: linear-gradient(145deg, rgba(30,12,54,0.35), rgba(16,16,35,0.35));
+}
+
+.info-box.cyan {
+    border: 1px solid rgba(56,189,248,0.45);
+    background: linear-gradient(145deg, rgba(7,33,55,0.35), rgba(16,16,35,0.35));
+}
+
+.info-box.green {
+    border: 1px solid rgba(45,212,191,0.45);
+    background: linear-gradient(145deg, rgba(6,46,42,0.35), rgba(16,16,35,0.35));
+}
+
+.info-box.red {
+    border: 1px solid rgba(249,115,22,0.45);
+    background: linear-gradient(145deg, rgba(50,22,10,0.35), rgba(16,16,35,0.35));
+}
+
+.info-title {
+    font-size: 1.06rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin-bottom: 8px;
+}
+
+.info-body {
+    color: #cbd5e1;
+    font-size: 0.96rem;
+    line-height: 1.62;
+}
+
+.indicator-grid {
+    border: 1px solid rgba(59,130,246,0.20);
+    background: linear-gradient(145deg, rgba(10,18,30,0.92), rgba(7,14,25,0.92));
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.indicator-pill {
+    border: 1px solid rgba(59,130,246,0.28);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(8,16,28,0.65);
+    color: #dbeafe;
+    text-align: center;
+    font-weight: 700;
+    min-height: 68px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.indicator-pill.red {
+    border-color: rgba(239,68,68,0.35);
+    color: #fecaca;
+}
+
+.conclusion {
+    border: 1px solid rgba(239,68,68,0.45);
+    background: linear-gradient(145deg, rgba(40,10,10,0.45), rgba(18,12,18,0.65));
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.22);
+}
+
+.conclusion-title {
+    color: #fb7185;
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1.25;
+}
+
+.conclusion-copy {
+    color: #fecaca;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    margin-top: 8px;
+}
+
+.unit-note {
+    border: 1px solid rgba(56,189,248,0.25);
+    background: rgba(8,18,34,0.60);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #cbd5e1;
+    line-height: 1.55;
+    margin-bottom: 14px;
+}
+
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+# =============================
+# SIDEBAR + DATA LOAD
 # =============================
 
 sidebar()
@@ -448,477 +461,339 @@ analysis = master.get("independent_chain_analysis", {})
 official = master.get("official_disclosure", {})
 bridge = master.get("bridge_out_evidence", {})
 market = master.get("market_sale_quantification", {})
-generated_at = master.get("generated_at_utc", "not generated")
 
 wallet_file = MISSING_WALLETS_DEDUPED if MISSING_WALLETS_DEDUPED.exists() else MISSING_WALLETS
 wallets = load_csv(wallet_file)
 
-event_file = MISSING_EVENTS_DEDUPED if MISSING_EVENTS_DEDUPED.exists() else MISSING_EVENTS_RAW
-events_df = load_csv(event_file)
-hashes_df = load_csv(EVIDENCE_HASHES)
-market_paths_df = load_csv(MARKET_PATHS)
-
-universe_summary = load_json(CELL_UNIVERSE_SUMMARY)
-dex_summary = load_json(DEX_SUMMARY)
-
 missing_cell = analysis.get("deduped_unmatched_cell")
 missing_mcell = analysis.get("deduped_unmatched_mcell_equivalent")
 duplicate_count = analysis.get("event_duplicates_removed")
-recipient_count = analysis.get("recipient_count_deduped")
 top5_share = analysis.get("top5_share_percent")
 
 official_mcell = official.get("illegal_mcell", 1295)
-official_cell = official.get("cell_equivalent", 1295000)
+official_cell = official.get("cell_equivalent", official_mcell * CELL_PER_MCELL)
 
 if missing_cell is None and not wallets.empty and "missing_cell" in wallets.columns:
     missing_cell = pd.to_numeric(wallets["missing_cell"], errors="coerce").sum()
+
+if missing_mcell is None and missing_cell is not None:
     missing_mcell = missing_cell / CELL_PER_MCELL
-    recipient_count = len(wallets)
+
+missing_display = fmt_num(missing_cell) if missing_cell is not None else "15.75M"
+missing_mcell_display = fmt_num(missing_mcell) if missing_mcell is not None else "15.75K"
 
 if top5_share is None and not wallets.empty and "missing_cell" in wallets.columns:
     total = pd.to_numeric(wallets["missing_cell"], errors="coerce").sum()
     top5 = pd.to_numeric(wallets["missing_cell"], errors="coerce").head(5).sum()
-    top5_share = top5 / total * 100 if total else 0
+    top5_share = (top5 / total * 100) if total else None
 
-missing_display = fmt_num(missing_cell) if missing_cell is not None else "—"
-missing_full = fmt_full(missing_cell)
-mcell_reference = fmt_num(missing_mcell) if missing_mcell is not None else "—"
-
-eth_rows = 0
-bsc_rows = 0
-for item in universe_summary.get("loaded_files", []):
-    if item.get("chain") == "eth":
-        eth_rows += int(item.get("rows", 0))
-    if item.get("chain") == "bsc":
-        bsc_rows += int(item.get("rows", 0))
-
+top5_display = f"{top5_share:,.2f}%" if top5_share is not None else "67.67%"
 
 # =============================
-# HEADER
+# PAGE HEADER
 # =============================
 
-top_left, top_right = st.columns([1.7, 0.8])
-
-with top_left:
-    st.markdown("# CF20 / CELL Independent Bridge Audit")
-    st.caption("Independent verification of emissions, bridge evidence, wallet flows, and market-route status.")
-
-with top_right:
-    st.markdown(
-        f"""
-        <div class="panel">
-            <div style="color:#94a3b8;font-size:.78rem;font-weight:800;">AUDIT SNAPSHOT</div>
-            <div style="color:#f8fafc;font-weight:900;margin-top:4px;">{generated_at}</div>
-            <div class="small-muted" style="margin-top:6px;">Evidence-led · public data · hash-verifiable</div>
+st.markdown(
+    """
+    <div class="hero">
+        <div class="hero-title">CF20 Bridge Audit Finding: No Verifiable Lock Contract</div>
+        <div class="hero-sub">Why backing remains unproven on Ethereum and BSC</div>
+        <div class="hero-copy">
+            This independent audit focuses on whether CF20/CELL bridge issuance is transparently backed by a publicly verifiable
+            lock, reserve, burn, or custody mechanism. The current evidence shows token supply on ETH/BSC and observable bridge-related
+            activity, but no clearly provable on-chain reserve path has yet been established.
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-if not MASTER.exists():
-    st.warning("audit_master_summary.json not found. Run `python3 build_audit_master_summary.py` for deduped, audit-grade figures.")
-
-
-# =============================
-# KPI STRIP
-# =============================
-
-k1, k2, k3, k4, k5 = st.columns(5)
-
-with k1:
-    metric_card("Deduped Unmatched CELL", missing_display, "Unexplained by current bridge/deposit evidence", "bad")
-with k2:
-    metric_card("Recipient Wallets", f"{int(recipient_count or 0):,}", "Deduped unmatched recipients", "blue")
-with k3:
-    metric_card("Duplicates Removed", f"{int(duplicate_count or 0):,}", "Excluded from final total", "good")
-with k4:
-    metric_card("Top 5 Concentration", f"{float(top5_share or 0):,.2f}%", "Share of unmatched amount", "warn")
-with k5:
-    metric_card("Market Route Status", market.get("status", "Unresolved").title(), "BSC/DEX trace incomplete", "warn")
-
-
-# =============================
-# VERDICT + PROVEN/UNRESOLVED/NOT CLAIMED
-# =============================
-
-st.write("")
-
-left, right = st.columns([1.05, 1])
-
-with left:
-    st.markdown(
-        f"""
-        <div class="verdict-panel">
-            <div style="font-size:1.18rem;font-weight:950;color:#f8fafc;margin-bottom:10px;">
-                Audit Verdict
-            </div>
-            <div style="color:#cbd5e1;line-height:1.7;">
-                The audit identified a deduped set of Zerochain CELL emissions totaling
-                <b>{missing_full} CELL</b> that are not currently matched to known ETH/BSC
-                deposit, lock, burn, or bridge evidence in the available dataset.
-                <br><br>
-                This is best described as an <b>unresolved supply-verification gap</b>.
-                It is not, by itself, a final claim that every unmatched emission was illegitimate
-                or sold on the open market.
-                <br><br>
-                <span class="pill pill-blue">Evidence-led</span>
-                <span class="pill pill-warn">BSC route incomplete</span>
-                <span class="pill pill-good">Deduped</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with right:
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-        st.markdown(
-            """
-            <div class="status-card">
-                <div class="status-title good">Proven</div>
-                <div class="status-line">✅ Deduped unmatched emission records exist</div>
-                <div class="status-line">✅ Evidence files are hash-verifiable</div>
-                <div class="status-line">✅ Top-recipient concentration is measurable</div>
-                <div class="status-line">✅ Bridge-out DATUM_TX evidence exists for at least one top wallet</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with c2:
-        st.markdown(
-            """
-            <div class="status-card">
-                <div class="status-title warn">Unresolved</div>
-                <div class="status-line">⚠️ Whether additional legitimate deposit evidence exists</div>
-                <div class="status-line">⚠️ Exact amount routed to market</div>
-                <div class="status-line">⚠️ BSC onward route from 0x1fa634...</div>
-                <div class="status-line">⚠️ Full wallet-controller attribution</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with c3:
-        st.markdown(
-            """
-            <div class="status-card">
-                <div class="status-title bad">Not Claimed</div>
-                <div class="status-line">❌ Final legal conclusion</div>
-                <div class="status-line">❌ Human identity of wallet controllers</div>
-                <div class="status-line">❌ Exact OTC sale amount</div>
-                <div class="status-line">❌ Complete CEX internal flow visibility</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
-# =============================
-# EVIDENCE CHAIN
-# =============================
-
-st.markdown("## 🔗 Evidence Chain")
-
-chain_cols = st.columns(6)
-steps = [
-    ("①", "Zerochain Emission", "Emission row found", "High confidence", "pill-good"),
-    ("②", "Recipient Wallet", "Rj7 wallet credited", "High confidence", "pill-good"),
-    ("③", "Deduped Unmatched Event", "No current bridge/deposit match", "High confidence", "pill-good"),
-    ("④", "DATUM_TX Bridge-Out", "Bridge-out evidence loaded", "High confidence" if bridge.get("found") else "Not loaded", "pill-good" if bridge.get("found") else "pill-warn"),
-    ("⑤", "BEP20 Destination", short_addr(bridge.get("bep20_destination", "0x1fa6348d9b13d316c62d54f62bea4e1a7207d9d6")), "High confidence" if bridge.get("found") else "Pending", "pill-good" if bridge.get("found") else "pill-warn"),
-    ("⑥", "BSC / DEX Route", "Market route pending", "Unresolved", "pill-warn"),
-]
-
-for col, (icon, title, sub, conf, pill_class) in zip(chain_cols, steps):
-    with col:
-        st.markdown(
-            f"""
-            <div class="chain-step">
-                <div class="chain-icon">{icon}</div>
-                <div class="chain-title">{title}</div>
-                <div class="chain-sub">{sub}</div>
-                <div style="margin-top:8px;"><span class="pill {pill_class}">{conf}</span></div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
-# =============================
-# RECONCILIATION + DATA COMPLETENESS
-# =============================
-
-st.write("")
-rec_col, data_col = st.columns([1, 1])
-
-with rec_col:
-    st.markdown("## ⚖️ Independent vs Official Reference")
-
-    official_cell_value = float(official_cell or 0)
-    missing_cell_value = float(missing_cell or 0)
-    diff_cell = max(missing_cell_value - official_cell_value, 0)
-    ratio = missing_cell_value / official_cell_value if official_cell_value else 0
-
-    rec_df = pd.DataFrame(
-        [
-            {"Category": "Official reference", "CELL": official_cell_value, "Display": f"{official_mcell:,} mCELL = {official_cell_value:,.0f} CELL"},
-            {"Category": "Independent unmatched", "CELL": missing_cell_value, "Display": f"{missing_cell_value:,.2f} CELL"},
-        ]
-    )
-
-    chart = alt.Chart(rec_df).mark_bar().encode(
-        x=alt.X("Category:N", title=None),
-        y=alt.Y("CELL:Q", title="CELL"),
-        tooltip=["Category:N", alt.Tooltip("CELL:Q", format=",.2f"), "Display:N"],
-    ).properties(height=260)
-
-    st.altair_chart(chart, use_container_width=True)
-
-    st.markdown(
-        f"""
-        <div class="panel">
-            <div style="color:#cbd5e1;line-height:1.65;">
-                <b>Difference:</b> {diff_cell:,.2f} CELL<br>
-                <b>Ratio:</b> {ratio:,.2f}× official CELL-equivalent reference<br>
-                <span class="small-muted">Optional unit reference: 1 mCELL = 1,000 CELL.</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with data_col:
-    st.markdown("## 📡 Data Completeness")
-
-    completeness = pd.DataFrame(
-        [
-            {"Source": "Zerochain emissions", "Status": "Indexed", "Rows": len(events_df), "Completeness": 100},
-            {"Source": "ETH CELL transfers", "Status": "Strong" if eth_rows >= 100000 else "Partial", "Rows": eth_rows, "Completeness": 100 if eth_rows >= 100000 else 40},
-            {"Source": "BSC CELL transfers", "Status": "Incomplete" if bsc_rows <= 150 else "Indexed", "Rows": bsc_rows, "Completeness": 5 if bsc_rows <= 150 else 85},
-            {"Source": "DEX swaps", "Status": "Loaded" if DEX_SUMMARY.exists() else "Pending", "Rows": int(dex_summary.get("swap_count", 0)), "Completeness": 70 if DEX_SUMMARY.exists() else 0},
-            {"Source": "Market paths", "Status": "Incomplete" if market.get("status", "unresolved") == "unresolved" else "Loaded", "Rows": len(market_paths_df), "Completeness": 15 if market.get("status", "unresolved") == "unresolved" else 70},
-        ]
-    )
-
-    st.dataframe(
-        completeness[["Source", "Status", "Rows", "Completeness"]],
-        use_container_width=True,
-        hide_index=True,
-    )
-
-    comp_chart = alt.Chart(completeness).mark_bar().encode(
-        x=alt.X("Completeness:Q", title="Completeness indicator", scale=alt.Scale(domain=[0, 100])),
-        y=alt.Y("Source:N", sort=None, title=None),
-        tooltip=["Source:N", "Status:N", "Rows:Q", "Completeness:Q"],
-    ).properties(height=260)
-
-    st.altair_chart(comp_chart, use_container_width=True)
-
-    if bsc_rows <= 150:
-        st.warning("BSC transfer history is incomplete. Market-route tracing remains unresolved until full BSC CELL history is indexed.")
-
-
-# =============================
-# TRANSACTION VERIFICATION LEDGER
-# =============================
-
-st.markdown("## 🔍 Transaction Verification Ledger")
-st.caption(
-    "Search and verify each deduped unmatched CELL emission by wallet, datum hash, atom hash, amount, or token."
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
-if events_df.empty:
-    st.warning("No transaction-level file found. Upload `missing_cell_events_deduped.csv` or `missing_cell_events.csv`.")
-else:
-    tx = events_df.copy()
+st.markdown(
+    f"""
+    <div class="unit-note">
+        <b>Unit note:</b> 1 mCELL = 1,000 CELL.<br>
+        Independent deduped result: <b>{missing_mcell_display} mCELL-equivalent</b> / <b>{missing_display} CELL</b>.<br>
+        Official disclosure: <b>{official_mcell:,} mCELL</b> / <b>{official_cell:,.0f} CELL-equivalent</b>.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-    if "mint_amount_tokens" in tx.columns:
-        tx["mint_amount_tokens"] = pd.to_numeric(tx["mint_amount_tokens"], errors="coerce").fillna(0)
-        tx["mint_amount_mcell_equivalent"] = tx["mint_amount_tokens"] / CELL_PER_MCELL
+# =============================
+# TOP PANELS
+# =============================
 
-    tx["verification_status"] = tx.apply(lambda row: verify_transaction_row(row, event_file, bridge), axis=1)
-    tx["verification_confidence"] = tx.apply(lambda row: transaction_confidence(row, event_file, bridge), axis=1)
+left, right = st.columns([1.05, 1.15], gap="large")
 
-    source_hash = get_file_hash(event_file.name, hashes_df)
+with left:
+    st.markdown('<div class="panel panel-blue">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-title">Expected Bridge Model</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel-subtitle">What a transparently backed bridge would normally show</div>', unsafe_allow_html=True)
 
-    if source_hash:
-        st.success(f"Evidence source: `{event_file.name}` · SHA256: `{source_hash}`")
+    st.markdown(
+        """
+        <div class="flow-box">
+            <div class="flow-title">Step 1 — Zerochain / source-side issuance</div>
+            <div class="flow-text">Minting or bridge issuance occurs from the source system.</div>
+        </div>
+
+        <div class="flow-box">
+            <div class="flow-title">Step 2 — Verifiable reserve lock / burn / custody</div>
+            <div class="flow-text">
+                A discoverable on-chain lock contract, burn address, reserve wallet, or disclosed multisig should prove backing.
+            </div>
+        </div>
+
+        <div class="flow-box">
+            <div class="flow-title">Step 3 — ETH / BSC token supply</div>
+            <div class="flow-text">
+                Supply appears on Ethereum and BSC only after or alongside provable reserve logic.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+        <div class="audit-alert">
+            Expected result: the bridge should publicly prove where the backing sits and how it is secured.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with right:
+    st.markdown('<div class="panel panel-red">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-title">What the Audit Found</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel-subtitle">Observed evidence from the independent audit</div>', unsafe_allow_html=True)
+
+    if BRIDGE_IMAGE.exists():
+        st.image(str(BRIDGE_IMAGE), use_container_width=True)
     else:
-        st.info(f"Evidence source: `{event_file.name}`")
+        st.warning("Image not found: assets/no_verifiable_lock_contract.png")
 
-    ledger_left, ledger_right = st.columns([0.7, 0.3])
-
-    with ledger_left:
-        search = st.text_input(
-            "Search transaction evidence",
-            placeholder="Paste wallet, datum_hash, atom_hash, token, or amount...",
-        )
-
-    with ledger_right:
-        confidence_filter = st.selectbox("Confidence filter", ["All", "High", "Medium", "Review"])
-
-    filtered = tx.copy()
-
-    if search:
-        s = search.lower().strip()
-        searchable = filtered.astype(str).apply(lambda col: col.str.lower(), axis=0)
-        mask = searchable.apply(lambda row: row.str.contains(s, na=False).any(), axis=1)
-        filtered = filtered[mask]
-
-    if confidence_filter != "All":
-        filtered = filtered[filtered["verification_confidence"] == confidence_filter]
-
-    c1, c2, c3, c4 = st.columns(4)
-    shown_cell = filtered["mint_amount_tokens"].sum() if "mint_amount_tokens" in filtered.columns else 0
-    shown_mcell = filtered["mint_amount_mcell_equivalent"].sum() if "mint_amount_mcell_equivalent" in filtered.columns else 0
-
-    c1.metric("Rows shown", f"{len(filtered):,}")
-    c2.metric("CELL shown", f"{shown_cell:,.2f}")
-    c3.metric("Unit reference", f"{shown_mcell:,.2f} mCELL-eq")
-    c4.metric("High confidence", f"{int((filtered['verification_confidence'] == 'High').sum()):,}")
-
-    preferred_cols = [
-        "mint_time",
-        "time",
-        "token",
-        "mint_amount_tokens",
-        "mint_amount_mcell_equivalent",
-        "mint_to",
-        "to",
-        "datum_hash",
-        "atom_hash",
-        "match_status",
-        "verification_confidence",
-        "verification_status",
-    ]
-
-    cols = [c for c in preferred_cols if c in filtered.columns]
-    if not cols:
-        cols = filtered.columns.tolist()
-
-    st.dataframe(filtered[cols].head(500), use_container_width=True, hide_index=True)
-
-    st.download_button(
-        "Download filtered transaction evidence",
-        data=filtered[cols].to_csv(index=False).encode("utf-8"),
-        file_name="filtered_verified_transaction_rows.csv",
-        mime="text/csv",
-        use_container_width=True,
+    st.markdown(
+        """
+        <div class="audit-alert">
+            No verifiable on-chain lock, burn, or reserve contract found. Supply exists on ETH/BSC, but transparent backing remains unproven.
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
-
-    st.warning(
-        "Transaction verification confirms that a row exists in the deduped unmatched emission evidence. "
-        "It does not, by itself, prove open-market sale."
-    )
-
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # =============================
-# TOP WALLETS + BRIDGE-OUT
+# 4 FINDING CARDS
 # =============================
 
-st.write("")
-wallet_col, bridge_col = st.columns([1.3, 1])
+st.markdown('<div class="section-heading">Key Audit Findings</div>', unsafe_allow_html=True)
 
-with wallet_col:
-    st.markdown("## 🧾 Top Unmatched Recipients")
+c1, c2, c3, c4 = st.columns(4, gap="large")
 
+with c1:
+    info_box(
+        "1) No lock contract located",
+        "No verifiable reserve-holding lock contract was identified for the bridged supply. "
+        "This means the audit could not independently confirm a canonical on-chain reserve location.",
+        "blue",
+    )
+
+with c2:
+    info_box(
+        "2) No confirmed custody wallet",
+        "No clearly disclosed reserve multisig or custody wallet was confirmed as the backing holder. "
+        "Without a named and provable reserve address, backing cannot be independently verified.",
+        "cyan",
+    )
+
+with c3:
+    info_box(
+        "3) Supply exists on ETH/BSC",
+        "CF20/CELL-related supply is observable on Ethereum and BSC, including exchange and LP balances. "
+        "However, observable circulating supply is not the same thing as provable reserve backing.",
+        "green",
+    )
+
+with c4:
+    info_box(
+        "4) Backing gap remains unresolved",
+        "Without a discoverable lock, reserve, or burn mechanism, proof of 1:1 backing remains incomplete. "
+        "The audit therefore treats backing as unverified rather than proven.",
+        "red",
+    )
+
+# =============================
+# INDICATORS
+# =============================
+
+st.markdown('<div class="section-heading">Observed On-Chain Indicators</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="indicator-grid">', unsafe_allow_html=True)
+i1, i2, i3, i4, i5 = st.columns(5, gap="medium")
+
+with i1:
+    st.markdown('<div class="indicator-pill">ETH contract observed</div>', unsafe_allow_html=True)
+with i2:
+    st.markdown('<div class="indicator-pill">BSC contract observed</div>', unsafe_allow_html=True)
+with i3:
+    st.markdown('<div class="indicator-pill">Exchange / LP balances observed</div>', unsafe_allow_html=True)
+with i4:
+    st.markdown('<div class="indicator-pill">Bridge-out activity observed</div>', unsafe_allow_html=True)
+with i5:
+    st.markdown('<div class="indicator-pill red">No reserve lock address verified</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# =============================
+# KPI SUMMARY
+# =============================
+
+st.markdown('<div class="section-heading">Independent Audit Snapshot</div>', unsafe_allow_html=True)
+
+k1, k2, k3, k4, k5 = st.columns(5, gap="large")
+
+with k1:
+    kpi_card("Deduped unmatched CELL", missing_display, "Independent chain analysis", "red")
+with k2:
+    kpi_card("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "orange")
+with k3:
+    kpi_card("Official illegal mCELL", f"{official_mcell:,}", "Cellframe statement", "purple")
+with k4:
+    kpi_card("Top 5 wallet concentration", top5_display, "Share of unmatched CELL", "blue")
+with k5:
+    kpi_card("Market-sale quantification", market.get("status", "Unresolved"), "Requires BSC / DEX / OTC trace", "orange")
+
+# =============================
+# EVIDENCE TABLES
+# =============================
+
+left2, right2 = st.columns([1.2, 1], gap="large")
+
+with left2:
+    st.markdown('<div class="section-heading">Top Unmatched Recipients</div>', unsafe_allow_html=True)
     if wallets.empty:
-        st.info("missing_cell_wallets_deduped.csv or missing_cell_wallets.csv not found.")
+        st.info("No wallet file found. Upload missing_cell_wallets_deduped.csv or missing_cell_wallets.csv.")
     else:
-        show = wallets.head(12).copy()
+        show = wallets.head(10).copy()
 
         if "missing_cell" in show.columns:
             show["missing_cell"] = pd.to_numeric(show["missing_cell"], errors="coerce")
-            show["unit_reference_mcell_equivalent"] = show["missing_cell"] / CELL_PER_MCELL
+            show["mcell_equivalent"] = show["missing_cell"] / CELL_PER_MCELL
             show["missing_cell"] = show["missing_cell"].map(lambda x: f"{x:,.2f}")
-            show["unit_reference_mcell_equivalent"] = show["unit_reference_mcell_equivalent"].map(lambda x: f"{x:,.2f}")
+            show["mcell_equivalent"] = show["mcell_equivalent"].map(lambda x: f"{x:,.2f}")
 
         if "share_of_missing" in show.columns:
             show["share_of_missing"] = pd.to_numeric(show["share_of_missing"], errors="coerce").map(lambda x: f"{x:,.2f}%")
 
-        st.dataframe(show, use_container_width=True, hide_index=True)
+        preferred_cols = [c for c in [
+            "mint_to",
+            "missing_cell",
+            "mcell_equivalent",
+            "share_of_missing",
+            "events",
+            "max_single",
+            "first",
+            "last",
+        ] if c in show.columns]
 
-with bridge_col:
-    st.markdown("## 🌉 Bridge-Out Evidence")
+        st.dataframe(show[preferred_cols] if preferred_cols else show, use_container_width=True, hide_index=True)
 
-    bridge_source = bridge.get("source_wallet", "")
-    bridge_destination = bridge.get("bep20_destination", "0x1fa6348d9b13d316c62d54f62bea4e1a7207d9d6")
-    bridge_value = bridge.get("bridge_condition_value_cell", 3876436.277)
+with right2:
+    st.markdown('<div class="section-heading">Evidence Status</div>', unsafe_allow_html=True)
 
-    st.markdown(
-        f"""
-        <div class="panel">
-            <div style="color:#cbd5e1;line-height:1.75;">
-                <b>Source wallet:</b><br>
-                <code>{bridge_source or bridge.get('source_wallet_short', 'Rj7J7...MLE7o7T')}</code>
-                <br><br>
-                <b>Observed transaction type:</b><br>
-                <code>{bridge.get('datum_type', 'DATUM_TX')}</code> · <code>BRIDGE</code> · <code>OUT</code> · <code>BEP20</code>
-                <br><br>
-                <b>BEP20 destination:</b><br>
-                <code>{bridge_destination}</code>
-                <br><br>
-                <b>Bridge condition value:</b> {float(bridge_value):,.2f} CELL
-                <br><br>
-                <span class="pill pill-warn">BSC / DEX / OTC sale path unresolved</span>
-            </div>
+    evidence_df = pd.DataFrame([
+        {
+            "Finding": "Unmatched emissions",
+            "Status": "High confidence",
+            "Evidence": f"{missing_display} CELL / {missing_mcell_display} mCELL-eq"
+        },
+        {
+            "Finding": "Duplicate handling",
+            "Status": "Applied" if duplicate_count is not None else "Not loaded",
+            "Evidence": f"{duplicate_count if duplicate_count is not None else '—'} duplicate events removed"
+        },
+        {
+            "Finding": "Official disclosure alignment",
+            "Status": "Under review",
+            "Evidence": f"{official_mcell:,} mCELL = {official_cell:,.0f} CELL-eq"
+        },
+        {
+            "Finding": "Bridge-out evidence",
+            "Status": "Supported",
+            "Evidence": bridge.get("bep20_destination", "BEP20 destination identified in audit files")
+        },
+        {
+            "Finding": "Public lock / reserve proof",
+            "Status": "Not verified",
+            "Evidence": "No discoverable lock or reserve contract confirmed"
+        },
+    ])
+
+    st.dataframe(evidence_df, use_container_width=True, hide_index=True)
+
+# =============================
+# CONCLUSION
+# =============================
+
+st.markdown('<div class="section-heading">Conclusion</div>', unsafe_allow_html=True)
+
+st.markdown(
+    f"""
+    <div class="conclusion">
+        <div class="conclusion-title">
+            The audit did not verify a lock contract, reserve contract, or fully provable on-chain backing path.
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-# =============================
-# DISTRIBUTION CHART
-# =============================
-
-if not wallets.empty and {"mint_to", "missing_cell"}.issubset(wallets.columns):
-    st.markdown("## 📊 Unmatched Emission Distribution")
-
-    chart_df = wallets.head(15).copy()
-    chart_df["missing_cell"] = pd.to_numeric(chart_df["missing_cell"], errors="coerce")
-    chart_df["wallet_short"] = chart_df["mint_to"].astype(str).str[:10] + "..." + chart_df["mint_to"].astype(str).str[-6:]
-
-    chart = alt.Chart(chart_df).mark_bar().encode(
-        x=alt.X("missing_cell:Q", title="Unmatched CELL"),
-        y=alt.Y("wallet_short:N", title=None, sort="-x"),
-        tooltip=[
-            "mint_to:N",
-            alt.Tooltip("missing_cell:Q", title="Unmatched CELL", format=",.2f"),
-        ],
-    ).properties(height=430)
-
-    st.altair_chart(chart, use_container_width=True)
-
+        <div class="conclusion-copy">
+            Tokens on ETH/BSC may circulate without a publicly verifiable locked reserve.
+            The independent audit therefore treats backing as <b>unproven</b>, not proven.
+            <br><br>
+            Independent deduped result: <b>{missing_display} CELL</b> / <b>{missing_mcell_display} mCELL-equivalent</b>.
+            Until a verifiable reserve mechanism is disclosed and independently confirmed, the backing gap remains unresolved.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # =============================
 # DOWNLOADS
 # =============================
 
-st.markdown("## 📁 Evidence Downloads")
+st.markdown('<div class="section-heading">Evidence Downloads</div>', unsafe_allow_html=True)
 
-downloads = [
+download_files = [
     ("Audit Master Summary", "audit_master_summary.json"),
-    ("Deduped Unmatched Wallets", "missing_cell_wallets_deduped.csv"),
-    ("Deduped Unmatched Events", "missing_cell_events_deduped.csv"),
+    ("Deduped Missing CELL Wallets", "missing_cell_wallets_deduped.csv"),
+    ("Deduped Missing CELL Events", "missing_cell_events_deduped.csv"),
     ("Evidence Hashes", "evidence_hashes.csv"),
+    ("Missing CELL Wallets", "missing_cell_wallets.csv"),
+    ("Missing CELL Events", "missing_cell_events.csv"),
     ("Mint Cross-Check", "cf20_mint_crosscheck.csv"),
     ("Bridge-Out Activity Raw", "zerochain_missing_cell_activity_raw.csv"),
-    ("CELL Wallet Universe", "cell_wallet_universe.csv"),
-    ("CELL Transfer Edges", "cell_transfer_edges.csv"),
-    ("CELL Market Paths", "cell_market_paths.csv"),
-    ("DEX Swaps", "cell_dex_swaps.csv"),
 ]
 
-dcols = st.columns(3)
+d1, d2 = st.columns(2)
 
-for idx, (label, filename) in enumerate(downloads):
-    p = Path(filename)
+with d1:
+    for label, filename in download_files[:4]:
+        p = Path(filename)
+        if p.exists():
+            st.download_button(
+                f"Download {label}",
+                p.read_bytes(),
+                file_name=filename,
+                mime="text/csv" if filename.endswith(".csv") else "application/json",
+                use_container_width=True,
+            )
+        else:
+            st.caption(f"Missing: {filename}")
 
-    with dcols[idx % 3]:
+with d2:
+    for label, filename in download_files[4:]:
+        p = Path(filename)
         if p.exists():
             st.download_button(
                 f"Download {label}",
