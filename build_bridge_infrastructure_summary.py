@@ -2,25 +2,7 @@ import csv
 import json
 from pathlib import Path
 
-# ==============================
-# CF20 BRIDGE INFRASTRUCTURE SUMMARY BUILDER
-# ==============================
-#
-# Put this file in repo root and run:
-# python3 build_bridge_infrastructure_summary.py
-#
-# Inputs used if present:
-# - bridge_cluster_terminal_endpoints.csv
-# - bridge_cluster_unclassified_wallets.csv
-# - bridge_cluster_summary.json
-# - known_wallet_labels.csv
-# - bridge_market_route_summary.json
-#
-# Output:
-# - bridge_infrastructure_summary.json
-
 OUT = Path("bridge_infrastructure_summary.json")
-
 TERMINALS = Path("bridge_cluster_terminal_endpoints.csv")
 UNCLASSIFIED = Path("bridge_cluster_unclassified_wallets.csv")
 CLUSTER_SUMMARY = Path("bridge_cluster_summary.json")
@@ -54,18 +36,6 @@ def load_csv(path):
         return []
 
 
-def find_terminal(label_contains=None, class_value=None, address=None):
-    rows = load_csv(TERMINALS)
-    for r in rows:
-        if address and r.get("address", "").lower() == address.lower():
-            return r
-        if label_contains and label_contains.lower() in r.get("label", "").lower():
-            return r
-        if class_value and r.get("class", "") == class_value:
-            return r
-    return {}
-
-
 def sum_terminal_class(class_name):
     total = 0.0
     for r in load_csv(TERMINALS):
@@ -76,17 +46,8 @@ def sum_terminal_class(class_name):
 
 def main():
     cluster = load_json(CLUSTER_SUMMARY)
-    market = load_json(MARKET_SUMMARY)
-
-    terminals = load_csv(TERMINALS)
-    unclassified = load_csv(UNCLASSIFIED)
     labels = load_csv(KNOWN_LABELS)
-
-    labels_by_addr = {
-        r.get("address", "").lower(): r
-        for r in labels
-        if r.get("address")
-    }
+    labels_by_addr = {r.get("address", "").lower(): r for r in labels if r.get("address")}
 
     bridge_lock = labels_by_addr.get("0xfd64fa5976687c2048f08f5df89c9a78e31df680", {
         "address": "0xfd64fa5976687c2048f08f5df89c9a78e31df680",
@@ -95,6 +56,7 @@ def main():
         "notes": "Etherscan method history shows Lock Token and Unlock Token; routes to 0x4A831 bridge intake and 0x35ce bridge aggregator",
     })
 
+    terminals = load_csv(TERMINALS)
     terminal_summary = []
     for r in terminals:
         terminal_summary.append({
@@ -105,11 +67,10 @@ def main():
             "paths": int(fnum(r.get("paths"))),
             "direct_edge_count": int(fnum(r.get("direct_edge_count"))),
         })
-
     terminal_summary.sort(key=lambda r: r["route_exposure_possible_cell"], reverse=True)
 
     top_unclassified = []
-    for r in unclassified[:25]:
+    for r in load_csv(UNCLASSIFIED)[:25]:
         top_unclassified.append({
             "address": r.get("address", ""),
             "first_seen_hop": int(fnum(r.get("first_seen_hop"))),
@@ -132,7 +93,7 @@ def main():
                 "address": "0x4a831a8ebb160ad025d34a788c99e9320b9ab531",
                 "label": "Bridge intake / Bridge Token target",
                 "class": "BRIDGE_CLUSTER",
-                "evidence": "Etherscan shows repeated Bridge Token calls; address currently held a large CELL balance during manual inspection.",
+                "evidence": "Etherscan shows repeated Bridge Token calls; address held a large CELL balance during manual inspection.",
                 "audit_status": "Bridge-facing intake/router identified.",
             },
             {
@@ -153,26 +114,10 @@ def main():
             {"address": "0x9c4cc862f51b1ba90485de3502aa058ca4331f32", "label": "Router / exchange-like hub"},
         ],
         "manual_findings": [
-            {
-                "finding": "Bridge lock/unlock endpoint identified",
-                "status": "New evidence",
-                "details": "0xfd64... shows Lock Token and Unlock Token methods and routes to known bridge infrastructure.",
-            },
-            {
-                "finding": "CEX routes identified",
-                "status": "Strongly supported",
-                "details": "Traversal reaches Gate.io and MEXC-labelled wallets.",
-            },
-            {
-                "finding": "DEX / swap routes identified",
-                "status": "Strongly supported",
-                "details": "Traversal reaches Uniswap, 1inch, MetaMask Swaps, ParaSwap, CoW, and other router/settlement endpoints.",
-            },
-            {
-                "finding": "Exact sale amount",
-                "status": "Not directly visible",
-                "details": "Route exposure does not equal exact sale volume because paths can overlap/loop and CEX internal trades are off-chain.",
-            },
+            {"finding": "Bridge lock/unlock endpoint identified", "status": "New evidence", "details": "0xfd64... shows Lock Token and Unlock Token methods and routes to known bridge infrastructure."},
+            {"finding": "CEX routes identified", "status": "Strongly supported", "details": "Traversal reaches Gate.io and MEXC-labelled wallets."},
+            {"finding": "DEX / swap routes identified", "status": "Strongly supported", "details": "Traversal reaches Uniswap, MetaMask Swaps, 1inch, ParaSwap, CoW, and other router/settlement endpoints."},
+            {"finding": "Exact sale amount", "status": "Not directly visible", "details": "Route exposure does not equal exact sale volume because paths can overlap/loop and CEX internal trades are off-chain."},
         ],
         "cluster_metrics": {
             "reachable_wallets": cluster.get("reachable_wallets"),
@@ -196,7 +141,6 @@ def main():
 
     OUT.write_text(json.dumps(summary, indent=2))
     print(f"Saved {OUT}")
-    print("\nHeadline:")
     print("Bridge lock/unlock infrastructure identified: 0xfd64...")
     print("Bridge intake/router identified: 0x4A831...")
     print("Market routes identified: CEX + DEX + MEV endpoints")
