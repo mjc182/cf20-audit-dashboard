@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    page_title="Bridge Infrastructure",
+    page_title="Bridge Infrastructure | CF20 Audit",
     page_icon="🌉",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -31,16 +31,16 @@ st.markdown(
 .panel {
     border:1px solid rgba(148,163,184,.18);
     background:linear-gradient(145deg, rgba(15,23,42,.94), rgba(8,20,36,.88));
-    border-radius:16px;
+    border-radius:18px;
     padding:18px;
     box-shadow:0 18px 40px rgba(0,0,0,.22);
 }
 .card {
     border:1px solid rgba(148,163,184,.18);
     background:rgba(8,18,34,.78);
-    border-radius:16px;
+    border-radius:18px;
     padding:16px;
-    min-height:150px;
+    min-height:165px;
 }
 .card-title { color:#f8fafc;font-size:1rem;font-weight:950;margin-bottom:8px; }
 .card-copy { color:#cbd5e1;font-size:.92rem;line-height:1.55; }
@@ -61,20 +61,23 @@ st.markdown(
 .flow {
     display:flex;
     gap:12px;
-    align-items:center;
+    align-items:stretch;
     flex-wrap:wrap;
     color:#cbd5e1;
 }
 .node {
-    padding:12px 14px;
+    padding:13px 14px;
     border-radius:14px;
     background:rgba(15,23,42,.88);
     border:1px solid rgba(148,163,184,.22);
-    min-width:170px;
+    min-width:165px;
+    flex:1;
 }
 .node b { color:#f8fafc; }
-.arrow { color:#38bdf8;font-size:1.8rem;font-weight:950; }
+.node span { color:#94a3b8;font-size:.82rem;line-height:1.45; }
+.arrow { color:#38bdf8;font-size:1.8rem;font-weight:950;display:flex;align-items:center; }
 [data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
+code { color:#93c5fd;background:rgba(15,23,42,.88);padding:2px 5px;border-radius:6px; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -97,25 +100,11 @@ def load_csv(path):
         return pd.DataFrame()
 
 
-def metric_fmt(n):
-    try:
-        return f"{float(n):,.2f}"
-    except Exception:
-        return "—"
-
-
-def short(addr):
-    addr = str(addr)
-    if len(addr) <= 18:
-        return addr
-    return addr[:10] + "..." + addr[-8:]
-
-
 data = load_json(SUMMARY)
 metrics = data.get("cluster_metrics", {})
 
 st.title("🌉 Bridge Infrastructure Evidence")
-st.caption("Updated bridge model after identifying lock/unlock infrastructure, bridge intake, downstream distribution, and market-route endpoints.")
+st.caption("Bridge lock/unlock contract, intake/router, aggregator, downstream distribution cluster, and terminal market endpoints.")
 
 if not SUMMARY.exists():
     st.warning("bridge_infrastructure_summary.json not found. Run `python3 build_bridge_infrastructure_summary.py` first.")
@@ -123,13 +112,15 @@ if not SUMMARY.exists():
 st.markdown(
     """
 <div class="panel">
-  <div style="font-weight:950;color:#f8fafc;font-size:1.2rem;margin-bottom:8px;">New core finding</div>
+  <span class="chip green">New finding</span>
+  <span class="chip blue">Bridge infrastructure identified</span>
+  <span class="chip red">Market-route exposure identified</span>
+  <div style="font-weight:950;color:#f8fafc;font-size:1.2rem;margin:8px 0;">Core conclusion</div>
   <div style="color:#cbd5e1;line-height:1.65;">
     The audit has identified a bridge lock/unlock endpoint: <b>0xfd64fa5976687c2048f08f5df89c9a78e31df680</b>.
     Its transaction history shows <b>Lock Token</b> and <b>Unlock Token</b> methods, including routes to
-    <b>0x4A831...</b> and <b>0x35ce...</b>, both already identified as bridge-facing infrastructure.
-    <br><br>
-    This identifies bridge infrastructure, but does <b>not</b> by itself prove full reserve backing or exact final sale amounts.
+    <b>0x4A831...</b> and <b>0x35ce...</b>.
+    The wider graph routes onward into CEX, DEX/router, and MEV infrastructure.
   </div>
 </div>
 """,
@@ -140,7 +131,7 @@ st.write("")
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Reachable wallets", f"{int(metrics.get('reachable_wallets') or 0):,}")
-c2.metric("Transfer edges", f"{int(metrics.get('discovered_edges') or 0):,}")
+c2.metric("Discovered edges", f"{int(metrics.get('discovered_edges') or 0):,}")
 c3.metric("Terminal endpoints", f"{int(metrics.get('terminal_endpoint_count') or 0):,}")
 c4.metric("Unclassified wallets", f"{int(metrics.get('unclassified_wallet_count') or 0):,}")
 
@@ -150,17 +141,17 @@ st.markdown(
     """
 <div class="panel">
   <div class="flow">
-    <div class="node"><b>0xfd64...</b><br>Bridge Lock / Unlock<br><span class="chip green">Lock Token</span><span class="chip green">Unlock Token</span></div>
+    <div class="node"><b>0xfd64...</b><br><span>Bridge Lock / Unlock<br>Lock Token + Unlock Token</span></div>
     <div class="arrow">→</div>
-    <div class="node"><b>0x4A831...</b><br>Bridge Token Intake<br><span class="chip blue">Bridge-facing</span></div>
+    <div class="node"><b>0x4A831...</b><br><span>Bridge Token Intake<br>User-facing calls</span></div>
     <div class="arrow">→</div>
-    <div class="node"><b>0x35ce...</b><br>Bridge Aggregator<br><span class="chip blue">Routing hub</span></div>
+    <div class="node"><b>0x35ce...</b><br><span>Bridge Aggregator<br>Routes onward</span></div>
     <div class="arrow">→</div>
-    <div class="node"><b>0x50ebb...</b><br>Major Distributor<br><span class="chip orange">Distributor</span></div>
+    <div class="node"><b>0x50ebb / 0x65def / 0xd3ec</b><br><span>Distribution Cluster<br>Multi-hop movement</span></div>
     <div class="arrow">→</div>
-    <div class="node"><b>0xda8a / 0x9c4...</b><br>Consolidation / Router Hub<br><span class="chip orange">Market route</span></div>
+    <div class="node"><b>0xda8a / 0x9c4...</b><br><span>Consolidation / Router Hub<br>CEX + DEX routes</span></div>
     <div class="arrow">→</div>
-    <div class="node"><b>Gate.io / MEXC / Uniswap / 1inch</b><br>Terminal Market Infrastructure<br><span class="chip red">CEX</span><span class="chip purple">DEX</span><span class="chip orange">MEV</span></div>
+    <div class="node"><b>Gate.io / MEXC / Uniswap / 1inch</b><br><span>Market Infrastructure<br>CEX, DEX, MEV</span></div>
   </div>
 </div>
 """,
@@ -169,52 +160,28 @@ st.markdown(
 
 st.markdown("## Evidence Cards")
 
-a, b, c = st.columns(3)
+a, b, c, d = st.columns(4)
 
-with a:
-    st.markdown(
-        """
+cards = [
+    ("1. Lock/Unlock contract", "0xfd64... shows Lock Token and Unlock Token methods and routes to known bridge infrastructure.", "green", "Bridge"),
+    ("2. Intake/router", "0x4A831... receives Bridge Token calls and routes through the bridge cluster.", "blue", "Intake"),
+    ("3. Distribution cluster", "0x35ce..., 0x50ebb..., 0x65def..., 0xd3ec..., and 0xda8a... form the downstream routing graph.", "orange", "Cluster"),
+    ("4. Market endpoints", "Traversal reaches Gate.io, MEXC, MetaMask Swaps, Uniswap, 1inch, ParaSwap, CoW, and MEV infrastructure.", "red", "Market"),
+]
+
+for col, (title, copy, chip_class, chip) in zip([a, b, c, d], cards):
+    with col:
+        st.markdown(
+            f"""
 <div class="card">
-  <div class="card-title">1. Lock / Unlock contract found</div>
-  <div class="card-copy">
-    <code>0xfd64...</code> shows Lock Token and Unlock Token methods and routes to known bridge infrastructure.
-  </div>
+  <div class="card-title">{title}</div>
+  <div class="card-copy">{copy}</div>
   <br>
-  <span class="chip green">Bridge infrastructure</span>
+  <span class="chip {chip_class}">{chip}</span>
 </div>
 """,
-        unsafe_allow_html=True,
-    )
-
-with b:
-    st.markdown(
-        """
-<div class="card">
-  <div class="card-title">2. Bridge intake verified</div>
-  <div class="card-copy">
-    <code>0x4A831...</code> receives repeated Bridge Token calls and routes onward through bridge/aggregator wallets.
-  </div>
-  <br>
-  <span class="chip blue">Bridge Token</span>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-
-with c:
-    st.markdown(
-        """
-<div class="card">
-  <div class="card-title">3. Market routes identified</div>
-  <div class="card-copy">
-    The traversal reaches Gate.io, MEXC, Uniswap, MetaMask Swaps, 1inch, ParaSwap, CoW, and MEV infrastructure.
-  </div>
-  <br>
-  <span class="chip red">CEX</span><span class="chip purple">DEX</span><span class="chip orange">MEV</span>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+            unsafe_allow_html=True,
+        )
 
 st.markdown("## Bridge Contracts / Cluster Wallets")
 
