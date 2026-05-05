@@ -419,7 +419,9 @@ def load_jsonl(path_str: str, chain: str, max_rows: int = 250_000) -> pd.DataFra
     if not path.exists():
         return pd.DataFrame(columns=["chain", "block", "tx_hash", "from", "to", "amount"])
 
-    with path.open() as f:
+    opener = gzip.open if path.suffix == ".gz" else open
+
+    with opener(path, "rt") as f:
         for i, line in enumerate(f):
             if i >= max_rows:
                 break
