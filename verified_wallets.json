@@ -1,0 +1,85 @@
+{
+  "bsc": {
+    "exchanges": {
+      "MEXC 13": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+      "Gate.io 1": "0x0d0707963952f2fba59dd06f2b425ace40b492fe",
+      "MEXC 5": "0x2e8f79ad740de90dc5f5a9f0d8d9661a60725e64",
+      "BitMart 7": "0xeacb50a28630a4c44a884158ee85cbc10d2b3f10"
+    },
+    "liquidity_pools": {
+      "PancakeSwap v3: WBNB/CELL Pool": "0xa2c1e0237bf4b58bc9808a579715df57522f41b2"
+    },
+    "tracked_wallets": {
+      "Top non-exchange holder #4": "0xe0ca82008f52dd94a4314c4869a0294e8c136f1d",
+      "MM / distribution wallet": "0x18ec3e97b76ad4524bd76b1339d319fa4a41f685"
+    },
+    "top_holders": {
+      "#1 MEXC 13": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+      "#2 Gate 1": "0x0d0707963952f2fba59dd06f2b425ace40b492fe",
+      "#3 MEXC 5": "0x2e8f79ad740de90dc5f5a9f0d8d9661a60725e64",
+      "#4 BSC holder #4": "0xe0ca82008f52dd94a4314c4869a0294e8c136f1d",
+      "#5 PancakeSwap v3: WBNB/CELL Pool": "0xa2c1e0237bf4b58bc9808a579715df57522f41b2",
+      "#6 BSC holder #6": "0xeb27941e02b0b70761fb56e7a2d7eb3f01347ae0",
+      "#7 BitMart 7": "0xeacb50a28630a4c44a884158ee85cbc10d2b3f10",
+      "#8 BSC holder #8": "0x8ea70b2c5db8acf841d7b671b4544f0f6d3f1968",
+      "#9 BSC holder #9": "0x3fc484a8f2054bb80e2baa10f38ca4affea652a7",
+      "#10 BSC holder #10": "0xcdcc1d4c1b2f55a9c4444b2968699b5abacc9898",
+      "#11 BSC holder #11": "0xd32a7f215596d9d31a9b8a87bbeafe365d5a24e1",
+      "#12 BSC holder #12": "0xc9b6dcc30e7c0ee1fd4da9927f2179fde8094c73",
+      "#13 BSC holder #13": "0x96eb88a0a41cb1a24cb3a4ad62932d78d889d3a6",
+      "#14 BSC holder #14": "0x67609edc8dff35318da5fd3a16b621885375596d",
+      "#15 BSC holder #15": "0xfec3a995588a4bc72bed6a47f6c3a61946030001",
+      "#16 BSC holder #16": "0x75b2aa8dd260d45ff972ae9a7d213305b8a83cdc",
+      "#17 BSC holder #17": "0x1fa7fa2ee5856bd5818ee388a39f504460e8d4b9",
+      "#18 BSC holder #18": "0xdc92c7da54fafeb2b30a23050b72bb88930335d7",
+      "#19 BSC holder #19": "0x18ec3e97b76ad4524bd76b1339d319fa4a41f685",
+      "#20 BSC holder #20": "0x426b47ef7d046f6601fca36a62932f520b21c589",
+      "#21 BSC holder #21": "0x8d7e0518cd73a297dbb752db5ffc1c45bb5cabc8",
+      "#22 BSC holder #22": "0xb85b098448b2aac4af96f5bdd9c6c02373a08975",
+      "#23 BSC holder #23": "0xda955f71baeab501792473fa8426864abac96bf3",
+      "#24 BSC holder #24": "0x8d17fbfb03a6b7e8fdcfd60f1f9e6c08578ba5d7",
+      "#25 BSC holder #25": "0x9506cd7a8a9e6cecaf9fe8bb76713b7c0d79ee4f",
+      "#26 BSC holder #26": "0xe6451016f095835a0d5ef98a5c0092e47ddf0a93",
+      "#27 BSC holder #27": "0x4858821da3a75c001a895072305b774af7a494d9",
+      "#28 BSC holder #28": "0x7d83bade33d6189de29d4d820afadba8b966e988",
+      "#29 BSC holder #29": "0xd0be1fded5d964619b92b3672c08c43305529be0",
+      "#30 BSC holder #30": "0xadcc054417a5dd6091025326cf6c0910afa18c05",
+      "#31 BSC holder #31": "0x57078a682ac277d444d8cee278dc6e2ff0a52ea8",
+      "#32 BSC holder #32": "0x24a0d9928a3b6cd13a6210d0ff6d450a080fc266",
+      "#33 BSC holder #33": "0x03e2f45929e4b2b2941b0e42755562963e972206",
+      "#34 BSC holder #34": "0x4da7e215704d8418964f7e1073b2e023c4ebfa18",
+      "#35 BSC holder #35": "0x3ea023b07d1fbf0e12e33283b3c55a829eb9067a",
+      "#36 BSC holder #36": "0xc1630d2dac70c7eac83befe102f11dd5dd16e30b",
+      "#37 BSC holder #37": "0xa75fdc8b54728eff4693ef77a557ac190bef6876",
+      "#38 BSC holder #38": "0xd0001ef1249c7a0bd121f894333ee87d0c9e5606",
+      "#39 BSC holder #39": "0x6201c11bcd307c3b4f7857ece3d751b2a2ba09d3",
+      "#40 BSC holder #40": "0x70c974a29da71edd64f004529fd0f044978c279d",
+      "#41 BSC holder #41": "0x993d02d385b84018fdff688ab85fdb9b1acbd37c",
+      "#42 BSC holder #42": "0x52fb32c2d5db242fd847846eac346ff67ef716da",
+      "#43 BSC holder #43": "0x4a0027ee503681611c64768f80e9080983761d2b",
+      "#44 BSC holder #44": "0xe4666c1a276c4469a35dcb32875476ac41b3e859",
+      "#45 BSC holder #45": "0xdff54dc10555b3d1cc8ecee54b09c417893c281f",
+      "#46 BSC holder #46": "0x687269fff19b4941c7b50ec6a36010af979c5825",
+      "#47 BSC holder #47": "0x98f870ab30c0530b2e19d1adf5285200f52305a7",
+      "#48 BSC holder #48": "0x46f509b3d326245be6d88af0d292fe9b2328d479",
+      "#49 BSC holder #49": "0x53e4875e1a32b7e59a15a55a97ef555b639e1295",
+      "#50 BSC holder #50": "0x8e538e5518bec1c0f1a6fd858882ed8446512c9b"
+    }
+  },
+  "eth": {
+    "bridge_wallets": {
+      "Bridge intake": "0x4A831a8ebb160aD025D34A788c99e9320B9aB531",
+      "Aggregator L1": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+      "Aggregator L2": "0x50ebb0827aa80ba1a2a30b38581629996262d481",
+      "Router / exchange-like": "0x9c4cc862f51b1ba90485De3502AA058CA4331F32"
+    }
+  },
+  "snapshots": {
+    "bsc_holder_distribution": {
+      "exchanges_percent": 39.078,
+      "liquidity_pools_percent": 5.2849,
+      "other_wallets_percent": 55.6371,
+      "top_50_percent": 75.0502
+    }
+  }
+}
