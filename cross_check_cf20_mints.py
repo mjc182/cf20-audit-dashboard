@@ -1,4 +1,4 @@
-import json
+import gzip
 import os
 from pathlib import Path
 from datetime import datetime, timezone
@@ -12,8 +12,8 @@ SCALE = 10**18
 ZEROCHAIN_API = "https://2.api.explorer.cellframe.net/atoms/Backbone/zerochain/"
 
 DATA_DIR = Path("data")
-ETH_TRANSFERS = DATA_DIR / "eth_transfers.jsonl"
-BSC_TRANSFERS = DATA_DIR / "bsc_transfers.jsonl"
+ETH_TRANSFERS = DATA_DIR / "eth_transfers.jsonl.gz"
+BSC_TRANSFERS = DATA_DIR / "bsc_transfers.jsonl.gz"
 
 OUT_CSV = Path("cf20_mint_crosscheck.csv")
 OUT_JSON = Path("cf20_mint_crosscheck_summary.json")
