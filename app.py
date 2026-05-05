@@ -57,19 +57,66 @@ def metric(label, value, sub="", color=""):
     st.markdown(f'<div class="kpi-card"><div class="label">{label}</div><div class="value {color}">{value}</div><div class="sub">{sub}</div></div>', unsafe_allow_html=True)
 
 def sidebar():
-    st.sidebar.markdown('<div class="sidebar-brand">🛡 CF20 Audit</div>', unsafe_allow_html=True)
-    st.sidebar.markdown('<div class="sidebar-section">Main</div>', unsafe_allow_html=True)
-    st.sidebar.page_link("app.py", label="Home / Verdict")
-    for page, label, icon in [
-    st.sidebar.page_link("pages/1_Investigation_Graph.py", label="Investigation Graph")
-    st.sidebar.page_link("pages/2_Verified_Wallets.py", label="Verified Wallets")
-    st.sidebar.page_link("pages/3_Mint_Cross_Check.py", label="Mint Cross-Check")
-    st.sidebar.page_link("pages/4_Missing_CELL.py", label="Missing CELL")
-    st.sidebar.page_link("pages/5_Bridge_Out_Trace.py", label="Bridge-Out Trace")
-    st.sidebar.page_link("pages/6_Evidence_Downloads.py", label="Evidence Downloads")
-    ]:
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-brand">
+            <span class="sidebar-logo">🛡️</span>CF20 Audit
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Main</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.sidebar.page_link(
+        "app.py",
+        label="Home / Verdict",
+    )
+
+    if Path("pages/1_Investigation_Graph.py").exists():
+        st.sidebar.page_link(
+            "pages/1_Investigation_Graph.py",
+            label="Investigation Graph",
+        )
+
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Evidence</div>',
+        unsafe_allow_html=True,
+    )
+
+    page_links = [
+        ("pages/2_Verified_Wallets.py", "Verified Wallets"),
+        ("pages/3_Mint_Cross_Check.py", "Mint Cross-Check"),
+        ("pages/4_Missing_CELL.py", "Missing CELL"),
+        ("pages/5_Bridge_Out_Trace.py", "Bridge-Out Trace"),
+        ("pages/6_Evidence_Downloads.py", "Evidence Downloads"),
+    ]
+
+    for page, label in page_links:
         if Path(page).exists():
-            st.sidebar.page_link(page, label=label, icon=icon)
+            st.sidebar.page_link(
+                page,
+                label=label,
+            )
+
+    st.sidebar.markdown(
+        '<div class="sidebar-section">Status</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.sidebar.markdown(
+        """
+        <div style="color:#cbd5e1;font-size:.82rem;">
+            <span class="green-dot"></span>Dashboard active<br>
+            <span style="color:#94a3b8;">Local evidence loaded where available</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 sidebar()
 summary = load_json(MISSING_SUMMARY)
