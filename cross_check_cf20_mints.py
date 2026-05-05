@@ -168,7 +168,9 @@ def load_transfers():
 
         known = KNOWN_DEPOSIT_WALLETS.get(chain, set())
 
-        with path.open() as f:
+        opener = gzip.open if path.suffix == ".gz" else open
+
+        with opener(path, "rt") as f:
             for line in f:
                 try:
                     tx = json.loads(line)
