@@ -22,6 +22,7 @@ BRIDGE_IMAGE = Path("assets/no_verifiable_lock_contract.png")
 
 CELL_PER_MCELL = 1000
 
+
 # =============================
 # HELPERS
 # =============================
@@ -56,24 +57,28 @@ def fmt_num(n):
     return f"{n:,.2f}"
 
 
+def short_wallet(w):
+    w = str(w)
+    if len(w) <= 16:
+        return w
+    return w[:10] + "..." + w[-6:]
+
+
 def sidebar():
     st.sidebar.markdown(
         """
-        <div class="sidebar-brand">🛡️ CF20 Audit</div>
+        <div class="sidebar-brand-wrap">
+            <div class="sidebar-badge">🛡️</div>
+            <div class="sidebar-brand-text">CF20 Audit</div>
+        </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.sidebar.markdown(
-        '<div class="sidebar-section">Main</div>',
-        unsafe_allow_html=True,
-    )
+    st.sidebar.markdown('<div class="sidebar-section">Main</div>', unsafe_allow_html=True)
     st.sidebar.page_link("app.py", label="Home / Verdict")
 
-    st.sidebar.markdown(
-        '<div class="sidebar-section">Evidence</div>',
-        unsafe_allow_html=True,
-    )
+    st.sidebar.markdown('<div class="sidebar-section">Evidence</div>', unsafe_allow_html=True)
 
     page_links = [
         ("pages/1_Investigation_Graph.py", "Investigation Graph"),
@@ -90,11 +95,7 @@ def sidebar():
         if Path(page).exists():
             st.sidebar.page_link(page, label=label)
 
-    st.sidebar.markdown(
-        '<div class="sidebar-section">Status</div>',
-        unsafe_allow_html=True,
-    )
-
+    st.sidebar.markdown('<div class="sidebar-section">Status</div>', unsafe_allow_html=True)
     st.sidebar.markdown(
         """
         <div class="status-small">
@@ -106,25 +107,13 @@ def sidebar():
     )
 
 
-def kpi_card(label, value, sub="", color_class=""):
+def render_kpi(label, value, sub="", color_class=""):
     st.markdown(
         f"""
         <div class="kpi-card">
             <div class="kpi-label">{label}</div>
             <div class="kpi-value {color_class}">{value}</div>
             <div class="kpi-sub">{sub}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def info_box(title, body, color="blue"):
-    st.markdown(
-        f"""
-        <div class="info-box {color}">
-            <div class="info-title">{title}</div>
-            <div class="info-body">{body}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -144,10 +133,10 @@ html, body, [class*="css"] {
 
 [data-testid="stAppViewContainer"] {
     background:
-        radial-gradient(circle at 20% 10%, rgba(59,130,246,0.14), transparent 25%),
-        radial-gradient(circle at 85% 10%, rgba(239,68,68,0.12), transparent 22%),
-        radial-gradient(circle at 50% 90%, rgba(34,197,94,0.08), transparent 24%),
-        #050d18;
+        radial-gradient(circle at 18% 10%, rgba(59,130,246,0.18), transparent 24%),
+        radial-gradient(circle at 82% 10%, rgba(239,68,68,0.12), transparent 22%),
+        radial-gradient(circle at 50% 90%, rgba(34,197,94,0.08), transparent 22%),
+        #040b16;
 }
 
 [data-testid="stSidebar"] {
@@ -160,21 +149,40 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-    max-width: 1600px;
-    padding-top: 1rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
+    max-width: 1650px;
+    padding-top: 0.85rem;
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
 }
 
 #MainMenu, header, footer {
     visibility: hidden;
 }
 
-.sidebar-brand {
-    font-size: 1.15rem;
+.sidebar-brand-wrap {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin: 8px 0 14px 0;
+}
+
+.sidebar-badge {
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.1rem;
+    border:1px solid rgba(96,165,250,0.25);
+    background:linear-gradient(145deg, rgba(37,99,235,0.22), rgba(168,85,247,0.18));
+    box-shadow:0 0 14px rgba(59,130,246,0.18);
+}
+
+.sidebar-brand-text {
+    font-size: 1.08rem;
     font-weight: 900;
     color: #f8fafc;
-    margin: 10px 0 14px 0;
 }
 
 .sidebar-section {
@@ -205,104 +213,112 @@ html, body, [class*="css"] {
 }
 
 .hero {
-    border: 1px solid rgba(59,130,246,0.28);
-    background: linear-gradient(145deg, rgba(6,18,34,0.96), rgba(10,20,36,0.92));
+    border: 1px solid rgba(59,130,246,0.26);
+    background:
+        linear-gradient(145deg, rgba(6,18,34,0.96), rgba(8,16,28,0.94));
     border-radius: 18px;
-    padding: 20px 22px;
+    padding: 18px 22px 16px 22px;
     box-shadow: 0 18px 50px rgba(0,0,0,0.28);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero:before {
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:2px;
+    background:linear-gradient(90deg, rgba(96,165,250,0.0), rgba(96,165,250,0.95), rgba(96,165,250,0.0));
 }
 
 .hero-title {
-    font-size: 2.15rem;
+    font-size: 2.75rem;
     font-weight: 900;
     color: #f8fafc;
-    line-height: 1.08;
+    line-height: 1.04;
     letter-spacing: -0.03em;
     margin-bottom: 6px;
+    text-transform: uppercase;
 }
 
 .hero-sub {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: #60a5fa;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 12px;
 }
 
 .hero-copy {
     color: #cbd5e1;
     line-height: 1.65;
-    font-size: 0.98rem;
+    font-size: 0.97rem;
 }
 
-.panel {
-    border: 1px solid rgba(148,163,184,0.18);
-    background: linear-gradient(145deg, rgba(15,23,42,.95), rgba(8,20,36,.90));
-    border-radius: 16px;
-    padding: 16px 18px;
-    box-shadow: 0 18px 40px rgba(0,0,0,.22);
-    height: 100%;
-}
-
-.panel-blue {
-    border: 1px solid rgba(59,130,246,0.45);
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 20px 40px rgba(0,0,0,.20);
-}
-
-.panel-red {
-    border: 1px solid rgba(239,68,68,0.45);
-    box-shadow: 0 0 0 1px rgba(239,68,68,0.08), 0 20px 40px rgba(0,0,0,.20);
-}
-
-.panel-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: #f8fafc;
-    margin-bottom: 6px;
-}
-
-.panel-subtitle {
-    font-size: 0.95rem;
-    color: #94a3b8;
-    margin-bottom: 12px;
-}
-
-.flow-box {
-    border: 1px solid rgba(96,165,250,0.25);
+.unit-note {
+    border: 1px solid rgba(56,189,248,0.25);
+    background: rgba(7,18,34,0.65);
     border-radius: 14px;
-    padding: 14px;
-    background: rgba(8,16,28,0.60);
-    margin-bottom: 10px;
-}
-
-.flow-title {
-    color: #60a5fa;
-    font-size: 0.9rem;
-    font-weight: 800;
-    margin-bottom: 4px;
-}
-
-.flow-text {
-    color: #dbeafe;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.audit-alert {
-    border: 1px solid rgba(239,68,68,0.45);
-    background: rgba(40,10,10,0.35);
-    color: #fecaca;
     padding: 12px 14px;
-    border-radius: 12px;
-    font-weight: 700;
-    margin-top: 12px;
+    color: #cbd5e1;
+    line-height: 1.55;
+    margin-bottom: 14px;
 }
 
 .section-heading {
     color: #f8fafc;
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     font-weight: 900;
-    margin: 18px 0 10px 0;
+    margin: 16px 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.status-chip-row {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin: 8px 0 14px 0;
+}
+
+.status-chip {
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    border:1px solid rgba(148,163,184,0.22);
+    background: rgba(8,18,34,0.80);
+    color:#dbeafe;
+    box-shadow: 0 0 14px rgba(59,130,246,0.08);
+}
+
+.status-chip.blue {
+    border-color: rgba(59,130,246,0.35);
+    color:#93c5fd;
+    box-shadow: 0 0 14px rgba(59,130,246,0.18);
+}
+
+.status-chip.green {
+    border-color: rgba(34,197,94,0.35);
+    color:#86efac;
+    box-shadow: 0 0 14px rgba(34,197,94,0.14);
+}
+
+.status-chip.orange {
+    border-color: rgba(245,158,11,0.35);
+    color:#fcd34d;
+    box-shadow: 0 0 14px rgba(245,158,11,0.14);
+}
+
+.status-chip.red {
+    border-color: rgba(239,68,68,0.42);
+    color:#fca5a5;
+    box-shadow: 0 0 14px rgba(239,68,68,0.16);
 }
 
 .kpi-card {
@@ -310,8 +326,20 @@ html, body, [class*="css"] {
     background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(12,28,50,.88));
     border-radius: 14px;
     padding: 16px;
-    min-height: 128px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.26);
+    min-height: 126px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+    position:relative;
+    overflow:hidden;
+}
+
+.kpi-card:before {
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:2px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(96,165,250,0.7), rgba(255,255,255,0));
 }
 
 .kpi-label {
@@ -337,108 +365,322 @@ html, body, [class*="css"] {
     line-height: 1.4;
 }
 
-.red { color: #f87171 !important; }
-.orange { color: #f59e0b !important; }
-.green { color: #4ade80 !important; }
-.blue { color: #60a5fa !important; }
-.purple { color: #c084fc !important; }
+.red-text { color: #f87171 !important; }
+.orange-text { color: #f59e0b !important; }
+.green-text { color: #4ade80 !important; }
+.blue-text { color: #60a5fa !important; }
+.purple-text { color: #c084fc !important; }
 
-.info-box {
-    border-radius: 14px;
+.infographic-panel {
+    border-radius: 18px;
     padding: 16px;
-    min-height: 180px;
-    margin-bottom: 10px;
+    min-height: 100%;
+    border:1px solid rgba(148,163,184,0.18);
+    background: linear-gradient(145deg, rgba(11,20,35,0.96), rgba(8,16,29,0.94));
+    box-shadow: 0 18px 40px rgba(0,0,0,.22);
 }
 
-.info-box.blue {
-    border: 1px solid rgba(168,85,247,0.45);
-    background: linear-gradient(145deg, rgba(30,12,54,0.35), rgba(16,16,35,0.35));
+.infographic-panel.blue {
+    border-color: rgba(59,130,246,0.35);
 }
 
-.info-box.cyan {
-    border: 1px solid rgba(56,189,248,0.45);
-    background: linear-gradient(145deg, rgba(7,33,55,0.35), rgba(16,16,35,0.35));
+.infographic-panel.red {
+    border-color: rgba(239,68,68,0.35);
 }
 
-.info-box.green {
-    border: 1px solid rgba(45,212,191,0.45);
-    background: linear-gradient(145deg, rgba(6,46,42,0.35), rgba(16,16,35,0.35));
-}
-
-.info-box.red {
-    border: 1px solid rgba(249,115,22,0.45);
-    background: linear-gradient(145deg, rgba(50,22,10,0.35), rgba(16,16,35,0.35));
-}
-
-.info-title {
-    font-size: 1.06rem;
+.panel-title {
+    font-size: 1.55rem;
     font-weight: 900;
     color: #f8fafc;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    text-align:center;
 }
 
-.info-body {
-    color: #cbd5e1;
-    font-size: 0.96rem;
-    line-height: 1.62;
+.panel-subtitle {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-align:center;
 }
 
-.indicator-grid {
-    border: 1px solid rgba(59,130,246,0.20);
-    background: linear-gradient(145deg, rgba(10,18,30,0.92), rgba(7,14,25,0.92));
+.flow-track-3 {
+    display:grid;
+    grid-template-columns: 1fr 58px 1fr 58px 1fr;
+    gap: 8px;
+    align-items:center;
+    margin-top: 4px;
+}
+
+.flow-track-4 {
+    display:grid;
+    grid-template-columns: 1fr 52px 1fr 52px 1fr 52px 1fr;
+    gap: 8px;
+    align-items:center;
+    margin-top: 4px;
+}
+
+.flow-node {
+    border-radius: 16px;
+    padding: 14px 12px;
+    min-height: 132px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    flex-direction:column;
+    font-weight:800;
+    line-height:1.35;
+    position:relative;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.flow-node .node-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #f8fafc;
+    margin-bottom: 6px;
+}
+
+.flow-node .node-copy {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color:#dbeafe;
+    line-height:1.5;
+}
+
+.flow-node.purple {
+    border:1px solid rgba(168,85,247,0.55);
+    background:linear-gradient(145deg, rgba(43,18,67,0.72), rgba(16,16,35,0.65));
+    box-shadow: 0 0 18px rgba(168,85,247,0.18);
+}
+
+.flow-node.green {
+    border:1px solid rgba(34,197,94,0.55);
+    background:linear-gradient(145deg, rgba(10,50,28,0.72), rgba(16,16,35,0.65));
+    box-shadow: 0 0 18px rgba(34,197,94,0.18);
+}
+
+.flow-node.blue {
+    border:1px solid rgba(59,130,246,0.55);
+    background:linear-gradient(145deg, rgba(8,38,70,0.72), rgba(16,16,35,0.65));
+    box-shadow: 0 0 18px rgba(59,130,246,0.18);
+}
+
+.flow-node.red {
+    border:1px solid rgba(239,68,68,0.60);
+    background:linear-gradient(145deg, rgba(65,14,14,0.78), rgba(16,16,35,0.68));
+    box-shadow: 0 0 20px rgba(239,68,68,0.22);
+}
+
+.flow-node.orange {
+    border:1px solid rgba(249,115,22,0.58);
+    background:linear-gradient(145deg, rgba(66,26,8,0.78), rgba(16,16,35,0.68));
+    box-shadow: 0 0 20px rgba(249,115,22,0.18);
+}
+
+.flow-arrow {
+    text-align:center;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color:#60a5fa;
+    text-shadow:0 0 12px rgba(96,165,250,0.75), 0 0 28px rgba(96,165,250,0.35);
+}
+
+.flow-arrow.red {
+    color:#f87171;
+    text-shadow:0 0 12px rgba(248,113,113,0.75), 0 0 28px rgba(248,113,113,0.35);
+}
+
+.flow-stack {
+    display:grid;
+    gap:8px;
+}
+
+.flow-mini {
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align:center;
+    min-height:58px;
+    border:1px solid rgba(59,130,246,0.45);
+    background: rgba(8,28,46,0.78);
+    color:#dbeafe;
+    font-weight:800;
+    box-shadow:0 0 12px rgba(59,130,246,0.14);
+}
+
+.audit-alert {
+    border: 1px solid rgba(239,68,68,0.45);
+    background: rgba(40,10,10,0.35);
+    color: #fecaca;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-top: 12px;
+    line-height:1.55;
+}
+
+.audit-card {
+    border:1px solid rgba(148,163,184,0.18);
+    border-radius:16px;
+    padding:18px 16px 16px 16px;
+    background: linear-gradient(145deg, rgba(11,20,35,0.96), rgba(9,16,29,0.94));
+    box-shadow: 0 18px 36px rgba(0,0,0,.22);
+    min-height: 245px;
+    position:relative;
+    overflow:hidden;
+}
+
+.audit-card.purple { border-color: rgba(168,85,247,0.42); }
+.audit-card.blue { border-color: rgba(59,130,246,0.42); }
+.audit-card.green { border-color: rgba(45,212,191,0.42); }
+.audit-card.orange { border-color: rgba(249,115,22,0.42); }
+
+.audit-number {
+    position:absolute;
+    top:12px;
+    left:12px;
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#f8fafc;
+    border:1px solid rgba(255,255,255,0.18);
+    background: rgba(8,16,28,0.70);
+    box-shadow: 0 0 12px rgba(96,165,250,0.15);
+}
+
+.audit-icon {
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin: 20px auto 14px auto;
+    font-size: 2rem;
+    font-weight: 900;
+    border:1px solid rgba(255,255,255,0.12);
+}
+
+.audit-card.purple .audit-icon {
+    color:#d8b4fe;
+    background: rgba(120,38,182,0.18);
+    box-shadow:0 0 18px rgba(168,85,247,0.18);
+}
+.audit-card.blue .audit-icon {
+    color:#93c5fd;
+    background: rgba(37,99,235,0.18);
+    box-shadow:0 0 18px rgba(59,130,246,0.18);
+}
+.audit-card.green .audit-icon {
+    color:#99f6e4;
+    background: rgba(13,148,136,0.18);
+    box-shadow:0 0 18px rgba(45,212,191,0.18);
+}
+.audit-card.orange .audit-icon {
+    color:#fdba74;
+    background: rgba(234,88,12,0.18);
+    box-shadow:0 0 18px rgba(249,115,22,0.18);
+}
+
+.audit-title {
+    color:#f8fafc;
+    font-size:1.45rem;
+    font-weight:900;
+    line-height:1.22;
+    margin-bottom:8px;
+    text-align:left;
+}
+
+.audit-copy {
+    color:#cbd5e1;
+    font-size:0.96rem;
+    line-height:1.62;
+}
+
+.indicator-panel {
+    border:1px solid rgba(59,130,246,0.22);
+    background: linear-gradient(145deg, rgba(8,16,28,0.95), rgba(7,14,24,0.93));
     border-radius: 16px;
     padding: 16px;
 }
 
 .indicator-pill {
-    border: 1px solid rgba(59,130,246,0.28);
-    border-radius: 12px;
-    padding: 12px;
-    background: rgba(8,16,28,0.65);
-    color: #dbeafe;
-    text-align: center;
-    font-weight: 700;
-    min-height: 68px;
+    border:1px solid rgba(59,130,246,0.30);
+    background: rgba(7,18,32,0.82);
+    border-radius: 14px;
+    padding: 16px 12px;
+    min-height: 72px;
     display:flex;
     align-items:center;
     justify-content:center;
+    text-align:center;
+    color:#dbeafe;
+    font-weight:800;
+    box-shadow:0 0 14px rgba(59,130,246,0.10);
 }
 
 .indicator-pill.red {
     border-color: rgba(239,68,68,0.35);
-    color: #fecaca;
+    color:#fecaca;
+    box-shadow:0 0 14px rgba(239,68,68,0.12);
+}
+
+.subpanel {
+    border:1px solid rgba(148,163,184,0.18);
+    background: linear-gradient(145deg, rgba(12,20,34,0.95), rgba(8,16,28,0.93));
+    border-radius: 16px;
+    padding: 16px;
+    min-height: 100%;
+    box-shadow: 0 18px 36px rgba(0,0,0,.18);
+}
+
+.subpanel-title {
+    color:#f8fafc;
+    font-size:1.2rem;
+    font-weight:900;
+    margin-bottom:10px;
+    text-transform:uppercase;
+}
+
+.bridge-bullets {
+    color:#cbd5e1;
+    line-height:1.72;
+    font-size:0.96rem;
+}
+
+.bridge-bullets code {
+    color:#93c5fd;
+    background: rgba(15,23,42,0.92);
+    padding:2px 6px;
+    border-radius:6px;
 }
 
 .conclusion {
-    border: 1px solid rgba(239,68,68,0.45);
-    background: linear-gradient(145deg, rgba(40,10,10,0.45), rgba(18,12,18,0.65));
-    border-radius: 16px;
-    padding: 20px 22px;
+    border: 1px solid rgba(239,68,68,0.42);
+    background: linear-gradient(145deg, rgba(48,12,12,0.52), rgba(18,12,18,0.72));
+    border-radius: 18px;
+    padding: 22px 24px;
     box-shadow: 0 18px 40px rgba(0,0,0,.22);
 }
 
 .conclusion-title {
     color: #fb7185;
-    font-size: 1.7rem;
+    font-size: 2.1rem;
     font-weight: 900;
-    line-height: 1.25;
+    line-height: 1.22;
+    text-transform: uppercase;
 }
 
 .conclusion-copy {
     color: #fecaca;
     font-size: 1.02rem;
-    line-height: 1.7;
-    margin-top: 8px;
-}
-
-.unit-note {
-    border: 1px solid rgba(56,189,248,0.25);
-    background: rgba(8,18,34,0.60);
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: #cbd5e1;
-    line-height: 1.55;
-    margin-bottom: 14px;
+    line-height: 1.75;
+    margin-top: 10px;
 }
 
 [data-testid="stDataFrame"] {
@@ -451,7 +693,7 @@ html, body, [class*="css"] {
 )
 
 # =============================
-# SIDEBAR + DATA LOAD
+# LOAD DATA
 # =============================
 
 sidebar()
@@ -479,18 +721,28 @@ if missing_cell is None and not wallets.empty and "missing_cell" in wallets.colu
 if missing_mcell is None and missing_cell is not None:
     missing_mcell = missing_cell / CELL_PER_MCELL
 
-missing_display = fmt_num(missing_cell) if missing_cell is not None else "15.75M"
-missing_mcell_display = fmt_num(missing_mcell) if missing_mcell is not None else "15.75K"
-
 if top5_share is None and not wallets.empty and "missing_cell" in wallets.columns:
     total = pd.to_numeric(wallets["missing_cell"], errors="coerce").sum()
     top5 = pd.to_numeric(wallets["missing_cell"], errors="coerce").head(5).sum()
     top5_share = (top5 / total * 100) if total else None
 
+missing_display = fmt_num(missing_cell) if missing_cell is not None else "15.75M"
+missing_mcell_display = fmt_num(missing_mcell) if missing_mcell is not None else "15.75K"
 top5_display = f"{top5_share:,.2f}%" if top5_share is not None else "67.67%"
+duplicate_display = f"{duplicate_count:,}" if duplicate_count is not None else "—"
+
+bridge_found = bridge.get("found", True)
+bridge_status = "Bridge-out evidence found" if bridge_found else "Bridge-out evidence not loaded"
+market_status = market.get("status", "Unresolved")
+
+source_wallet_short = bridge.get("source_wallet_short", "Rj7J7...MLE7o7T")
+bep20_destination = bridge.get("bep20_destination", "0x1fa6348d9b13d316c62d54f62bea4e1a7207d9d6")
+bridge_condition_value = bridge.get("bridge_condition_value_cell", 3876436.277)
+datum_type = bridge.get("datum_type", "DATUM_TX")
+
 
 # =============================
-# PAGE HEADER
+# HERO
 # =============================
 
 st.markdown(
@@ -499,9 +751,9 @@ st.markdown(
         <div class="hero-title">CF20 Bridge Audit Finding: No Verifiable Lock Contract</div>
         <div class="hero-sub">Why backing remains unproven on Ethereum and BSC</div>
         <div class="hero-copy">
-            This independent audit focuses on whether CF20/CELL bridge issuance is transparently backed by a publicly verifiable
-            lock, reserve, burn, or custody mechanism. The current evidence shows token supply on ETH/BSC and observable bridge-related
-            activity, but no clearly provable on-chain reserve path has yet been established.
+            This homepage is designed as an independent audit command view. It focuses on what can be verified from
+            current evidence: observable ETH/BSC supply, unmatched issuance analysis, bridge-out indicators, and whether
+            a publicly verifiable reserve / lock / burn path can be independently proven.
         </div>
     </div>
     """,
@@ -513,80 +765,127 @@ st.markdown(
     <div class="unit-note">
         <b>Unit note:</b> 1 mCELL = 1,000 CELL.<br>
         Independent deduped result: <b>{missing_mcell_display} mCELL-equivalent</b> / <b>{missing_display} CELL</b>.<br>
-        Official disclosure: <b>{official_mcell:,} mCELL</b> / <b>{official_cell:,.0f} CELL-equivalent</b>.
+        Official disclosure reference: <b>{official_mcell:,} mCELL</b> / <b>{official_cell:,.0f} CELL-equivalent</b>.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    f"""
+    <div class="status-chip-row">
+        <div class="status-chip blue">🔹 ETH contract observed</div>
+        <div class="status-chip blue">🔹 BSC contract observed</div>
+        <div class="status-chip green">✅ {bridge_status}</div>
+        <div class="status-chip orange">⚠ Market quantification: {market_status}</div>
+        <div class="status-chip red">⛔ No public reserve lock verified</div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
 # =============================
-# TOP PANELS
+# KPI ROW
 # =============================
 
-left, right = st.columns([1.05, 1.15], gap="large")
+k1, k2, k3, k4, k5 = st.columns(5, gap="large")
+
+with k1:
+    render_kpi("Deduped unmatched CELL", missing_display, "Independent chain analysis", "red-text")
+with k2:
+    render_kpi("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "orange-text")
+with k3:
+    render_kpi("Official illegal mCELL", f"{official_mcell:,}", "Referenced official disclosure", "purple-text")
+with k4:
+    render_kpi("Top 5 concentration", top5_display, "Share of unmatched recipient total", "blue-text")
+with k5:
+    render_kpi("Duplicate events removed", duplicate_display, "Audit master summary", "green-text")
+
+# =============================
+# INFOGRAPHIC CENTER SECTION
+# =============================
+
+st.markdown('<div class="section-heading">Bridge Model vs Audit Finding</div>', unsafe_allow_html=True)
+
+left, right = st.columns([1, 1], gap="large")
 
 with left:
-    st.markdown('<div class="panel panel-blue">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-title">Expected Bridge Model</div>', unsafe_allow_html=True)
-    st.markdown('<div class="panel-subtitle">What a transparently backed bridge would normally show</div>', unsafe_allow_html=True)
-
     st.markdown(
         """
-        <div class="flow-box">
-            <div class="flow-title">Step 1 — Zerochain / source-side issuance</div>
-            <div class="flow-text">Minting or bridge issuance occurs from the source system.</div>
-        </div>
+        <div class="infographic-panel blue">
+            <div class="panel-title">Expected Bridge Model</div>
+            <div class="panel-subtitle">What should exist for transparent reserve-backed bridging</div>
 
-        <div class="flow-box">
-            <div class="flow-title">Step 2 — Verifiable reserve lock / burn / custody</div>
-            <div class="flow-text">
-                A discoverable on-chain lock contract, burn address, reserve wallet, or disclosed multisig should prove backing.
+            <div class="flow-track-3">
+                <div class="flow-node purple">
+                    <div class="node-title">Zerochain<br>/ mints</div>
+                    <div class="node-copy">Source-side issuance or bridge event begins the process.</div>
+                </div>
+                <div class="flow-arrow">➜</div>
+                <div class="flow-node green">
+                    <div class="node-title">Verifiable lock /<br>reserve custody</div>
+                    <div class="node-copy">Should prove backing CELL is locked, burned, or transparently custodied.</div>
+                </div>
+                <div class="flow-arrow">➜</div>
+                <div class="flow-node blue">
+                    <div class="node-title">ETH / BSC<br>token supply</div>
+                    <div class="node-copy">External-chain supply appears only alongside provable reserve logic.</div>
+                </div>
             </div>
-        </div>
 
-        <div class="flow-box">
-            <div class="flow-title">Step 3 — ETH / BSC token supply</div>
-            <div class="flow-text">
-                Supply appears on Ethereum and BSC only after or alongside provable reserve logic.
+            <div class="audit-alert" style="border-color:rgba(34,197,94,0.35); background:rgba(8,40,20,0.25); color:#bbf7d0;">
+                Expected outcome: the bridge should publicly prove where the backing sits and how it is secured.
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
-    st.markdown(
-        """
-        <div class="audit-alert">
-            Expected result: the bridge should publicly prove where the backing sits and how it is secured.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
-    st.markdown('<div class="panel panel-red">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-title">What the Audit Found</div>', unsafe_allow_html=True)
-    st.markdown('<div class="panel-subtitle">Observed evidence from the independent audit</div>', unsafe_allow_html=True)
-
-    if BRIDGE_IMAGE.exists():
-        st.image(str(BRIDGE_IMAGE), use_container_width=True)
-    else:
-        st.warning("Image not found: assets/no_verifiable_lock_contract.png")
-
     st.markdown(
         """
-        <div class="audit-alert">
-            No verifiable on-chain lock, burn, or reserve contract found. Supply exists on ETH/BSC, but transparent backing remains unproven.
+        <div class="infographic-panel red">
+            <div class="panel-title">What the Audit Found</div>
+            <div class="panel-subtitle">What current independent evidence supports</div>
+
+            <div class="flow-track-4">
+                <div class="flow-node purple">
+                    <div class="node-title">Zerochain<br>emissions</div>
+                    <div class="node-copy">Emission activity and related bridge evidence can be observed.</div>
+                </div>
+                <div class="flow-arrow red">➜</div>
+                <div class="flow-node red">
+                    <div class="node-title">No identified<br>lock contract</div>
+                    <div class="node-copy">No discoverable lock, reserve, or burn contract was independently verified.</div>
+                </div>
+                <div class="flow-arrow red">➜</div>
+                <div class="flow-stack">
+                    <div class="flow-mini">ETH<br>contract</div>
+                    <div class="flow-mini">BSC<br>contract</div>
+                </div>
+                <div class="flow-arrow red">➜</div>
+                <div class="flow-node blue">
+                    <div class="node-title">Exchanges /<br>LP / wallets</div>
+                    <div class="node-copy">Circulating external-chain activity exists, but reserve proof remains incomplete.</div>
+                </div>
+            </div>
+
+            <div class="audit-alert">
+                No verifiable on-chain lock, burn, or reserve contract found. Tokens may circulate on ETH/BSC without a publicly provable reserve path.
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    st.markdown("</div>", unsafe_allow_html=True)
+
+st.write("")
+if BRIDGE_IMAGE.exists():
+    st.image(str(BRIDGE_IMAGE), use_container_width=True)
+else:
+    st.warning("Image not found: assets/no_verifiable_lock_contract.png")
 
 # =============================
-# 4 FINDING CARDS
+# NUMBERED AUDIT CARDS
 # =============================
 
 st.markdown('<div class="section-heading">Key Audit Findings</div>', unsafe_allow_html=True)
@@ -594,35 +893,67 @@ st.markdown('<div class="section-heading">Key Audit Findings</div>', unsafe_allo
 c1, c2, c3, c4 = st.columns(4, gap="large")
 
 with c1:
-    info_box(
-        "1) No lock contract located",
-        "No verifiable reserve-holding lock contract was identified for the bridged supply. "
-        "This means the audit could not independently confirm a canonical on-chain reserve location.",
-        "blue",
+    st.markdown(
+        """
+        <div class="audit-card purple">
+            <div class="audit-number">1</div>
+            <div class="audit-icon">⌕</div>
+            <div class="audit-title">No lock contract located</div>
+            <div class="audit-copy">
+                No verifiable reserve-holding lock contract was identified for the bridged supply.
+                The audit could not independently confirm a canonical on-chain reserve location.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 with c2:
-    info_box(
-        "2) No confirmed custody wallet",
-        "No clearly disclosed reserve multisig or custody wallet was confirmed as the backing holder. "
-        "Without a named and provable reserve address, backing cannot be independently verified.",
-        "cyan",
+    st.markdown(
+        """
+        <div class="audit-card blue">
+            <div class="audit-number">2</div>
+            <div class="audit-icon">⌘</div>
+            <div class="audit-title">No confirmed custody wallet</div>
+            <div class="audit-copy">
+                No clearly disclosed reserve multisig or custody wallet was confirmed as the backing holder.
+                Without a named reserve address, backing cannot be independently verified.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 with c3:
-    info_box(
-        "3) Supply exists on ETH/BSC",
-        "CF20/CELL-related supply is observable on Ethereum and BSC, including exchange and LP balances. "
-        "However, observable circulating supply is not the same thing as provable reserve backing.",
-        "green",
+    st.markdown(
+        """
+        <div class="audit-card green">
+            <div class="audit-number">3</div>
+            <div class="audit-icon">◈</div>
+            <div class="audit-title">Supply exists on ETH/BSC</div>
+            <div class="audit-copy">
+                CF20/CELL-related supply is observable on Ethereum and BSC, including exchange and LP balances.
+                Observable circulating supply is not the same thing as provable reserve backing.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 with c4:
-    info_box(
-        "4) Backing gap remains unresolved",
-        "Without a discoverable lock, reserve, or burn mechanism, proof of 1:1 backing remains incomplete. "
-        "The audit therefore treats backing as unverified rather than proven.",
-        "red",
+    st.markdown(
+        """
+        <div class="audit-card orange">
+            <div class="audit-number">4</div>
+            <div class="audit-icon">⚠</div>
+            <div class="audit-title">Backing gap remains unresolved</div>
+            <div class="audit-copy">
+                Without a discoverable lock, reserve, or burn mechanism, proof of 1:1 backing remains incomplete.
+                The audit therefore treats backing as unverified rather than proven.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 # =============================
@@ -631,7 +962,7 @@ with c4:
 
 st.markdown('<div class="section-heading">Observed On-Chain Indicators</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="indicator-grid">', unsafe_allow_html=True)
+st.markdown('<div class="indicator-panel">', unsafe_allow_html=True)
 i1, i2, i3, i4, i5 = st.columns(5, gap="medium")
 
 with i1:
@@ -639,7 +970,7 @@ with i1:
 with i2:
     st.markdown('<div class="indicator-pill">BSC contract observed</div>', unsafe_allow_html=True)
 with i3:
-    st.markdown('<div class="indicator-pill">Exchange / LP balances observed</div>', unsafe_allow_html=True)
+    st.markdown('<div class="indicator-pill">Exchange and LP balances observed</div>', unsafe_allow_html=True)
 with i4:
     st.markdown('<div class="indicator-pill">Bridge-out activity observed</div>', unsafe_allow_html=True)
 with i5:
@@ -648,50 +979,37 @@ with i5:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # =============================
-# KPI SUMMARY
+# LOWER PANELS
 # =============================
 
-st.markdown('<div class="section-heading">Independent Audit Snapshot</div>', unsafe_allow_html=True)
-
-k1, k2, k3, k4, k5 = st.columns(5, gap="large")
-
-with k1:
-    kpi_card("Deduped unmatched CELL", missing_display, "Independent chain analysis", "red")
-with k2:
-    kpi_card("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "orange")
-with k3:
-    kpi_card("Official illegal mCELL", f"{official_mcell:,}", "Cellframe statement", "purple")
-with k4:
-    kpi_card("Top 5 wallet concentration", top5_display, "Share of unmatched CELL", "blue")
-with k5:
-    kpi_card("Market-sale quantification", market.get("status", "Unresolved"), "Requires BSC / DEX / OTC trace", "orange")
-
-# =============================
-# EVIDENCE TABLES
-# =============================
-
-left2, right2 = st.columns([1.2, 1], gap="large")
+left2, right2 = st.columns([1.25, 1], gap="large")
 
 with left2:
-    st.markdown('<div class="section-heading">Top Unmatched Recipients</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subpanel-title">Top Unmatched Recipients</div>', unsafe_allow_html=True)
     if wallets.empty:
-        st.info("No wallet file found. Upload missing_cell_wallets_deduped.csv or missing_cell_wallets.csv.")
+        st.info("missing_cell_wallets_deduped.csv or missing_cell_wallets.csv not found.")
     else:
-        show = wallets.head(10).copy()
+        show = wallets.copy().head(10)
+
+        if "mint_to" in show.columns:
+            show["wallet_short"] = show["mint_to"].apply(short_wallet)
 
         if "missing_cell" in show.columns:
-            show["missing_cell"] = pd.to_numeric(show["missing_cell"], errors="coerce")
-            show["mcell_equivalent"] = show["missing_cell"] / CELL_PER_MCELL
-            show["missing_cell"] = show["missing_cell"].map(lambda x: f"{x:,.2f}")
-            show["mcell_equivalent"] = show["mcell_equivalent"].map(lambda x: f"{x:,.2f}")
+            show["missing_cell_num"] = pd.to_numeric(show["missing_cell"], errors="coerce")
+            show["missing_mcell_equivalent"] = show["missing_cell_num"] / CELL_PER_MCELL
+            show["missing_cell"] = show["missing_cell_num"].map(lambda x: f"{x:,.2f}" if pd.notnull(x) else "—")
+            show["missing_mcell_equivalent"] = show["missing_mcell_equivalent"].map(lambda x: f"{x:,.2f}" if pd.notnull(x) else "—")
 
         if "share_of_missing" in show.columns:
-            show["share_of_missing"] = pd.to_numeric(show["share_of_missing"], errors="coerce").map(lambda x: f"{x:,.2f}%")
+            show["share_of_missing"] = pd.to_numeric(show["share_of_missing"], errors="coerce").map(
+                lambda x: f"{x:,.2f}%" if pd.notnull(x) else "—"
+            )
 
         preferred_cols = [c for c in [
+            "wallet_short",
             "mint_to",
             "missing_cell",
-            "mcell_equivalent",
+            "missing_mcell_equivalent",
             "share_of_missing",
             "events",
             "max_single",
@@ -699,40 +1017,28 @@ with left2:
             "last",
         ] if c in show.columns]
 
-        st.dataframe(show[preferred_cols] if preferred_cols else show, use_container_width=True, hide_index=True)
+        st.dataframe(
+            show[preferred_cols] if preferred_cols else show,
+            use_container_width=True,
+            hide_index=True,
+        )
 
 with right2:
-    st.markdown('<div class="section-heading">Evidence Status</div>', unsafe_allow_html=True)
-
-    evidence_df = pd.DataFrame([
-        {
-            "Finding": "Unmatched emissions",
-            "Status": "High confidence",
-            "Evidence": f"{missing_display} CELL / {missing_mcell_display} mCELL-eq"
-        },
-        {
-            "Finding": "Duplicate handling",
-            "Status": "Applied" if duplicate_count is not None else "Not loaded",
-            "Evidence": f"{duplicate_count if duplicate_count is not None else '—'} duplicate events removed"
-        },
-        {
-            "Finding": "Official disclosure alignment",
-            "Status": "Under review",
-            "Evidence": f"{official_mcell:,} mCELL = {official_cell:,.0f} CELL-eq"
-        },
-        {
-            "Finding": "Bridge-out evidence",
-            "Status": "Supported",
-            "Evidence": bridge.get("bep20_destination", "BEP20 destination identified in audit files")
-        },
-        {
-            "Finding": "Public lock / reserve proof",
-            "Status": "Not verified",
-            "Evidence": "No discoverable lock or reserve contract confirmed"
-        },
-    ])
-
-    st.dataframe(evidence_df, use_container_width=True, hide_index=True)
+    st.markdown('<div class="subpanel-title">Bridge-Out Evidence</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="subpanel">
+            <div class="bridge-bullets">
+                <b>Largest unmatched wallet:</b> <code>{source_wallet_short}</code><br><br>
+                <b>Observed transaction type:</b> <code>{datum_type}</code> · <code>BRIDGE</code> · <code>OUT</code> · <code>BEP20</code><br><br>
+                <b>BEP20 destination:</b> <code>{bep20_destination}</code><br><br>
+                <b>Bridge condition value:</b> <code>{bridge_condition_value:,.2f} CELL</code><br><br>
+                <b>Status:</b> external-chain destination identified; BSC / DEX / OTC sale path still unresolved.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # =============================
 # CONCLUSION
@@ -744,13 +1050,13 @@ st.markdown(
     f"""
     <div class="conclusion">
         <div class="conclusion-title">
-            The audit did not verify a lock contract, reserve contract, or fully provable on-chain backing path.
+            Conclusion: the audit did not verify a lock contract, reserve contract, or fully provable on-chain backing path.
         </div>
         <div class="conclusion-copy">
             Tokens on ETH/BSC may circulate without a publicly verifiable locked reserve.
             The independent audit therefore treats backing as <b>unproven</b>, not proven.
             <br><br>
-            Independent deduped result: <b>{missing_display} CELL</b> / <b>{missing_mcell_display} mCELL-equivalent</b>.
+            Current independent deduped result: <b>{missing_display} CELL</b> / <b>{missing_mcell_display} mCELL-equivalent</b>.
             Until a verifiable reserve mechanism is disclosed and independently confirmed, the backing gap remains unresolved.
         </div>
     </div>
@@ -775,7 +1081,7 @@ download_files = [
     ("Bridge-Out Activity Raw", "zerochain_missing_cell_activity_raw.csv"),
 ]
 
-d1, d2 = st.columns(2)
+d1, d2 = st.columns(2, gap="large")
 
 with d1:
     for label, filename in download_files[:4]:
@@ -783,7 +1089,7 @@ with d1:
         if p.exists():
             st.download_button(
                 f"Download {label}",
-                p.read_bytes(),
+                data=p.read_bytes(),
                 file_name=filename,
                 mime="text/csv" if filename.endswith(".csv") else "application/json",
                 use_container_width=True,
@@ -797,7 +1103,7 @@ with d2:
         if p.exists():
             st.download_button(
                 f"Download {label}",
-                p.read_bytes(),
+                data=p.read_bytes(),
                 file_name=filename,
                 mime="text/csv" if filename.endswith(".csv") else "application/json",
                 use_container_width=True,
