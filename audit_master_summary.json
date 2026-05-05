@@ -1,0 +1,124 @@
+{
+  "generated_at_utc": "2026-05-05T15:40:10+00:00",
+  "unit_conversion": {
+    "cell_per_mcell": 1000,
+    "statement": "1 mCELL = 1,000 CELL"
+  },
+  "contracts": {
+    "eth_cell_token": "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+    "bsc_cell_token": "0xd98438889Ae7364c7E2A3540547Fad042FB24642"
+  },
+  "official_disclosure": {
+    "illegal_mcell": 1295,
+    "cell_equivalent": 1295000,
+    "note": "Official Cellframe statement figure converted using 1 mCELL = 1,000 CELL."
+  },
+  "independent_chain_analysis": {
+    "deduped_unmatched_cell": 15751762.35845899,
+    "deduped_unmatched_mcell_equivalent": 15751.762358458991,
+    "original_missing_summary": {
+      "target_tokens": [
+        "CELL",
+        "CF20",
+        "mCELL"
+      ],
+      "total_cell_minted_scanned": 16022167.644240461,
+      "matched_cell": 0,
+      "missing_cell": 16022167.644240461,
+      "missing_percent": 100.0,
+      "matched_events": 0,
+      "missing_events": 7467,
+      "recipient_count": 451
+    },
+    "event_count_deduped": 6030,
+    "event_duplicates_removed": 1437,
+    "recipient_count_deduped": 451,
+    "top5_missing_cell": 10658447.926314564,
+    "top5_share_percent": 67.66511380608011,
+    "largest_wallet": {
+      "mint_to": "Rj7J7MiX2bWy8sNyXN6YqRfWnuX8VkcRfBF2uzuAgC5fZ5UiL5thQxX6rNyRMaCBvBWLVN8xjkmgs7VVSvqnNE3BKVXV6xTvYMLE7o7T",
+      "missing_cell": 3800000.0,
+      "missing_mcell_equivalent": 3800.0,
+      "share_of_missing": 24.12428472144471,
+      "events": 2,
+      "first_seen": "2026-01-16T08:30:15",
+      "last_seen": "2026-04-13T06:39:13",
+      "max_single_mint": 2800000.0,
+      "top_datum_hashes": "0xB702D5689CBCB6736CF28E83D71EF7EB9B3C1A8BF51F5BC617B69D73478A3EB3, 0xB06508B9ECF34BC4A445E52D2FBB06970123A9DF2051BB19D45176BF1A95F90F"
+    }
+  },
+  "matching_summary": {
+    "mint_events": 10534,
+    "total_minted_tokens": 2001771584473.0288,
+    "matched_events": 0,
+    "unmatched_events": 10534,
+    "matched_amount_tokens": 0,
+    "unmatched_amount_tokens": 2001771584473.0288,
+    "matched_amount_percent": 0.0,
+    "unmatched_amount_percent": 100.0,
+    "note": "This is amount-only matching against known deposit wallets. It flags mints that do not match observed deposits in loaded data."
+  },
+  "bridge_out_evidence": {
+    "found": true,
+    "source_wallet_short": "Rj7J7...MLE7o7T",
+    "source_wallet": "Rj7J7MiX2bWy8sNyXN6YqRfWnuX8VkcRfBF2uzuAgC5fZ5UiL5thQxX6rNyRMaCBvBWLVN8xjkmgs7VVSvqnNE3BKVXV6xTvYMLE7o7T",
+    "datum_type": "DATUM_TX",
+    "transaction_hash": "0x03F5934B41AE409E81258BD7C7FA55B86A52CA829D413E0D791E2A0D96E8E9A4",
+    "atom_hash": "0xFF141C49A63FD7D2B69B2EC2E4835923584FFFF73E8F7F8E2CDB3D52C3C01717",
+    "created_at": "2026-04-13T11:31:24",
+    "service_name": "bridge",
+    "action": "close",
+    "direction_tag": "OUT",
+    "destination_chain_type": "BEP20",
+    "bep20_destination": "0x1fa6348d9b13d316c62d54f62bea4e1a7207d9d6",
+    "bridge_condition_value_raw": "3876436277458157528389260",
+    "bridge_condition_value_cell": 3876436.2774581574,
+    "sale_quantified": false,
+    "sale_status": "Bridge-out route identified; BSC/DEX/OTC sale path not yet quantified."
+  },
+  "outflow_trace_summary": {
+    "targets_scanned": 50,
+    "raw_hits": 17795,
+    "outgoing_edges": 0,
+    "outputs": {
+      "raw": "zerochain_missing_cell_activity_raw.csv",
+      "edges": "zerochain_missing_cell_outgoing_edges.csv",
+      "summary": "zerochain_missing_cell_outflow_summary.csv"
+    },
+    "note": "amount_guess is best-effort because Cellframe datum structures vary. Use raw_json rows to validate how transfer datums encode from/to/value."
+  },
+  "market_sale_quantification": {
+    "status": "unresolved",
+    "proven_sold_amount_cell": null,
+    "note": "Bridge-out evidence exists, but BSC/DEX/OTC sale route has not been quantified yet."
+  },
+  "confidence": {
+    "unmatched_emissions": "high",
+    "deduped_top_wallet_concentration": "high",
+    "bridge_out_link": "high",
+    "scheme_participant_wallet_classification": "medium",
+    "open_market_sale_amount": "unresolved"
+  },
+  "methodology": {
+    "deduplication_key": "datum_hash, fallback mint_time+mint_to+token+amount",
+    "target_tokens": [
+      "CELL",
+      "CF20",
+      "mCELL"
+    ],
+    "important_limitations": [
+      "Known wallet matching may be incomplete.",
+      "Emission records prove receipt, not sale.",
+      "Bridge-out transaction proves external-chain exit route, not final market sale.",
+      "BSC/DEX/OTC tracing remains pending for exact sold amount.",
+      "Official disclosure figure and independent unmatched-emission figure are not assumed to be identical."
+    ]
+  },
+  "outputs": {
+    "deduped_events_csv": "missing_cell_events_deduped.csv",
+    "deduped_wallets_csv": "missing_cell_wallets_deduped.csv",
+    "master_summary_json": "audit_master_summary.json",
+    "evidence_hashes_json": "evidence_hashes.json",
+    "evidence_hashes_csv": "evidence_hashes.csv"
+  }
+}
