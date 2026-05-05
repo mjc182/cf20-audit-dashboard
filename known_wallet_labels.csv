@@ -1,0 +1,3 @@
+address,manual_label,manual_class,notes
+0xfd64fa5976687c2048f08f5df89c9a78e31df680,Bridge Lock/Unlock Contract,BRIDGE_CLUSTER,Etherscan shows Lock Token and Unlock Token methods; routes to 0x4A831 and 0x35ce bridge infrastructure
+0xe6a2eca14d2b1b0a82dd9a407488004939fb5aad,Uniswap V3: CELL 2,LP_OR_POOL,CELL/WETH Uniswap pool; token transfers show CELL/WETH swap and collect activity
