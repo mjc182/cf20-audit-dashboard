@@ -1,24 +1,28 @@
 {
+  "eth": {
+    "bridge": {
+      "Bridge Intake": "0x4a831a8ebb160ad025d34a788c99e9320b9ab531",
+      "Aggregator L1": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+      "Aggregator L2": "0x50ebb0827aa80ba1a2a30b38581629996262d481",
+      "Secondary Distributor": "0x52105eee8e836ff9e60cb02c0a665cbe2fc3a30d",
+      "Router / Exchange-like": "0x9c4cc862f51b1ba90485de3502aa058ca4331f32"
+    }
+  },
   "bsc": {
-    "exchanges": {
+    "exchange": {
       "MEXC 13": "0x4982085C9e2F89F2eCb8131Eca71aFAD896e89CB",
       "Gate.io 1": "0x0D0707963952f2fBA59dD06f2b425ace40b492Fe",
       "MEXC 5": "0x2e8F79aD740de90dC5F5A9F0D8D9661a60725e64",
       "BitMart 7": "0xeACB50a28630a4C44a884158eE85cBc10d2B3F10"
     },
-    "liquidity_pools": {
+    "liquidity_pool": {
       "PancakeSwap v3 WBNB/CELL Pool": "0xA2C1e0237bF4B58bC9808A579715dF57522F41b2"
     },
-    "tracked_wallets": {
-      "Top non-exchange holder": "0xe0ca82008f52dd94a4314c4869a0294e8c136f1d"
-    }
-  },
-  "eth": {
-    "bridge_wallets": {
-      "Bridge intake": "0x4A831a8ebb160aD025D34A788c99e9320B9aB531",
-      "Aggregator L1": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
-      "Aggregator L2": "0x50ebb0827aa80ba1a2a30b38581629996262d481",
-      "Router / exchange-like": "0x9c4cc862F51B1Ba90485De3502AA058CA4331F32"
+    "large_holder": {
+      "Top Non-Exchange Holder": "0xe0CA82008F52Dd94a4314C4869A0294e8c136F1d"
+    },
+    "bridge_trace": {
+      "BEP20 Bridge-Out Destination 0x1fa": "0x1fa6348d9b13d316c62d54f62bea4e1a7207d9d6"
     }
   }
 }
