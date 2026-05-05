@@ -143,7 +143,7 @@ st.markdown(f"""
   <div style="font-size:1.22rem;font-weight:900;color:#f8fafc;margin-bottom:8px;">High-confidence unmatched mCELL/CELL issuance detected</div>
   <div style="color:#cbd5e1;line-height:1.65;">
     Independent emission matching identified approximately <b>{missing_display} CELL/mCELL</b> that could not be matched to known ETH/BSC bridge deposit flows.
-    This closely aligns with the official disclosure of <b>{OFFICIAL_ILLEGAL_MTOKENS:,} illegal m-tokens</b>, equivalent to approximately <b>{OFFICIAL_CELL_EQUIV:,.0f} CELL</b> at 12,500 CELL per m-token.
+    This closely aligns with the official disclosure of <b>{OFFICIAL_ILLEGAL_MTOKENS:,} illegal m-tokens</b>, equivalent to approximately <b>{OFFICIAL_CELL_EQUIV:,.0f} CELL</b> at 1,000 CELL per mCELL.
     <br><br>A separate <b>DATUM_TX</b> record links the largest unmatched recipient wallet to a <b>BRIDGE OUT BEP20</b> transaction. The amount definitively sold on open markets remains unresolved pending BSC/DEX/OTC destination tracing.
   </div>
 </div>
