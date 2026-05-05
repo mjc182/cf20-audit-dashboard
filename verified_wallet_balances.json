@@ -1,0 +1,56 @@
+[
+  {
+    "chain": "bsc",
+    "group": "exchanges",
+    "label": "MEXC 13",
+    "address": "0x4982085C9e2F89F2eCb8131Eca71aFAD896e89CB",
+    "balance_raw": "5657459037979772056740220",
+    "balance_tokens": 5657459.037979772,
+    "supply_percent": 16.989366480419736
+  },
+  {
+    "chain": "bsc",
+    "group": "exchanges",
+    "label": "Gate.io 1",
+    "address": "0x0D0707963952f2fBA59dD06f2b425ace40b492Fe",
+    "balance_raw": "3785304277115186967535607",
+    "balance_tokens": 3785304.277115187,
+    "supply_percent": 11.367280111457017
+  },
+  {
+    "chain": "bsc",
+    "group": "exchanges",
+    "label": "MEXC 5",
+    "address": "0x2e8F79aD740de90dC5F5A9F0D8D9661a60725e64",
+    "balance_raw": "2918969955117536589112453",
+    "balance_tokens": 2918969.9551175367,
+    "supply_percent": 8.765675540893502
+  },
+  {
+    "chain": "bsc",
+    "group": "exchanges",
+    "label": "BitMart 7",
+    "address": "0xeACB50a28630a4C44a884158eE85cBc10d2B3F10",
+    "balance_raw": "651207308104353220878486",
+    "balance_tokens": 651207.3081043533,
+    "supply_percent": 1.9555775018148744
+  },
+  {
+    "chain": "bsc",
+    "group": "liquidity_pools",
+    "label": "PancakeSwap v3 WBNB/CELL Pool",
+    "address": "0xA2C1e0237bF4B58bC9808A579715dF57522F41b2",
+    "balance_raw": "1761681301538100779724046",
+    "balance_tokens": 1761681.3015381007,
+    "supply_percent": 5.290334238853156
+  },
+  {
+    "chain": "bsc",
+    "group": "tracked_wallets",
+    "label": "Top non-exchange holder",
+    "address": "0xe0ca82008f52dd94a4314c4869a0294e8c136f1d",
+    "balance_raw": "1889567361768625274202464",
+    "balance_tokens": 1889567.3617686252,
+    "supply_percent": 5.674376461767643
+  }
+]
