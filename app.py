@@ -22,6 +22,7 @@ TERMINALS = Path("bridge_cluster_terminal_endpoints.csv")
 UNCLASSIFIED = Path("bridge_cluster_unclassified_wallets.csv")
 MISSING_WALLETS_DEDUPED = Path("missing_cell_wallets_deduped.csv")
 MISSING_WALLETS = Path("missing_cell_wallets.csv")
+CURRENT_BRIDGE_IMAGE = Path("assets/current_bridge_model.png")
 
 CELL_PER_MCELL = 1000
 
