@@ -1,0 +1,2 @@
+step,chain,block_number,from,to,amount_cell,tx_hash,classification,finding,evidence_status
+12,bsc,34691012,0xda8a4204de68f959ca2302c4febc4ee5b6cc32f5,0x0d0707963952f2fba59dd06f2b425ace40b492fe,500000,0xb1609fb3b9536e772b396d642939be5dadb6abadb490aa5f025b9dbcd733e021,cex_route,Second verified 500k CELL route from 0xda8a... to Gate.io-labelled endpoint.,verified
