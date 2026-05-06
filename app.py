@@ -204,6 +204,112 @@ code {
     padding:2px 5px;
     border-radius:6px;
 }
+
+.bridge-image-shell {
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    background:
+        linear-gradient(180deg, rgba(5, 14, 28, 0.98), rgba(4, 12, 24, 0.96)),
+        radial-gradient(circle at 20% 10%, rgba(56,189,248,.10), transparent 30%),
+        radial-gradient(circle at 85% 10%, rgba(168,85,247,.10), transparent 25%);
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.08) inset,
+        0 24px 65px rgba(0, 0, 0, 0.40),
+        0 0 32px rgba(34, 211, 238, 0.06);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.bridge-image-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.bridge-image-title {
+    font-size: 1.55rem;
+    font-weight: 950;
+    color: #f8fafc;
+    letter-spacing: -0.04em;
+    margin: 0;
+}
+
+.bridge-image-subtitle {
+    color: #93c5fd;
+    font-size: 0.95rem;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.bridge-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    background: linear-gradient(180deg, rgba(6, 30, 22, 0.95), rgba(5, 22, 18, 0.95));
+    color: #86efac;
+    font-size: 0.88rem;
+    font-weight: 850;
+    white-space: nowrap;
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.10);
+}
+
+.bridge-image-frame {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    background: rgba(2, 8, 23, 0.92);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.02),
+        0 0 28px rgba(56,189,248,.07);
+}
+
+.bridge-footnote {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin-top: 10px;
+}
+
+.bridge-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.bridge-mini-card {
+    border: 1px solid rgba(148,163,184,.18);
+    background: rgba(15,23,42,.70);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.bridge-mini-card .mini-label {
+    color: #94a3b8;
+    font-size: .74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.bridge-mini-card .mini-value {
+    color: #f8fafc;
+    font-size: 1.15rem;
+    font-weight: 950;
+    margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+    .bridge-mini-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 """,
     unsafe_allow_html=True,
@@ -252,6 +358,53 @@ def metric_card(label, value, sub="", color=""):
         """,
         unsafe_allow_html=True,
     )
+
+
+
+def render_current_bridge_model_image():
+    st.markdown("""
+        <div class="bridge-image-shell">
+            <div class="bridge-image-header">
+                <div>
+                    <div class="bridge-image-title">Current Bridge Model</div>
+                    <div class="bridge-image-subtitle">
+                        Observed bridge infrastructure and downstream routing paths
+                    </div>
+                </div>
+                <div class="bridge-status-chip">● Audit evidence: On-chain verified</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    if CURRENT_BRIDGE_IMAGE.exists():
+        st.markdown('<div class="bridge-image-frame">', unsafe_allow_html=True)
+        st.image(str(CURRENT_BRIDGE_IMAGE), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("""
+            <div class="bridge-mini-grid">
+                <div class="bridge-mini-card">
+                    <div class="mini-label">Bridge infrastructure</div>
+                    <div class="mini-value">Lock / Unlock observed</div>
+                </div>
+                <div class="bridge-mini-card">
+                    <div class="mini-label">Market route exposure</div>
+                    <div class="mini-value">CEX · DEX · MEV</div>
+                </div>
+                <div class="bridge-mini-card">
+                    <div class="mini-label">Audit caveat</div>
+                    <div class="mini-value">Exposure ≠ sale amount</div>
+                </div>
+            </div>
+            <div class="bridge-footnote">
+                This visual summarizes the currently observed bridge-facing wallets, lock/unlock contracts,
+                intake wallets, consolidation layer, and downstream market-routing endpoints identified during
+                the audit. It is a visual summary of current evidence and may be updated as additional wallet labels
+                are verified.
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.warning("Bridge model image not found at assets/current_bridge_model.png")
 
 
 def sidebar():
@@ -353,7 +506,7 @@ st.write("")
 k1, k2, k3, k4, k5 = st.columns(5)
 
 with k1:
-    metric_card("Deduped unmatched CELL", missing_display, "Independent unmatched-emission estimate", "red")
+    metric_card("Unreconciled CELL emissions", missing_display, "Deduped events not yet matched to indexed bridge/reserve evidence", "red")
 with k2:
     metric_card("mCELL equivalent", missing_mcell_display, "CELL ÷ 1,000", "orange")
 with k3:
@@ -392,28 +545,8 @@ for col, (num, title, copy, chip_class, chip) in zip([c1, c2, c3, c4, c5], cards
             unsafe_allow_html=True,
         )
 
-st.markdown("## Current Bridge Model")
-
-st.markdown(
-    """
-<div class="flow-wrap">
-  <div class="flow-grid">
-    <div class="flow-node"><b>0xfd64...</b><br><span>Bridge Lock / Unlock endpoint<br>Methods: Lock Token, Unlock Token</span></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-node"><b>0x4A831...</b><br><span>Bridge Token intake / router<br>User-facing bridge calls</span></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-node"><b>0x35ce...</b><br><span>Bridge aggregator<br>Routes to distributor wallets</span></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-node"><b>0x50ebb / 0x65def / 0xd3ec</b><br><span>Distributor layer<br>Multi-hop routing cluster</span></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-node"><b>0xda8a / 0x9c4...</b><br><span>Consolidation / market hub<br>Routes into CEX and DEX</span></div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-node"><b>Gate.io / MEXC / Uniswap / 1inch</b><br><span>Market infrastructure<br>CEX, DEX/router, MEV endpoints</span></div>
-  </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
+st.markdown("## 🌉 Current Bridge Model")
+render_current_bridge_model_image()
 
 st.markdown("## Route Exposure Summary")
 
