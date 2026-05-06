@@ -1,0 +1,388 @@
+{
+  "bridge_contracts": [
+    {
+      "address": "0xfd64fa5976687c2048f08f5df89c9a78e31df680",
+      "label": "Bridge Lock/Unlock Contract",
+      "class": "BRIDGE_CLUSTER",
+      "evidence": "Etherscan transaction methods show Lock Token and Unlock Token. Observed unlock routes include 0x4A831... and 0x35ce....",
+      "audit_status": "Bridge lock/unlock infrastructure identified; not full reserve reconciliation by itself."
+    },
+    {
+      "address": "0x4a831a8ebb160ad025d34a788c99e9320b9ab531",
+      "label": "Bridge intake / Bridge Token target",
+      "class": "BRIDGE_CLUSTER",
+      "evidence": "Etherscan shows repeated Bridge Token calls; address currently held a large CELL balance during manual inspection.",
+      "audit_status": "Bridge-facing intake/router identified."
+    },
+    {
+      "address": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+      "label": "Bridge aggregator",
+      "class": "BRIDGE_CLUSTER",
+      "evidence": "Receives from bridge intake and routes to 0x50ebb..., 0x52105..., and 0xda8a....",
+      "audit_status": "Aggregator/distributor bridge route identified."
+    }
+  ],
+  "bridge_cluster": [
+    {
+      "address": "0x50ebb0827aa80ba1a2a30b38581629996262d481",
+      "label": "Major distributor"
+    },
+    {
+      "address": "0x65def3ea531fd80354ec11c611ae4faa06068f27",
+      "label": "Downstream distributor"
+    },
+    {
+      "address": "0xd3ec4a0113091ed2b0a3edbfdf1476efe07c8539",
+      "label": "Downstream distributor"
+    },
+    {
+      "address": "0x71f95edf9dd132970036fa3202d313ac2a4b9468",
+      "label": "Downstream distributor"
+    },
+    {
+      "address": "0xda8a4204de68f959ca2302c4febc4ee5b6cc32f5",
+      "label": "Consolidation wallet"
+    },
+    {
+      "address": "0x52105eee8e836ff9e60cb02c0a665cbe2fc3a30d",
+      "label": "Secondary distributor"
+    },
+    {
+      "address": "0x9c4cc862f51b1ba90485de3502aa058ca4331f32",
+      "label": "Router / exchange-like hub"
+    }
+  ],
+  "manual_findings": [
+    {
+      "finding": "Bridge lock/unlock endpoint identified",
+      "status": "New evidence",
+      "details": "0xfd64... shows Lock Token and Unlock Token methods and routes to known bridge infrastructure."
+    },
+    {
+      "finding": "CEX routes identified",
+      "status": "Strongly supported",
+      "details": "Traversal reaches Gate.io and MEXC-labelled wallets."
+    },
+    {
+      "finding": "DEX / swap routes identified",
+      "status": "Strongly supported",
+      "details": "Traversal reaches Uniswap, 1inch, MetaMask Swaps, ParaSwap, CoW, and other router/settlement endpoints."
+    },
+    {
+      "finding": "Exact sale amount",
+      "status": "Not directly visible",
+      "details": "Route exposure does not equal exact sale volume because paths can overlap/loop and CEX internal trades are off-chain."
+    }
+  ],
+  "cluster_metrics": {
+    "reachable_wallets": 968,
+    "discovered_edges": 7368,
+    "terminal_endpoint_count": 12,
+    "unclassified_wallet_count": 946,
+    "manual_labels_loaded": 1,
+    "known_cex_routes_cell_possible": 34891274.24055864,
+    "known_dex_router_routes_cell_possible": 18005549.981371474,
+    "known_mev_routes_cell_possible": 7807859.89022645
+  },
+  "terminal_summary": [
+    {
+      "address": "0x0d0707963952f2fba59dd06f2b425ace40b492fe",
+      "label": "Gate.io 1",
+      "class": "CEX",
+      "route_exposure_possible_cell": 26844681.00384876,
+      "paths": 123,
+      "direct_edge_count": 123
+    },
+    {
+      "address": "0x6b75d8af000000e20b7a7ddf000ba900b4009a80",
+      "label": "MEV Bot",
+      "class": "MEV_OR_SEARCHER",
+      "route_exposure_possible_cell": 7807859.89022645,
+      "paths": 38,
+      "direct_edge_count": 38
+    },
+    {
+      "address": "0x75e89d5979e4f6fba9f97c104c2f0afb3f1dcb88",
+      "label": "MEXC 1",
+      "class": "CEX",
+      "route_exposure_possible_cell": 5965317.15886942,
+      "paths": 108,
+      "direct_edge_count": 108
+    },
+    {
+      "address": "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad",
+      "label": "Uniswap Universal Router",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 5847681.30229135,
+      "paths": 35,
+      "direct_edge_count": 35
+    },
+    {
+      "address": "0x74de5d4fcbf63e00296fd95d33236b9794016631",
+      "label": "MetaMask: Swaps Spender",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 4401196.87111721,
+      "paths": 117,
+      "direct_edge_count": 117
+    },
+    {
+      "address": "0x1111111254eeb25477b68fb85ed929f73a960582",
+      "label": "1inch Aggregation Router V5",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 3536885.08822251,
+      "paths": 47,
+      "direct_edge_count": 47
+    },
+    {
+      "address": "0x3cc936b795a188f0e246cbb2d74c5bd190aecf18",
+      "label": "MEXC 3",
+      "class": "CEX",
+      "route_exposure_possible_cell": 2081276.07784046,
+      "paths": 56,
+      "direct_edge_count": 56
+    },
+    {
+      "address": "0xef1c6e67703c7bd7107eed8303fbe6ec2554bf6b",
+      "label": "Uniswap / router contract",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 1090979.6040017,
+      "paths": 28,
+      "direct_edge_count": 28
+    },
+    {
+      "address": "0x7a250d5630b4cf539739df2c5dacb4c659f2488d",
+      "label": "Uniswap V2 Router 2",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 885311.17253927,
+      "paths": 5,
+      "direct_edge_count": 5
+    },
+    {
+      "address": "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+      "label": "ParaSwap / router contract",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 829162.27512582,
+      "paths": 42,
+      "direct_edge_count": 42
+    },
+    {
+      "address": "0x000000000035b5e5ad9019092c665357240f594e",
+      "label": "Aggregator / settlement contract",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 777660.5737797,
+      "paths": 9,
+      "direct_edge_count": 9
+    },
+    {
+      "address": "0x9008d19f58aabd9ed0d60971565aa8510560ab41",
+      "label": "CoW Protocol Settlement",
+      "class": "DEX_ROUTER",
+      "route_exposure_possible_cell": 636673.09429391,
+      "paths": 37,
+      "direct_edge_count": 37
+    }
+  ],
+  "top_unclassified": [
+    {
+      "address": "0xe6a2eca14d2b1b0a82dd9a407488004939fb5aad",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 5581636.73158914,
+      "outgoing_cell_all_dataset": 5572327.12489969,
+      "net_cell_all_dataset": 9309.60668944,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0xdba9184305207f843d7fe57a49a9079981ba4298",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 3529311.30501946,
+      "outgoing_cell_all_dataset": 4024091.98172265,
+      "net_cell_all_dataset": -494780.67670319,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0x7ca898cbbed67df0b4e249b05561d3a23404eed0",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 2939885.31611658,
+      "outgoing_cell_all_dataset": 2939895.06599604,
+      "net_cell_all_dataset": -9.74987946,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x5f9ecf757137d5ef4330ab72d18163c2f221befd",
+      "first_seen_hop": 3,
+      "incoming_cell_all_dataset": 2416317.40932257,
+      "outgoing_cell_all_dataset": 2412589.81233969,
+      "net_cell_all_dataset": 3727.59698287,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x13307b8854a95946b54a904100afd0767a7a577b",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 2048026.79469709,
+      "outgoing_cell_all_dataset": 2364790.21884885,
+      "net_cell_all_dataset": -316763.42415177,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0x63756a3c3bf677baab9d9e06457402ed05be8570",
+      "first_seen_hop": 3,
+      "incoming_cell_all_dataset": 2130604.44272452,
+      "outgoing_cell_all_dataset": 2130604.44272452,
+      "net_cell_all_dataset": -0.0,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x15b7031491548963581ba5979a8792f012b6fc12",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1707637.87756947,
+      "outgoing_cell_all_dataset": 2122419.57357998,
+      "net_cell_all_dataset": -414781.69601051,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0x00000000a991c429ee2ec6df19d40fe0c80088b8",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 2061632.00867125,
+      "outgoing_cell_all_dataset": 2061631.94688509,
+      "net_cell_all_dataset": 0.06178616,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0xa7ca2c8673bcfa5a26d8ceec2887f2cc2b0db22a",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 2016179.37876728,
+      "outgoing_cell_all_dataset": 2016179.37876728,
+      "net_cell_all_dataset": 0.0,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0xe37e799d5077682fa0a244d46e5649f71457bd09",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1965456.22313136,
+      "outgoing_cell_all_dataset": 1965456.22313137,
+      "net_cell_all_dataset": -0.0,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0xf226e1dd15c857a74a0af32f266f8e5187c367d9",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1855083.74601312,
+      "outgoing_cell_all_dataset": 1839158.6248394,
+      "net_cell_all_dataset": 15925.12117372,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0x9642b23ed1e01df1092b92641051881a322f5d4e",
+      "first_seen_hop": 2,
+      "incoming_cell_all_dataset": 2298297.4155916,
+      "outgoing_cell_all_dataset": 1684267.19214286,
+      "net_cell_all_dataset": 614030.22344874,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0xe66b31678d6c16e9ebf358268a790b763c133750",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1436147.23948711,
+      "outgoing_cell_all_dataset": 1436147.2394871,
+      "net_cell_all_dataset": 0.0,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0x08866a21550853e5eef6ef40a8daf871b9843fff",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1414943.75745606,
+      "outgoing_cell_all_dataset": 1400915.08009529,
+      "net_cell_all_dataset": 14028.67736077,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0xa4c8cb43b079172050e7c2c20ac03649160bbdea",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1068942.64978226,
+      "outgoing_cell_all_dataset": 1188942.64978684,
+      "net_cell_all_dataset": -120000.00000458,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0xa701f9db977c98f9043b20225b4322f94dbd50db",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1188109.55976461,
+      "outgoing_cell_all_dataset": 1155277.44487944,
+      "net_cell_all_dataset": 32832.11488517,
+      "suggested_review": "large unclassified downstream wallet"
+    },
+    {
+      "address": "0xa88800cd213da5ae406ce248380802bd53b47647",
+      "first_seen_hop": 2,
+      "incoming_cell_all_dataset": 1104295.36860136,
+      "outgoing_cell_all_dataset": 1104295.36860136,
+      "net_cell_all_dataset": 0.0,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0x62d63efdfdc7804666725f4cc8cb45c1a41a0809",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1100612.70391199,
+      "outgoing_cell_all_dataset": 1100612.70391199,
+      "net_cell_all_dataset": 0.0,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x22f9dcf4647084d6c31b2765f6910cd85c178c18",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1088840.32729209,
+      "outgoing_cell_all_dataset": 1088840.32729209,
+      "net_cell_all_dataset": -0.0,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0x4400b633e90947c59903759e2121abcd83ddfa22",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 1055042.81990135,
+      "outgoing_cell_all_dataset": 1055042.81990135,
+      "net_cell_all_dataset": 0.0,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x4e4be94266681284c2bb51e89a8074539d19e8d3",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 838227.54924392,
+      "outgoing_cell_all_dataset": 838227.54924393,
+      "net_cell_all_dataset": -0.0,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0x722ba4621a225e7870f6d87787a10a2c156469a7",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 841783.0984522,
+      "outgoing_cell_all_dataset": 830292.45568338,
+      "net_cell_all_dataset": 11490.64276882,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0xb1b2d032aa2f52347fbcfd08e5c3cc55216e8404",
+      "first_seen_hop": 3,
+      "incoming_cell_all_dataset": 799169.32,
+      "outgoing_cell_all_dataset": 797807.83649049,
+      "net_cell_all_dataset": 1361.48350951,
+      "suggested_review": "large balanced pass-through wallet"
+    },
+    {
+      "address": "0xdd753bae6a83cc91b9b2a21428ddf3ef223b45f9",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 796631.85370316,
+      "outgoing_cell_all_dataset": 787937.92752098,
+      "net_cell_all_dataset": 8693.92618219,
+      "suggested_review": "high-activity unclassified routing wallet"
+    },
+    {
+      "address": "0x007933790a4f00000099e9001629d9fe7775b800",
+      "first_seen_hop": 1,
+      "incoming_cell_all_dataset": 714498.26439,
+      "outgoing_cell_all_dataset": 714498.26305,
+      "net_cell_all_dataset": 0.00134,
+      "suggested_review": "large balanced pass-through wallet"
+    }
+  ],
+  "important_note": "All route amounts are route-exposure evidence from an aggregated graph. They are not exact final sale amounts. CEX deposits prove custody routing, but exchange-internal trades are off-chain. DEX/router paths require transaction-level log verification to quantify executed swaps."
+}

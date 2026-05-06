@@ -1,0 +1,28 @@
+{
+  "max_hops": 5,
+  "min_amount": 1000.0,
+  "max_edges_per_node": 75,
+  "manual_labels_loaded": 1,
+  "seed_wallet_count": 9,
+  "reachable_wallets": 968,
+  "discovered_edges": 7368,
+  "terminal_endpoint_count": 12,
+  "unclassified_wallet_count": 946,
+  "terminal_classes": [
+    "CEX",
+    "DEX_ROUTER",
+    "LP_OR_POOL",
+    "MEV_OR_SEARCHER"
+  ],
+  "known_cex_routes_cell_possible": 34891274.24055864,
+  "known_dex_router_routes_cell_possible": 18005549.981371474,
+  "known_mev_routes_cell_possible": 7807859.89022645,
+  "important_note": "Amounts are route-exposure evidence from an aggregated transfer graph. They are not exact final sale amounts because paths can overlap, loop, or terminate inside CEX custody where internal trades are off-chain.",
+  "outputs": {
+    "edges": "bridge_cluster_edges.csv",
+    "paths": "bridge_cluster_paths.csv",
+    "terminal_endpoints": "bridge_cluster_terminal_endpoints.csv",
+    "unclassified": "bridge_cluster_unclassified_wallets.csv",
+    "summary": "bridge_cluster_summary.json"
+  }
+}
