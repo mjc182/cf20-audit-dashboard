@@ -18,6 +18,7 @@ st.set_page_config(
 
 MASTER = Path("audit_master_summary.json")
 BRIDGE_INFRA = Path("bridge_infrastructure_summary.json")
+BRIDGE_CLUSTER_SUMMARY = Path("bridge_cluster_summary.json")
 TERMINALS = Path("bridge_cluster_terminal_endpoints.csv")
 UNCLASSIFIED = Path("bridge_cluster_unclassified_wallets.csv")
 MISSING_WALLETS_DEDUPED = Path("missing_cell_wallets_deduped.csv")
@@ -347,6 +348,25 @@ def fmt_num(n):
     return f"{n:,.2f}"
 
 
+
+def get_metric_value(primary, fallback, key, default=0):
+    """
+    Robust metric lookup:
+    1. bridge_infrastructure_summary.json -> cluster_metrics[key]
+    2. bridge_infrastructure_summary.json -> root[key]
+    3. bridge_cluster_summary.json -> root[key]
+    """
+    primary_metrics = primary.get("cluster_metrics", {}) if isinstance(primary, dict) else {}
+
+    for source in [primary_metrics, primary, fallback]:
+        if isinstance(source, dict):
+            value = source.get(key)
+            if value not in [None, "", 0, 0.0]:
+                return value
+
+    return default
+
+
 def metric_card(label, value, sub="", color=""):
     st.markdown(
         f"""
@@ -453,6 +473,7 @@ sidebar()
 
 master = load_json(MASTER)
 bridge = load_json(BRIDGE_INFRA)
+cluster_summary = load_json(BRIDGE_CLUSTER_SUMMARY)
 metrics = bridge.get("cluster_metrics", {})
 terminals = load_csv(TERMINALS)
 unclassified = load_csv(UNCLASSIFIED)
@@ -471,9 +492,9 @@ if missing_cell is None and not wallets.empty and "missing_cell" in wallets.colu
 missing_display = fmt_num(missing_cell) if missing_cell is not None else "—"
 missing_mcell_display = fmt_num(missing_mcell) if missing_mcell is not None else "—"
 
-cex_exposure = metrics.get("known_cex_routes_cell_possible", 0)
-dex_exposure = metrics.get("known_dex_router_routes_cell_possible", 0)
-mev_exposure = metrics.get("known_mev_routes_cell_possible", 0)
+cex_exposure = get_metric_value(bridge, cluster_summary, "known_cex_routes_cell_possible", 0)
+dex_exposure = get_metric_value(bridge, cluster_summary, "known_dex_router_routes_cell_possible", 0)
+mev_exposure = get_metric_value(bridge, cluster_summary, "known_mev_routes_cell_possible", 0)
 
 # ==============================
 # HERO
@@ -560,6 +581,32 @@ with r3:
     metric_card("Known MEV exposure", f"{float(mev_exposure):,.2f} CELL", "MEV/searcher-labelled endpoint(s)", "orange")
 
 st.caption("Route exposure means graph-path exposure, not exact final sale volume. Paths can overlap or loop.")
+
+
+st.markdown(
+    """
+<div class="panel" style="margin-top:14px;">
+  <div style="font-size:1.08rem;font-weight:950;color:#f8fafc;margin-bottom:8px;">
+    Route exposure is not total supply
+  </div>
+  <div style="color:#cbd5e1;line-height:1.65;">
+    The CEX, DEX/router, and MEV figures above show <b>where CELL moved through the transaction graph</b>.
+    They do <b>not</b> mean total supply increased by those amounts, and they should not be added together as a
+    final sale or supply figure.
+    <br><br>
+    A single batch of CELL can move through multiple endpoints — for example:
+    <code>bridge wallet → distributor → DEX router → MEV bot → CEX</code>.
+    That same CELL can therefore appear in more than one route-exposure category.
+    <br><br>
+    <b>Total supply is a separate audit question.</b> It must be assessed using token-contract
+    <code>totalSupply</code>, mint/burn events, bridge lock/unlock accounting, cross-chain reserve backing,
+    and any official consolidated-supply disclosure.
+  </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
 
 # ==============================
 # TERMINALS TABLE
