@@ -1,0 +1,56 @@
+{
+  "generated_at_utc": "2026-05-06T12:23:09Z",
+  "methodology_note": "Supply verification is separate from route exposure. Raw ETH+BSC totalSupply can double count bridge-backed supply if one side is locked and another side is minted.",
+  "tokens": {
+    "ethereum": "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+    "bsc": "0xd98438889ae7364c7e2a3540547fad042fb24642"
+  },
+  "chain_summaries": [
+    {
+      "chain": "ethereum",
+      "status": "ok",
+      "token": "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+      "block_number": 25035961,
+      "name": "Cellframe Token",
+      "symbol": "CELL",
+      "decimals": 18,
+      "total_supply_raw": "30300000000000000000000000",
+      "total_supply_cell": "30300000",
+      "bridge_or_reserve_candidate_balance_raw": "1162177993418946355147138",
+      "bridge_or_reserve_candidate_balance_cell": "1162177.993418946355147138",
+      "burn_balance_raw": "565000000090711061392527",
+      "burn_balance_cell": "565000.000090711061392527",
+      "apparent_non_reserve_supply_cell": "28572822.006490342583460335",
+      "reserve_candidate_count": 7
+    },
+    {
+      "chain": "bsc",
+      "status": "ok",
+      "token": "0xd98438889ae7364c7e2a3540547fad042fb24642",
+      "block_number": 96703856,
+      "name": "Cellframe ERC20 v2",
+      "symbol": "CELL",
+      "decimals": 18,
+      "total_supply_raw": "33300000000000000000000000",
+      "total_supply_cell": "33300000",
+      "bridge_or_reserve_candidate_balance_raw": "0",
+      "bridge_or_reserve_candidate_balance_cell": "0",
+      "burn_balance_raw": "364282162510430874",
+      "burn_balance_cell": "0.364282162510430874",
+      "apparent_non_reserve_supply_cell": "33299999.635717837489569126",
+      "reserve_candidate_count": 0
+    }
+  ],
+  "cross_chain_summary": {
+    "raw_contract_supply_across_indexed_chains_cell": "63600000",
+    "configured_bridge_or_reserve_candidate_balance_cell": "1162177.993418946355147138",
+    "configured_burn_balance_cell": "565000.364372873571823401",
+    "apparent_non_reserve_supply_across_indexed_chains_cell": "61872821.642208180073029461"
+  },
+  "important_caveats": [
+    "Raw ETH + BSC totalSupply may double count bridge-backed supply.",
+    "Reserve candidate balances must be complete before apparent non-reserve supply is treated as an audit conclusion.",
+    "CEX/DEX/MEV route exposure is movement-path evidence and is not totalSupply.",
+    "Full proof requires totalSupply, mints, burns, lock/unlock events, and reserve balances at comparable block times."
+  ]
+}
