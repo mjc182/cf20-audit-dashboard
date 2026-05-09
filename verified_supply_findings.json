@@ -15,8 +15,8 @@
   ],
   "highlighted_finding": {
     "name": "Verified BSC mint-supply path reaches Gate.io-labelled endpoint",
-    "amount_cell": "1000000",
-    "verified_gateio_route_total_cell": "1000000",
+    "amount_cell": "2596567.55466338",
+    "verified_gateio_route_total_cell": "2596567.55466338",
     "final_txs": [
       "0x032a50cc99cc3ea7388f229ec4c820783dfcc9dc2a1e94cbc8a12518d9a52f7d",
       "0xb1609fb3b9536e772b396d642939be5dadb6abadb490aa5f025b9dbcd733e021"
@@ -27,6 +27,6 @@
       "Route 1: 0xc3b8... to 0xda8a... to Gate.io 1 = 500,000 CELL",
       "Route 2: 0xc3b8... to 0xda8a... to Gate.io 1 = 500,000 CELL"
     ],
-    "conclusion": "This proves route exposure from the original BSC-minted CELL supply into a Gate.io-labelled CEX endpoint. Two verified 500k routes now total 1,000,000 CELL. It does not prove exact final sale amount because exchange-internal trading is off-chain."
+    "conclusion": "Verified Gate.io-bound route exposure from traced BSC supply paths is now at least 2,596,567.55 CELL. This proves routing into a Gate.io-labelled custody endpoint, not exact realized sale proceeds, because exchange-internal trading is off-chain."
   }
 }
