@@ -1,0 +1,316 @@
+{
+  "chain": "bsc",
+  "token": "0xd98438889ae7364c7e2a3540547fad042fb24642",
+  "target_wallet": "0x65def3ea531fd80354ec11c611ae4faa06068f27",
+  "start_block": 21943290,
+  "end_block": 96716000,
+  "latest_processed_block": 27273716,
+  "current_balance_cell": "0",
+  "change_count": 20,
+  "event_count": 22,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 21943418,
+      "balance_before_raw": "33300000000000000000000000",
+      "balance_before_cell": "33300000",
+      "balance_after_raw": "3300000000000000000000000",
+      "balance_after_cell": "3300000",
+      "delta_cell": "-30000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 2,
+      "block_number": 21943636,
+      "balance_before_raw": "3300000000000000000000000",
+      "balance_before_cell": "3300000",
+      "balance_after_raw": "3299750000000000000000000",
+      "balance_after_cell": "3299750",
+      "delta_cell": "-250",
+      "logs_found": 1
+    },
+    {
+      "change_number": 3,
+      "block_number": 21947383,
+      "balance_before_raw": "3299750000000000000000000",
+      "balance_before_cell": "3299750",
+      "balance_after_raw": "3299600000000000000000000",
+      "balance_after_cell": "3299600",
+      "delta_cell": "-150",
+      "logs_found": 1
+    },
+    {
+      "change_number": 4,
+      "block_number": 22703227,
+      "balance_before_raw": "3299600000000000000000000",
+      "balance_before_cell": "3299600",
+      "balance_after_raw": "3299500000000000000000000",
+      "balance_after_cell": "3299500",
+      "delta_cell": "-100",
+      "logs_found": 1
+    },
+    {
+      "change_number": 5,
+      "block_number": 22763201,
+      "balance_before_raw": "3299500000000000000000000",
+      "balance_before_cell": "3299500",
+      "balance_after_raw": "3299400000000000000000000",
+      "balance_after_cell": "3299400",
+      "delta_cell": "-100",
+      "logs_found": 1
+    },
+    {
+      "change_number": 6,
+      "block_number": 22847377,
+      "balance_before_raw": "3299400000000000000000000",
+      "balance_before_cell": "3299400",
+      "balance_after_raw": "1299400000000000000000000",
+      "balance_after_cell": "1299400",
+      "delta_cell": "-2000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 7,
+      "block_number": 23048332,
+      "balance_before_raw": "1299400000000000000000000",
+      "balance_before_cell": "1299400",
+      "balance_after_raw": "299400000000000000000000",
+      "balance_after_cell": "299400",
+      "delta_cell": "-1000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 8,
+      "block_number": 23048620,
+      "balance_before_raw": "299400000000000000000000",
+      "balance_before_cell": "299400",
+      "balance_after_raw": "3299400000000000000000000",
+      "balance_after_cell": "3299400",
+      "delta_cell": "3000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 9,
+      "block_number": 23152288,
+      "balance_before_raw": "3299400000000000000000000",
+      "balance_before_cell": "3299400",
+      "balance_after_raw": "2359400000000000000000000",
+      "balance_after_cell": "2359400",
+      "delta_cell": "-940000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 10,
+      "block_number": 23298163,
+      "balance_before_raw": "2359400000000000000000000",
+      "balance_before_cell": "2359400",
+      "balance_after_raw": "2359300000000000000000000",
+      "balance_after_cell": "2359300",
+      "delta_cell": "-100",
+      "logs_found": 1
+    },
+    {
+      "change_number": 11,
+      "block_number": 23325381,
+      "balance_before_raw": "2359300000000000000000000",
+      "balance_before_cell": "2359300",
+      "balance_after_raw": "1702732445336624737632000",
+      "balance_after_cell": "1702732.445336624737632",
+      "delta_cell": "-656567.554663375262368",
+      "logs_found": 1
+    },
+    {
+      "change_number": 12,
+      "block_number": 23325555,
+      "balance_before_raw": "1702732445336624737632000",
+      "balance_before_cell": "1702732.445336624737632",
+      "balance_after_raw": "1701008305336624737632000",
+      "balance_after_cell": "1701008.305336624737632",
+      "delta_cell": "-1724.14",
+      "logs_found": 2
+    },
+    {
+      "change_number": 13,
+      "block_number": 23325575,
+      "balance_before_raw": "1701008305336624737632000",
+      "balance_before_cell": "1701008.305336624737632",
+      "balance_after_raw": "1696166877640344737632000",
+      "balance_after_cell": "1696166.877640344737632",
+      "delta_cell": "-4841.42769628",
+      "logs_found": 2
+    },
+    {
+      "change_number": 14,
+      "block_number": 23671447,
+      "balance_before_raw": "1696166877640344737632000",
+      "balance_before_cell": "1696166.877640344737632",
+      "balance_after_raw": "696166877640344737632000",
+      "balance_after_cell": "696166.877640344737632",
+      "delta_cell": "-1000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 15,
+      "block_number": 24125642,
+      "balance_before_raw": "696166877640344737632000",
+      "balance_before_cell": "696166.877640344737632",
+      "balance_after_raw": "694666877640344737632000",
+      "balance_after_cell": "694666.877640344737632",
+      "delta_cell": "-1500",
+      "logs_found": 1
+    },
+    {
+      "change_number": 16,
+      "block_number": 24806774,
+      "balance_before_raw": "694666877640344737632000",
+      "balance_before_cell": "694666.877640344737632",
+      "balance_after_raw": "94666877640344737632000",
+      "balance_after_cell": "94666.877640344737632",
+      "delta_cell": "-600000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 17,
+      "block_number": 25686172,
+      "balance_before_raw": "94666877640344737632000",
+      "balance_before_cell": "94666.877640344737632",
+      "balance_after_raw": "3094666877640344737632000",
+      "balance_after_cell": "3094666.877640344737632",
+      "delta_cell": "3000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 18,
+      "block_number": 25686402,
+      "balance_before_raw": "3094666877640344737632000",
+      "balance_before_cell": "3094666.877640344737632",
+      "balance_after_raw": "1094666877640344737632000",
+      "balance_after_cell": "1094666.877640344737632",
+      "delta_cell": "-2000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 19,
+      "block_number": 26647847,
+      "balance_before_raw": "1094666877640344737632000",
+      "balance_before_cell": "1094666.877640344737632",
+      "balance_after_raw": "500000877640344737632000",
+      "balance_after_cell": "500000.877640344737632",
+      "delta_cell": "-594666",
+      "logs_found": 1
+    },
+    {
+      "change_number": 20,
+      "block_number": 27273715,
+      "balance_before_raw": "500000877640344737632000",
+      "balance_before_cell": "500000.877640344737632",
+      "balance_after_raw": "0",
+      "balance_after_cell": "0",
+      "delta_cell": "-500000.877640344737632",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change.",
+  "complete_trace_result": {
+    "target_wallet": "0x65def3ea531fd80354ec11c611ae4faa06068f27",
+    "final_balance_cell": "0",
+    "outbound_events": 20,
+    "inbound_events": 2,
+    "total_outbound_cell": "39306565.567696280000000",
+    "total_inbound_cell": "6000000",
+    "unique_recipients": 13,
+    "top_recipients": [
+      {
+        "recipient": "0xc3b8a652e59d59a71b00808c1fb2432857080ab8",
+        "first_block": 21943418,
+        "amount_cell": "30000000",
+        "txs": 1,
+        "share_of_total_out_percent": "76.32312710794353723998256929"
+      },
+      {
+        "recipient": "0x8bbf051e8dfaa9c477bbd63fa5013ab3b988e218",
+        "first_block": 22763201,
+        "amount_cell": "4000100",
+        "txs": 3,
+        "share_of_total_out_percent": "10.17667135814949811045514251"
+      },
+      {
+        "recipient": "0xda8a4204de68f959ca2302c4febc4ee5b6cc32f5",
+        "first_block": 23152288,
+        "amount_cell": "2634666.877640344737632",
+        "txs": 4,
+        "share_of_total_out_percent": "6.702867166307758465186265556"
+      },
+      {
+        "recipient": "0xb4e47c13db187d54839cd1e08422af57e5348fc1",
+        "first_block": 23048332,
+        "amount_cell": "1000000",
+        "txs": 1,
+        "share_of_total_out_percent": "2.544104236931451241332752310"
+      },
+      {
+        "recipient": "0xefb9402a2c98524818e5bc72240c0988401c5974",
+        "first_block": 23671447,
+        "amount_cell": "1000000",
+        "txs": 1,
+        "share_of_total_out_percent": "2.544104236931451241332752310"
+      },
+      {
+        "recipient": "0x0d0707963952f2fba59dd06f2b425ace40b492fe",
+        "first_block": 23325381,
+        "amount_cell": "656567.554663375262368",
+        "txs": 1,
+        "share_of_total_out_percent": "1.670376297650815222858050787"
+      },
+      {
+        "recipient": "0x63aba321ada36f7b749804d29cc8e6cdebdbeafc",
+        "first_block": 23325575,
+        "amount_cell": "9682.85539256",
+        "txs": 2,
+        "share_of_total_out_percent": "0.02463419342980644655920554666"
+      },
+      {
+        "recipient": "0xa939ed0c4d7b364ea726a1726c318f77fc90fef3",
+        "first_block": 23325555,
+        "amount_cell": "3448.28",
+        "txs": 2,
+        "share_of_total_out_percent": "0.008772783758125984686462903135"
+      },
+      {
+        "recipient": "0xe6243da580b09521f13b9732b23f474d1ad6bd09",
+        "first_block": 24125642,
+        "amount_cell": "1500",
+        "txs": 1,
+        "share_of_total_out_percent": "0.003816156355397176861999128465"
+      },
+      {
+        "recipient": "0x1c15f4e3fd885a34660829ae692918b4b9c1803d",
+        "first_block": 21943636,
+        "amount_cell": "250",
+        "txs": 1,
+        "share_of_total_out_percent": "0.0006360260592328628103331880774"
+      },
+      {
+        "recipient": "0xcc6328b2372f8ebbae15222de82fbc8b1ed378c1",
+        "first_block": 21947383,
+        "amount_cell": "150",
+        "txs": 1,
+        "share_of_total_out_percent": "0.0003816156355397176861999128465"
+      },
+      {
+        "recipient": "0xe46c285d2e6cdedfb4567f46c98bd2179fc2885e",
+        "first_block": 22703227,
+        "amount_cell": "100",
+        "txs": 1,
+        "share_of_total_out_percent": "0.0002544104236931451241332752310"
+      },
+      {
+        "recipient": "0xdc498209deecb868ace2d47e137afa52d6e1256e",
+        "first_block": 23298163,
+        "amount_cell": "100",
+        "txs": 1,
+        "share_of_total_out_percent": "0.0002544104236931451241332752310"
+      }
+    ]
+  }
+}
