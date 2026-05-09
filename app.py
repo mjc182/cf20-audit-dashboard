@@ -760,7 +760,7 @@ st.markdown(
     </div>
     <div class="holo">
       <div class="float-card float-left"><b>ON-CHAIN</b><br>Transparent<br>Verifiable<br>Reproducible</div>
-      <div class="holo-core">CELLFRAME</div>
+      <div class="holo-core">CELL</div>
       <div class="float-card float-right"><b>INDEPENDENT</b><br>No team keys<br>No off-chain claims<br>Evidence-first</div>
     </div>
   </div>
