@@ -1,0 +1,66 @@
+{
+  "generated_at_utc": "2026-05-06T13:50:39Z",
+  "methodology_note": "Supply events are derived from ERC-20 Transfer logs. Mint means Transfer from zero address. Burn-to-zero means Transfer to zero address. Transfers to 0xdead are reported separately because they usually do not reduce ERC-20 totalSupply.",
+  "tokens": {
+    "ethereum": "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+    "bsc": "0xd98438889ae7364c7e2a3540547fad042fb24642"
+  },
+  "scan_settings": {
+    "eth_start_block": 11500000,
+    "bsc_start_block": 21943190,
+    "log_chunk_size": 10,
+    "min_log_chunk_size": 25
+  },
+  "chain_summaries": [
+    {
+      "chain": "ethereum",
+      "status": "missing_rpc",
+      "error": "ethereum RPC not configured"
+    },
+    {
+      "chain": "bsc",
+      "status": "ok",
+      "token": "0xd98438889ae7364c7e2a3540547fad042fb24642",
+      "name": "Cellframe ERC20 v2",
+      "symbol": "CELL",
+      "decimals": 18,
+      "start_block": 21943190,
+      "end_block": 21948290,
+      "total_supply_raw": "33300000000000000000000000",
+      "total_supply_cell": "33300000",
+      "mint_event_count": 1,
+      "burn_to_zero_event_count": 0,
+      "burn_to_dead_event_count": 0,
+      "minted_raw": "33300000000000000000000000",
+      "minted_cell": "33300000",
+      "burned_to_zero_raw": "0",
+      "burned_to_zero_cell": "0",
+      "burned_to_dead_raw": "0",
+      "burned_to_dead_cell": "0",
+      "burned_total_raw": "0",
+      "burned_total_cell": "0",
+      "event_implied_supply_raw": "33300000000000000000000000",
+      "event_implied_supply_cell": "33300000",
+      "event_implied_supply_including_dead_raw": "33300000000000000000000000",
+      "event_implied_supply_including_dead_cell": "33300000",
+      "total_supply_minus_event_implied_raw": "0",
+      "total_supply_minus_event_implied_cell": "0",
+      "note": "event_implied_supply uses mints minus burns to zero address. Dead-address transfers are reported separately because not every ERC-20 reduces totalSupply when tokens are sent to 0xdead."
+    }
+  ],
+  "cross_chain_event_summary": {
+    "minted_cell": "33300000",
+    "burned_to_zero_cell": "0",
+    "burned_to_dead_cell": "0",
+    "burned_total_cell": "0",
+    "contract_total_supply_cell": "33300000",
+    "event_implied_supply_cell": "33300000"
+  },
+  "important_caveats": [
+    "Event-implied supply should approximately match contract totalSupply when all logs from deployment are scanned.",
+    "If start_block is too late, historical mint/burn events will be missed.",
+    "Transfers to 0xdead may be economically burned but usually do not reduce totalSupply.",
+    "Raw ETH + BSC totalSupply can double count bridged supply if one side is locked while another side is minted.",
+    "This scan explains supply-changing events. It does not quantify route exposure or final sale proceeds."
+  ]
+}
