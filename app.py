@@ -746,7 +746,7 @@ st.markdown(
   <div class="hero-inner">
     <div>
       <div class="eyebrow">● On-chain verified evidence package</div>
-      <h1>Independent<br>On-Chain Audit of <span class="gradient-text">CF20 / CELL</span></h1>
+      <h1>Independent<br>On-Chain Audit of <span class="gradient-text">CELL</span></h1>
       <div class="hero-copy">
         Bridge infrastructure has been identified, market-route exposure has been mapped,
         and verified supply evidence now connects BSC mint creation to exchange custody infrastructure.
