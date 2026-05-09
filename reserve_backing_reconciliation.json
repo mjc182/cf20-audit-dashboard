@@ -1,0 +1,77 @@
+{
+  "status": "partial_candidate_backing_only",
+  "methodology_note": "Inventories current balances for reserve/custody candidates. Market terminals/routers/CEX/DEX/MEV/zero/dead addresses are excluded from backing by default. Use reserve_backing_manual_labels.csv for overrides.",
+  "chain_info": {
+    "eth": {
+      "status": "ok",
+      "token": "0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+      "decimals": 18,
+      "block_number": 25056404,
+      "total_supply_raw": "30300000000000000000000000",
+      "total_supply_cell": "30300000"
+    },
+    "bsc": {
+      "status": "ok",
+      "token": "0xd98438889ae7364c7e2a3540547fad042fb24642",
+      "decimals": 18,
+      "block_number": 97249946,
+      "total_supply_raw": "33300000000000000000000000",
+      "total_supply_cell": "33300000"
+    }
+  },
+  "candidate_count": 976,
+  "totals": {
+    "eth_total_supply_cell": "30300000",
+    "bsc_total_supply_cell": "33300000",
+    "raw_eth_plus_bsc_contract_supply_cell": "63600000",
+    "eth_backing_candidate_included_cell": "990044.194980390198616311",
+    "bsc_backing_candidate_included_cell": "0",
+    "all_chain_backing_candidate_included_cell": "990044.194980390198616311",
+    "eth_market_terminal_excluded_cell": "3.154429313437524577",
+    "bsc_market_terminal_excluded_cell": "0",
+    "eth_burn_or_zero_excluded_cell": "0",
+    "bsc_burn_or_zero_excluded_cell": "0.364282162510430874",
+    "bsc_supply_minus_eth_backing_candidate_cell": "32309955.805019609801383689",
+    "raw_supply_minus_included_candidates_and_burns_cell": "62609955.440737447290952815"
+  },
+  "interpretation": {
+    "bsc_backing_test": "If BSC CELL is claimed to be fully backed by ETH locked reserves, ETH backing-eligible balances should be at least BSC totalSupply unless other verified accounting is supplied.",
+    "current_result": "If status is partial or unresolved, configured candidates do not yet prove full backing. Add verified reserve wallets to reserve_backing_manual_labels.csv and rerun.",
+    "important_caveat": "A wallet balance alone does not prove reserve backing. Backing requires classification, custody control, and exclusion of market terminals."
+  },
+  "counts_by_bucket": {
+    "bsc:burn_or_zero_excluded": 2,
+    "bsc:manual_excluded": 1,
+    "bsc:unclassified_candidate": 2,
+    "bsc:backing_candidate_auto": 3,
+    "eth:burn_or_zero_excluded": 1,
+    "eth:manual_excluded": 25,
+    "eth:unclassified_candidate": 923,
+    "eth:market_terminal_excluded": 13,
+    "eth:backing_candidate_auto": 5,
+    "eth:manual_backing_included": 1
+  },
+  "balances_by_bucket": {
+    "bsc:burn_or_zero_excluded": "0.364282162510430874",
+    "bsc:burn_or_zero_total": "0.364282162510430874",
+    "bsc:manual_excluded": "3668555.077115186967535607",
+    "bsc:unclassified_candidate": "0",
+    "bsc:backing_candidate_auto": "0",
+    "bsc:backing_included_total": "0",
+    "eth:burn_or_zero_excluded": "0",
+    "eth:burn_or_zero_total": "0",
+    "eth:manual_excluded": "1971047.759096659036691700",
+    "eth:unclassified_candidate": "4268248.589793162143756334",
+    "eth:market_terminal_excluded": "3.154429313437524577",
+    "eth:market_terminal_total": "3.154429313437524577",
+    "eth:backing_candidate_auto": "6.291456E-12",
+    "eth:backing_included_total": "990044.194980390198616311",
+    "eth:manual_backing_included": "990044.194980390192324855",
+    "bsc:market_terminal_total": "0"
+  },
+  "outputs": [
+    "reserve_backing_candidates.csv",
+    "reserve_backing_manual_labels_template.csv",
+    "reserve_backing_reconciliation.json"
+  ]
+}
