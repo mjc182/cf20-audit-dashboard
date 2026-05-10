@@ -1,0 +1,394 @@
+{
+  "target_wallet": "0x8bbf051e8dfaa9c477bbd63fa5013ab3b988e218",
+  "trace_status": "complete_zero_balance",
+  "final_balance_cell": "0",
+  "outbound_events": 2631,
+  "inbound_events": 3,
+  "total_outbound_cell": "5000100.000000000000000000",
+  "total_inbound_cell": "5000000",
+  "unique_recipients": 1754,
+  "latest_processed_block": 40749692,
+  "part_summaries": [
+    {
+      "file": "auto_trace_8bbf_summary.json",
+      "latest_processed_block": 23109888,
+      "current_balance_cell": "1248597.301780513333478",
+      "change_count": 200,
+      "event_count": 237
+    },
+    {
+      "file": "auto_trace_8bbf_part2_summary.json",
+      "latest_processed_block": 29901619,
+      "current_balance_cell": "433094.992256780838573893",
+      "change_count": 1000,
+      "event_count": 1020
+    },
+    {
+      "file": "auto_trace_8bbf_part3_summary.json",
+      "latest_processed_block": 36830695,
+      "current_balance_cell": "381381.690514040504318922",
+      "change_count": 1000,
+      "event_count": 1031
+    },
+    {
+      "file": "auto_trace_8bbf_part4_summary.json",
+      "latest_processed_block": 40749692,
+      "current_balance_cell": "0",
+      "change_count": 431,
+      "event_count": 449
+    }
+  ],
+  "top_recipients": [
+    {
+      "recipient": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+      "first_block": 27274847,
+      "amount_cell": "552542.49066854797",
+      "txs": 3,
+      "share_of_total_out_percent": "11.05062880079494350112997740"
+    },
+    {
+      "recipient": "0x6fd24951b4c659f1919a15c3301c2e6b51a606a3",
+      "first_block": 27256655,
+      "amount_cell": "274996.7",
+      "txs": 1,
+      "share_of_total_out_percent": "5.499824003519929601407971841"
+    },
+    {
+      "recipient": "0x584a0e1002c5354216091d2c4f7961c223894831",
+      "first_block": 22850184,
+      "amount_cell": "174594.59",
+      "txs": 2,
+      "share_of_total_out_percent": "3.491821963560728785424291514"
+    },
+    {
+      "recipient": "0x65def3ea531fd80354ec11c611ae4faa06068f27",
+      "first_block": 40749691,
+      "amount_cell": "113430.76112187157435663",
+      "txs": 1,
+      "share_of_total_out_percent": "2.268569851040410678919021620"
+    },
+    {
+      "recipient": "0x467274b3e3a73df69e581223ac469648860f04e5",
+      "first_block": 23482839,
+      "amount_cell": "97557.026",
+      "txs": 1,
+      "share_of_total_out_percent": "1.951101497970040599188016240"
+    },
+    {
+      "recipient": "0xd504b8251baaa93db421c558d4603fcf41f0681f",
+      "first_block": 24832234,
+      "amount_cell": "85561.07",
+      "txs": 18,
+      "share_of_total_out_percent": "1.711187176256474870502589948"
+    },
+    {
+      "recipient": "0xa13e81b67938821e0df2d7057f0d1345a1ed7253",
+      "first_block": 22851887,
+      "amount_cell": "80816.63307494244412",
+      "txs": 10,
+      "share_of_total_out_percent": "1.616300335492139039619207616"
+    },
+    {
+      "recipient": "0xee459c9e50f5e2cb58d4d76f0b68f75c66a86650",
+      "first_block": 23879729,
+      "amount_cell": "69899.53",
+      "txs": 14,
+      "share_of_total_out_percent": "1.397962640747185056298874023"
+    },
+    {
+      "recipient": "0x71cd50ba682de704fa0010a2da238fddbc958697",
+      "first_block": 22851522,
+      "amount_cell": "68357.9905496307",
+      "txs": 2,
+      "share_of_total_out_percent": "1.367132468343247135057298854"
+    },
+    {
+      "recipient": "0xad539ef1257f61fe15e878b9b7d5d1abe2156678",
+      "first_block": 25099378,
+      "amount_cell": "58114.085311913304283075",
+      "txs": 105,
+      "share_of_total_out_percent": "1.162258461069044704767404652"
+    },
+    {
+      "recipient": "0xa8d03c7184e27fc36c3039bbb95399f96f24699c",
+      "first_block": 25601305,
+      "amount_cell": "51114.78",
+      "txs": 10,
+      "share_of_total_out_percent": "1.022275154496910061798764025"
+    },
+    {
+      "recipient": "0x0e42e4e7866274c2d43b32c77d08ebb2d9bb9438",
+      "first_block": 25602386,
+      "amount_cell": "50203.57804198881",
+      "txs": 3,
+      "share_of_total_out_percent": "1.004051479810179996400071999"
+    },
+    {
+      "recipient": "0x0c64bc24ce9b49b68d92af7b8013be895f2bc56c",
+      "first_block": 36796959,
+      "amount_cell": "44999.3",
+      "txs": 1,
+      "share_of_total_out_percent": "0.8999680006399872002559948801"
+    },
+    {
+      "recipient": "0x97ee4ed562c7ed22f4ff7dc3fc4a24b5f0b9627e",
+      "first_block": 25088699,
+      "amount_cell": "44146.3963",
+      "txs": 4,
+      "share_of_total_out_percent": "0.8829102677946441071178576428"
+    },
+    {
+      "recipient": "0x9cbf959138803220865c0ab934a856871db7f260",
+      "first_block": 34493379,
+      "amount_cell": "40838.1176",
+      "txs": 1,
+      "share_of_total_out_percent": "0.8167460170796584068318633627"
+    },
+    {
+      "recipient": "0x3ed5201f38965efdf75f4d371cbfb647b0a9504b",
+      "first_block": 24833412,
+      "amount_cell": "39851.653775482256782718",
+      "txs": 5,
+      "share_of_total_out_percent": "0.7970171351669417968184236315"
+    },
+    {
+      "recipient": "0x82912818bca0674ade6b96edce134cdeef7d018d",
+      "first_block": 29693938,
+      "amount_cell": "37874.41661689468866213",
+      "txs": 1,
+      "share_of_total_out_percent": "0.7574731828742362885168296634"
+    },
+    {
+      "recipient": "0xc3cf5655ba64fb07cd4d7aa09e82837ed5af1a8e",
+      "first_block": 32705519,
+      "amount_cell": "35774.4426",
+      "txs": 1,
+      "share_of_total_out_percent": "0.7154745425091498170036599268"
+    },
+    {
+      "recipient": "0x0dffa6d27a1f3dddd0bc37c7fb6b44b32da61ddd",
+      "first_block": 25297825,
+      "amount_cell": "34490.719",
+      "txs": 1,
+      "share_of_total_out_percent": "0.6898005839883202335953280934"
+    },
+    {
+      "recipient": "0xf7247434d02f6484c5d440100aa264cf66a4a718",
+      "first_block": 23476479,
+      "amount_cell": "30850.093068655467758749",
+      "txs": 59,
+      "share_of_total_out_percent": "0.6169895215826777016209475810"
+    },
+    {
+      "recipient": "0x8376fc6848653373162b7bc55667c52df11ec5e2",
+      "first_block": 27030853,
+      "amount_cell": "30400",
+      "txs": 1,
+      "share_of_total_out_percent": "0.6079878402431951360972780544"
+    },
+    {
+      "recipient": "0xc30e562c8440d47a84f945174234a1c3abc2d776",
+      "first_block": 31674317,
+      "amount_cell": "29896",
+      "txs": 2,
+      "share_of_total_out_percent": "0.5979080418391632167356652867"
+    },
+    {
+      "recipient": "0xa12171fecd8e54ea1e4a3df0f6a0ac14fb6fd987",
+      "first_block": 27387285,
+      "amount_cell": "29491.095379",
+      "txs": 3,
+      "share_of_total_out_percent": "0.5898101113777724445511089778"
+    },
+    {
+      "recipient": "0x3f051cd48466d7e06a37617b4774a76d3f5133ea",
+      "first_block": 22851213,
+      "amount_cell": "28450.8895763288958",
+      "txs": 3,
+      "share_of_total_out_percent": "0.5690064113983499490010199796"
+    },
+    {
+      "recipient": "0x6e521694edc193b07a136df5eca0d6e9fed75a5f",
+      "first_block": 23359677,
+      "amount_cell": "26638",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5327493450130997380052398952"
+    },
+    {
+      "recipient": "0xdb8023c404d15bbea7252f55009ade37a03c82a1",
+      "first_block": 37121100,
+      "amount_cell": "26544",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5308693826123477530449391012"
+    },
+    {
+      "recipient": "0xf94e6ff61a97a763831bf61e1a0ccf54bdafce54",
+      "first_block": 27279545,
+      "amount_cell": "26534.90827",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5306875516489670206595868083"
+    },
+    {
+      "recipient": "0xdd498c81d6fe6e562bf01f8a1bfc4f9348b99af2",
+      "first_block": 36895814,
+      "amount_cell": "26039.525635366313338449",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5207800971053841590857982840"
+    },
+    {
+      "recipient": "0x4e0be60fa9e77c897c6387aaa16ea9c7e6fd3f68",
+      "first_block": 27150390,
+      "amount_cell": "25265.25",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5052948941021179576408471831"
+    },
+    {
+      "recipient": "0x724a28b573c9206521b9a02c0c098687efe0186e",
+      "first_block": 30077077,
+      "amount_cell": "25003.843155260421297055",
+      "txs": 1,
+      "share_of_total_out_percent": "0.5000668617679730664797704046"
+    },
+    {
+      "recipient": "0x8d699ecabcd6a05ec1bfa11137ab3ddd06b798b7",
+      "first_block": 33846345,
+      "amount_cell": "24772.572937216969010299",
+      "txs": 121,
+      "share_of_total_out_percent": "0.4954415499133411133837123258"
+    },
+    {
+      "recipient": "0x0f10cc7686f11ed51085eab8f8cde4f2a3431344",
+      "first_block": 22916035,
+      "amount_cell": "24627.541622760237392217",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4925409816355720364036119278"
+    },
+    {
+      "recipient": "0xbd375a89cea1819510e27e288112ab6644b76b46",
+      "first_block": 25186545,
+      "amount_cell": "24294.41",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4858784824303513929721405572"
+    },
+    {
+      "recipient": "0x008196e948a499d0c43867910bfbf9d030a82dee",
+      "first_block": 23008461,
+      "amount_cell": "24145",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4828903421931561368772624548"
+    },
+    {
+      "recipient": "0xef88bdd10c397e8beeb42c3a4f1dd09465478a54",
+      "first_block": 26024502,
+      "amount_cell": "23718.404956434534588064",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4743586119564515627300253995"
+    },
+    {
+      "recipient": "0x8a3707daca88c3709249a2388e65f814da65761e",
+      "first_block": 22871792,
+      "amount_cell": "23298",
+      "txs": 1,
+      "share_of_total_out_percent": "0.4659506809863802723945521090"
+    },
+    {
+      "recipient": "0xd9c574614ecaab080df795aa3423d3146921973e",
+      "first_block": 34978737,
+      "amount_cell": "22335.631635970919371395",
+      "txs": 49,
+      "share_of_total_out_percent": "0.4467036986454454785183296334"
+    },
+    {
+      "recipient": "0x04d3f1ecd825d60f89b142c385870114771087ac",
+      "first_block": 35700692,
+      "amount_cell": "22003",
+      "txs": 5,
+      "share_of_total_out_percent": "0.4400511989760204795904081918"
+    },
+    {
+      "recipient": "0x77127e0e9f33e102b776d787a6eb4ce3a7605ce3",
+      "first_block": 23081914,
+      "amount_cell": "21187.44",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4237403251934961300773984520"
+    },
+    {
+      "recipient": "0x29253de4a23033073a400e3d785058ce639386b7",
+      "first_block": 23146267,
+      "amount_cell": "20318.5615",
+      "txs": 1,
+      "share_of_total_out_percent": "0.4063631027379452410951780964"
+    },
+    {
+      "recipient": "0x8364f4ef3b15fde2d9b88fa3ca0ecc8b10b84f8c",
+      "first_block": 22933251,
+      "amount_cell": "20258.74",
+      "txs": 2,
+      "share_of_total_out_percent": "0.4051666966660666786664266715"
+    },
+    {
+      "recipient": "0xaff6db2974315b21b578efadb60a08603eb8edea",
+      "first_block": 30048872,
+      "amount_cell": "20006.5897",
+      "txs": 1,
+      "share_of_total_out_percent": "0.4001237915241695166096678066"
+    },
+    {
+      "recipient": "0xdf9446140cf1923bdac24b811c8ed3301d6ff2fa",
+      "first_block": 23884635,
+      "amount_cell": "20001.7711255",
+      "txs": 7,
+      "share_of_total_out_percent": "0.4000274219615607687846243075"
+    },
+    {
+      "recipient": "0x98562a503f6a4aabd5d7a514f7ca1a8acda232c4",
+      "first_block": 23084372,
+      "amount_cell": "19863.34",
+      "txs": 1,
+      "share_of_total_out_percent": "0.3972588548229035419291614168"
+    },
+    {
+      "recipient": "0x6dc08993c7023a9128103878ab38cd0746866a28",
+      "first_block": 23305364,
+      "amount_cell": "19000",
+      "txs": 1,
+      "share_of_total_out_percent": "0.3799924001519969600607987840"
+    },
+    {
+      "recipient": "0xd503f6ae68c2cf6af952f6778647e99b2617e896",
+      "first_block": 23477216,
+      "amount_cell": "18298",
+      "txs": 2,
+      "share_of_total_out_percent": "0.3659526809463810723785524290"
+    },
+    {
+      "recipient": "0x659d4e64ef8440c04c3eceeef625273b9a55102b",
+      "first_block": 25069245,
+      "amount_cell": "17999",
+      "txs": 3,
+      "share_of_total_out_percent": "0.3599728005439891202175956481"
+    },
+    {
+      "recipient": "0x3de1b88d621eb45bf6d87486fae7084531a28894",
+      "first_block": 22850250,
+      "amount_cell": "17924",
+      "txs": 1,
+      "share_of_total_out_percent": "0.3584728305433891322173556529"
+    },
+    {
+      "recipient": "0x7d758c92273fba75cf2c090b6af09c4d4cb898ec",
+      "first_block": 27315846,
+      "amount_cell": "17173",
+      "txs": 2,
+      "share_of_total_out_percent": "0.3434531309373812523749525009"
+    },
+    {
+      "recipient": "0xacd21f2e7b1b5ca4c321639f5d8b28de3403c6a0",
+      "first_block": 24635284,
+      "amount_cell": "16779.135601002239",
+      "txs": 3,
+      "share_of_total_out_percent": "0.3355760005000347793044139117"
+    }
+  ],
+  "audit_interpretation": "0x8bbf is a high-volume downstream distribution wallet. It was traced across multiple parts to zero balance, with broad distribution across many recipients."
+}
