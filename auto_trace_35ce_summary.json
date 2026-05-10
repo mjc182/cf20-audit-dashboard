@@ -1,0 +1,237 @@
+{
+  "chain": "bsc",
+  "token": "0xd98438889ae7364c7e2a3540547fad042fb24642",
+  "target_wallet": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+  "start_block": 27274847,
+  "end_block": 96716000,
+  "latest_processed_block": 39546039,
+  "current_balance_cell": "0",
+  "change_count": 17,
+  "event_count": 17,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 27274950,
+      "balance_before_raw": "138135622667136980000000",
+      "balance_before_cell": "138135.62266713698",
+      "balance_after_raw": "555",
+      "balance_after_cell": "5.55E-16",
+      "delta_cell": "-138135.622667136979999445",
+      "logs_found": 1
+    },
+    {
+      "change_number": 2,
+      "block_number": 27275023,
+      "balance_before_raw": "555",
+      "balance_before_cell": "5.55E-16",
+      "balance_after_raw": "207203434000705500000555",
+      "balance_after_cell": "207203.434000705500000555",
+      "delta_cell": "207203.4340007055",
+      "logs_found": 1
+    },
+    {
+      "change_number": 3,
+      "block_number": 27275060,
+      "balance_before_raw": "207203434000705500000555",
+      "balance_before_cell": "207203.434000705500000555",
+      "balance_after_raw": "979",
+      "balance_after_cell": "9.79E-16",
+      "delta_cell": "-207203.434000705499999576",
+      "logs_found": 1
+    },
+    {
+      "change_number": 4,
+      "block_number": 27275136,
+      "balance_before_raw": "979",
+      "balance_before_cell": "9.79E-16",
+      "balance_after_raw": "207203434000705490000979",
+      "balance_after_cell": "207203.434000705490000979",
+      "delta_cell": "207203.43400070549",
+      "logs_found": 1
+    },
+    {
+      "change_number": 5,
+      "block_number": 27275168,
+      "balance_before_raw": "207203434000705490000979",
+      "balance_before_cell": "207203.434000705490000979",
+      "balance_after_raw": "577",
+      "balance_after_cell": "5.77E-16",
+      "delta_cell": "-207203.434000705490000402",
+      "logs_found": 1
+    },
+    {
+      "change_number": 6,
+      "block_number": 29701834,
+      "balance_before_raw": "577",
+      "balance_before_cell": "5.77E-16",
+      "balance_after_raw": "1099062194521440432326",
+      "balance_after_cell": "1099.062194521440432326",
+      "delta_cell": "1099.062194521440431749",
+      "logs_found": 1
+    },
+    {
+      "change_number": 7,
+      "block_number": 35005943,
+      "balance_before_raw": "1099062194521440432326",
+      "balance_before_cell": "1099.062194521440432326",
+      "balance_after_raw": "956062194521440432326",
+      "balance_after_cell": "956.062194521440432326",
+      "delta_cell": "-143",
+      "logs_found": 1
+    },
+    {
+      "change_number": 8,
+      "block_number": 35865330,
+      "balance_before_raw": "956062194521440432326",
+      "balance_before_cell": "956.062194521440432326",
+      "balance_after_raw": "194521440432326",
+      "balance_after_cell": "0.000194521440432326",
+      "delta_cell": "-956.062",
+      "logs_found": 1
+    },
+    {
+      "change_number": 9,
+      "block_number": 37066477,
+      "balance_before_raw": "194521440432326",
+      "balance_before_cell": "0.000194521440432326",
+      "balance_after_raw": "4971169859403894260767",
+      "balance_after_cell": "4971.169859403894260767",
+      "delta_cell": "4971.169664882453828441",
+      "logs_found": 1
+    },
+    {
+      "change_number": 10,
+      "block_number": 37333021,
+      "balance_before_raw": "4971169859403894260767",
+      "balance_before_cell": "4971.169859403894260767",
+      "balance_after_raw": "3971169859403894260767",
+      "balance_after_cell": "3971.169859403894260767",
+      "delta_cell": "-1000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 11,
+      "block_number": 37360389,
+      "balance_before_raw": "3971169859403894260767",
+      "balance_before_cell": "3971.169859403894260767",
+      "balance_after_raw": "3921169859403894260767",
+      "balance_after_cell": "3921.169859403894260767",
+      "delta_cell": "-50",
+      "logs_found": 1
+    },
+    {
+      "change_number": 12,
+      "block_number": 37366739,
+      "balance_before_raw": "3921169859403894260767",
+      "balance_before_cell": "3921.169859403894260767",
+      "balance_after_raw": "3911169859403894260767",
+      "balance_after_cell": "3911.169859403894260767",
+      "delta_cell": "-10",
+      "logs_found": 1
+    },
+    {
+      "change_number": 13,
+      "block_number": 38883839,
+      "balance_before_raw": "3911169859403894260767",
+      "balance_before_cell": "3911.169859403894260767",
+      "balance_after_raw": "193911169859403894260767",
+      "balance_after_cell": "193911.169859403894260767",
+      "delta_cell": "190000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 14,
+      "block_number": 38886247,
+      "balance_before_raw": "193911169859403894260767",
+      "balance_before_cell": "193911.169859403894260767",
+      "balance_after_raw": "140000169859403894260767",
+      "balance_after_cell": "140000.169859403894260767",
+      "delta_cell": "-53911",
+      "logs_found": 1
+    },
+    {
+      "change_number": 15,
+      "block_number": 39176080,
+      "balance_before_raw": "140000169859403894260767",
+      "balance_before_cell": "140000.169859403894260767",
+      "balance_after_raw": "100000169859403894260767",
+      "balance_after_cell": "100000.169859403894260767",
+      "delta_cell": "-40000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 16,
+      "block_number": 39176234,
+      "balance_before_raw": "100000169859403894260767",
+      "balance_before_cell": "100000.169859403894260767",
+      "balance_after_raw": "50000169859403894260767",
+      "balance_after_cell": "50000.169859403894260767",
+      "delta_cell": "-50000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 17,
+      "block_number": 39546038,
+      "balance_before_raw": "50000169859403894260767",
+      "balance_before_cell": "50000.169859403894260767",
+      "balance_after_raw": "0",
+      "balance_after_cell": "0",
+      "delta_cell": "-50000.169859403894260767",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change.",
+  "complete_trace_result": {
+    "target_wallet": "0x35ce1677d3d6aaaacd96510704d3c8617a12ee60",
+    "final_balance_cell": "0",
+    "outbound_events": 12,
+    "inbound_events": 5,
+    "total_outbound_cell": "748612.722527951864260190",
+    "total_inbound_cell": "610477.099860814884260190",
+    "unique_recipients": 6,
+    "top_recipients": [
+      {
+        "recipient": "0xa2c1e0237bf4b58bc9808a579715df57522f41b2",
+        "first_block": 27274950,
+        "amount_cell": "552542.490668547969999423",
+        "txs": 3,
+        "share_of_total_out_percent": "73.80885657442417011524161390"
+      },
+      {
+        "recipient": "0xda8a4204de68f959ca2302c4febc4ee5b6cc32f5",
+        "first_block": 38886247,
+        "amount_cell": "103911",
+        "txs": 2,
+        "share_of_total_out_percent": "13.88047475991434924303451272"
+      },
+      {
+        "recipient": "0x7d1a7fd9eb07e6d9f68bb94f8024d3b613d658fc",
+        "first_block": 39546038,
+        "amount_cell": "50000.169859403894260767",
+        "txs": 1,
+        "share_of_total_out_percent": "6.679043563481113169302810257"
+      },
+      {
+        "recipient": "0x231bfb95c2feaf36d41826da6299f13638d2513c",
+        "first_block": 35865330,
+        "amount_cell": "41016.062",
+        "txs": 4,
+        "share_of_total_out_percent": "5.478942685010076538980056413"
+      },
+      {
+        "recipient": "0x530548c86746cc2b33d44dc695b15d555847573e",
+        "first_block": 37333021,
+        "amount_cell": "1000",
+        "txs": 1,
+        "share_of_total_out_percent": "0.1335804174718205891872324655"
+      },
+      {
+        "recipient": "0xfcfc9568b1eefc0e48d56a8b99c30a9d7ed44be5",
+        "first_block": 35005943,
+        "amount_cell": "143",
+        "txs": 1,
+        "share_of_total_out_percent": "0.01910199969847034425377424257"
+      }
+    ]
+  }
+}
