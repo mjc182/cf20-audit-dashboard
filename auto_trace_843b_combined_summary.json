@@ -1,0 +1,331 @@
+{
+  "target_wallet": "0x843bb6a56619a6a175c9cb6b73a6a2eefd4d9946",
+  "trace_status": "segmented_multi_inbound_trace",
+  "segments": [
+    {
+      "segment": 1,
+      "start_block": 66418406,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 66419143,
+      "events_file": "auto_trace_843b_segment_01_events.csv",
+      "summary_file": "auto_trace_843b_segment_01_summary.json"
+    },
+    {
+      "segment": 2,
+      "start_block": 67000671,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 67001149,
+      "events_file": "auto_trace_843b_segment_02_events.csv",
+      "summary_file": "auto_trace_843b_segment_02_summary.json"
+    },
+    {
+      "segment": 3,
+      "start_block": 67686653,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 67686807,
+      "events_file": "auto_trace_843b_segment_03_events.csv",
+      "summary_file": "auto_trace_843b_segment_03_summary.json"
+    },
+    {
+      "segment": 4,
+      "start_block": 67814528,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 67814598,
+      "events_file": "auto_trace_843b_segment_04_events.csv",
+      "summary_file": "auto_trace_843b_segment_04_summary.json"
+    },
+    {
+      "segment": 5,
+      "start_block": 68010594,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 68011446,
+      "events_file": "auto_trace_843b_segment_05_events.csv",
+      "summary_file": "auto_trace_843b_segment_05_summary.json"
+    },
+    {
+      "segment": 6,
+      "start_block": 68028357,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 68028819,
+      "events_file": "auto_trace_843b_segment_06_events.csv",
+      "summary_file": "auto_trace_843b_segment_06_summary.json"
+    },
+    {
+      "segment": 7,
+      "start_block": 68391119,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 68391561,
+      "events_file": "auto_trace_843b_segment_07_events.csv",
+      "summary_file": "auto_trace_843b_segment_07_summary.json"
+    },
+    {
+      "segment": 8,
+      "start_block": 68927092,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 68927216,
+      "events_file": "auto_trace_843b_segment_08_events.csv",
+      "summary_file": "auto_trace_843b_segment_08_summary.json"
+    },
+    {
+      "segment": 9,
+      "start_block": 68959947,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 68960542,
+      "events_file": "auto_trace_843b_segment_09_events.csv",
+      "summary_file": "auto_trace_843b_segment_09_summary.json"
+    },
+    {
+      "segment": 10,
+      "start_block": 69308023,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 69308119,
+      "events_file": "auto_trace_843b_segment_10_events.csv",
+      "summary_file": "auto_trace_843b_segment_10_summary.json"
+    },
+    {
+      "segment": 11,
+      "start_block": 69309869,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 69310239,
+      "events_file": "auto_trace_843b_segment_11_events.csv",
+      "summary_file": "auto_trace_843b_segment_11_summary.json"
+    },
+    {
+      "segment": 12,
+      "start_block": 69982313,
+      "current_balance_cell": "0",
+      "change_count": 2,
+      "event_count": 2,
+      "latest_processed_block": 69982936,
+      "events_file": "auto_trace_843b_segment_12_events.csv",
+      "summary_file": "auto_trace_843b_segment_12_summary.json"
+    },
+    {
+      "segment": 13,
+      "start_block": 69982406,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 69982936,
+      "events_file": "auto_trace_843b_segment_13_events.csv",
+      "summary_file": "auto_trace_843b_segment_13_summary.json"
+    },
+    {
+      "segment": 14,
+      "start_block": 70095138,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 70095716,
+      "events_file": "auto_trace_843b_segment_14_events.csv",
+      "summary_file": "auto_trace_843b_segment_14_summary.json"
+    },
+    {
+      "segment": 15,
+      "start_block": 70108846,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 70109364,
+      "events_file": "auto_trace_843b_segment_15_events.csv",
+      "summary_file": "auto_trace_843b_segment_15_summary.json"
+    },
+    {
+      "segment": 16,
+      "start_block": 71237560,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 71237696,
+      "events_file": "auto_trace_843b_segment_16_events.csv",
+      "summary_file": "auto_trace_843b_segment_16_summary.json"
+    },
+    {
+      "segment": 17,
+      "start_block": 71706389,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 71706848,
+      "events_file": "auto_trace_843b_segment_17_events.csv",
+      "summary_file": "auto_trace_843b_segment_17_summary.json"
+    },
+    {
+      "segment": 18,
+      "start_block": 71831132,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 71831294,
+      "events_file": "auto_trace_843b_segment_18_events.csv",
+      "summary_file": "auto_trace_843b_segment_18_summary.json"
+    },
+    {
+      "segment": 19,
+      "start_block": 71836566,
+      "current_balance_cell": "0",
+      "change_count": 2,
+      "event_count": 2,
+      "latest_processed_block": 71836678,
+      "events_file": "auto_trace_843b_segment_19_events.csv",
+      "summary_file": "auto_trace_843b_segment_19_summary.json"
+    },
+    {
+      "segment": 20,
+      "start_block": 71836618,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 71836678,
+      "events_file": "auto_trace_843b_segment_20_events.csv",
+      "summary_file": "auto_trace_843b_segment_20_summary.json"
+    },
+    {
+      "segment": 21,
+      "start_block": 72049312,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 72050176,
+      "events_file": "auto_trace_843b_segment_21_events.csv",
+      "summary_file": "auto_trace_843b_segment_21_summary.json"
+    },
+    {
+      "segment": 22,
+      "start_block": 72051472,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 72051670,
+      "events_file": "auto_trace_843b_segment_22_events.csv",
+      "summary_file": "auto_trace_843b_segment_22_summary.json"
+    },
+    {
+      "segment": 23,
+      "start_block": 72058617,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 72058806,
+      "events_file": "auto_trace_843b_segment_23_events.csv",
+      "summary_file": "auto_trace_843b_segment_23_summary.json"
+    },
+    {
+      "segment": 24,
+      "start_block": 72638092,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 72638604,
+      "events_file": "auto_trace_843b_segment_24_events.csv",
+      "summary_file": "auto_trace_843b_segment_24_summary.json"
+    },
+    {
+      "segment": 25,
+      "start_block": 72639580,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 72640358,
+      "events_file": "auto_trace_843b_segment_25_events.csv",
+      "summary_file": "auto_trace_843b_segment_25_summary.json"
+    },
+    {
+      "segment": 26,
+      "start_block": 73322726,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73323078,
+      "events_file": "auto_trace_843b_segment_26_events.csv",
+      "summary_file": "auto_trace_843b_segment_26_summary.json"
+    },
+    {
+      "segment": 27,
+      "start_block": 73327840,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73328168,
+      "events_file": "auto_trace_843b_segment_27_events.csv",
+      "summary_file": "auto_trace_843b_segment_27_summary.json"
+    },
+    {
+      "segment": 28,
+      "start_block": 73445265,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73445310,
+      "events_file": "auto_trace_843b_segment_28_events.csv",
+      "summary_file": "auto_trace_843b_segment_28_summary.json"
+    },
+    {
+      "segment": 29,
+      "start_block": 73469641,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73470290,
+      "events_file": "auto_trace_843b_segment_29_events.csv",
+      "summary_file": "auto_trace_843b_segment_29_summary.json"
+    },
+    {
+      "segment": 30,
+      "start_block": 73552295,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73553080,
+      "events_file": "auto_trace_843b_segment_30_events.csv",
+      "summary_file": "auto_trace_843b_segment_30_summary.json"
+    },
+    {
+      "segment": 31,
+      "start_block": 73552564,
+      "current_balance_cell": "0",
+      "change_count": 1,
+      "event_count": 1,
+      "latest_processed_block": 73553080,
+      "events_file": "auto_trace_843b_segment_31_events.csv",
+      "summary_file": "auto_trace_843b_segment_31_summary.json"
+    }
+  ],
+  "outbound_events": 28,
+  "inbound_events": 2,
+  "total_outbound_cell": "3227000",
+  "total_inbound_cell": "170000",
+  "unique_recipients": 1,
+  "top_recipients": [
+    {
+      "recipient": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+      "first_block": 66419142,
+      "amount_cell": "3227000",
+      "txs": 28,
+      "share_of_total_out_percent": "100"
+    }
+  ],
+  "audit_interpretation": "0x843b received multiple intermittent top-ups from 0xc3b8. A segmented trace was used because one-shot balance tracing can stop after the first zero-balance cycle."
+}

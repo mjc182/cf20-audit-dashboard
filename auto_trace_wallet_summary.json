@@ -4,10 +4,10 @@
   "target_wallet": "0xe0ca82008f52dd94a4314c4869a0294e8c136f1d",
   "start_block": 42151986,
   "end_block": 96716000,
-  "latest_processed_block": 42668854,
-  "current_balance_cell": "5793909.802400000000442368",
-  "change_count": 47,
-  "event_count": 49,
+  "latest_processed_block": 42674175,
+  "current_balance_cell": "5823475.241400000000442368",
+  "change_count": 52,
+  "event_count": 54,
   "changes": [
     {
       "change_number": 1,
@@ -477,6 +477,56 @@
       "balance_after_raw": "5793909802400000000442368",
       "balance_after_cell": "5793909.802400000000442368",
       "delta_cell": "7088",
+      "logs_found": 1
+    },
+    {
+      "change_number": 48,
+      "block_number": 42669179,
+      "balance_before_raw": "5793909802400000000442368",
+      "balance_before_cell": "5793909.802400000000442368",
+      "balance_after_raw": "5799491591400000000442368",
+      "balance_after_cell": "5799491.591400000000442368",
+      "delta_cell": "5581.789",
+      "logs_found": 1
+    },
+    {
+      "change_number": 49,
+      "block_number": 42669588,
+      "balance_before_raw": "5799491591400000000442368",
+      "balance_before_cell": "5799491.591400000000442368",
+      "balance_after_raw": "5808771991400000000442368",
+      "balance_after_cell": "5808771.991400000000442368",
+      "delta_cell": "9280.4",
+      "logs_found": 1
+    },
+    {
+      "change_number": 50,
+      "block_number": 42673544,
+      "balance_before_raw": "5808771991400000000442368",
+      "balance_before_cell": "5808771.991400000000442368",
+      "balance_after_raw": "5813216991400000000442368",
+      "balance_after_cell": "5813216.991400000000442368",
+      "delta_cell": "4445",
+      "logs_found": 1
+    },
+    {
+      "change_number": 51,
+      "block_number": 42673907,
+      "balance_before_raw": "5813216991400000000442368",
+      "balance_before_cell": "5813216.991400000000442368",
+      "balance_after_raw": "5817654714400000000442368",
+      "balance_after_cell": "5817654.714400000000442368",
+      "delta_cell": "4437.723",
+      "logs_found": 1
+    },
+    {
+      "change_number": 52,
+      "block_number": 42674175,
+      "balance_before_raw": "5817654714400000000442368",
+      "balance_before_cell": "5817654.714400000000442368",
+      "balance_after_raw": "5823475241400000000442368",
+      "balance_after_cell": "5823475.241400000000442368",
+      "delta_cell": "5820.527",
       "logs_found": 1
     }
   ],
