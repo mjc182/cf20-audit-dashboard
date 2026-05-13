@@ -134,7 +134,7 @@ BSC_SUPPLY = D(reserve_totals.get("bsc_total_supply_cell") or circ_inputs.get("b
 RAW_SUPPLY = D(circ_inputs.get("raw_eth_plus_bsc_contract_supply_cell") or "63600000")
 BACKING = D(circ_estimates.get("conservative_non_circulating_cell") or "990044.19498039")
 CIRC_EST = D(circ_estimates.get("conservative_circulating_supply_estimate_cell") or "62609955.80501961")
-BSC_GAP = D(circ_estimates.get("bsc_supply_minus_verified_eth_backing_candidates_cell") or "32309955.80501961")
+BSC_GAP = D(circ_estimates.get("bsc_supply_minus_verified_eth_backing_MEXC referenceds_cell") or "32309955.80501961")
 
 GATEIO_EXPOSURE = D("2596567.55466338")
 OLD_CELL_UNLOCK = D("5207505.2")
@@ -337,7 +337,7 @@ st.markdown(
   <h1>CELLFRAME <span>On-Chain Audit</span></h1>
   <p>
     Independent on-chain evidence dashboard for CELL / CELLFRAME: supply tracing,
-    bridge analysis, reserve candidates, downstream wallet routing, exchange route exposure,
+    bridge analysis, reserve MEXC referenceds, downstream wallet routing, exchange route exposure,
     and claim verification.
   </p>
 </div>
@@ -354,7 +354,7 @@ m1, m2, m3, m4, m5 = st.columns(5)
 m1.metric("Raw ETH+BSC supply", f"{compact(RAW_SUPPLY)} CELL", "contract supply")
 m2.metric("Evidence-only circulating", f"{compact(CIRC_EST)} CELL", "estimate, not official")
 m3.metric("Gate.io route exposure", f"{compact(GATEIO_EXPOSURE)} CELL", "verified route")
-m4.metric("Backing candidates", f"{compact(BACKING)} CELL", "verified candidates")
+m4.metric("Backing MEXC referenceds", f"{compact(BACKING)} CELL", "verified MEXC referenceds")
 m5.metric("Public MEXC hits", f"{PUBLIC_MEXC_HITS}", "none detected")
 
 
@@ -483,7 +483,7 @@ with tabs[1]:
         },
         {
             "finding": "498208 endpoint behaviour",
-            "status": "partial high-activity endpoint trace",
+            "status": "partial high-activity MEXC endpoint trace",
             "evidence": "737 events captured, 126 unique recipients, 2.103M CELL outbound before trace cap.",
         },
         {
@@ -494,7 +494,7 @@ with tabs[1]:
         {
             "finding": "Reserve/backing reconciliation",
             "status": "open",
-            "evidence": "Verified candidates do not reconcile BSC supply; unresolved gap remains.",
+            "evidence": "Verified MEXC referenceds do not reconcile BSC supply; unresolved gap remains.",
         },
     ])
     show_df(findings)
@@ -511,11 +511,11 @@ with tabs[2]:
     s1.metric("ETH supply", f"{fmt(ETH_SUPPLY, 0)} CELL")
     s2.metric("BSC supply", f"{fmt(BSC_SUPPLY, 0)} CELL")
     s3.metric("Raw total", f"{fmt(RAW_SUPPLY, 0)} CELL")
-    s4.metric("Backing candidates", f"{fmt(BACKING, 2)} CELL")
+    s4.metric("Backing MEXC referenceds", f"{fmt(BACKING, 2)} CELL")
 
     st.warning(
         "The circulating estimate is evidence-only and not an official circulating supply figure. "
-        "It excludes only verified reserve/backing candidates."
+        "It excludes only verified reserve/backing MEXC referenceds."
     )
 
     s5, s6 = st.columns(2)
@@ -605,8 +605,8 @@ with tabs[5]:
     t1, t2, t3, t4 = st.columns(4)
     t1.metric("Received from 0xc3b8", "3.317M CELL", "33 inbound transfers")
     t2.metric("Routed to 0x498208", "3.227M CELL", "28 transfers")
-    t3.metric("Endpoint candidate", "0x498208", "high activity")
-    t4.metric("Label status", "candidate", "verify before naming exchange")
+    t3.metric("MEXC-referenced endpoint", "0x498208", "MEXC-labelled / high activity")
+    t4.metric("Endpoint label status", "MEXC referenced", "public label support found")
 
     st.info(
         "0x843b was an intermittent downstream distribution wallet. Segmented tracing shows "
@@ -621,16 +621,29 @@ with tabs[5]:
 
     st.divider()
 
-    st.subheader("498208 High-Activity Endpoint Candidate")
+    st.subheader("498208 MEXC-Referenced High-Activity Endpoint")
+
+st.success(
+    "Public label upgrade: 0x4982085c9e2f89f2ecb8131eca71afad896e89cb is publicly referenced by MEXC "
+    "as a BSC withdrawal address and is also labelled as MEXC 13 by public explorer/label sources. "
+    "This upgrades the 843b → 498208 route from an exchange/custody-style candidate to MEXC-referenced route exposure."
+)
+
+st.warning(
+    "Important limit: this proves MEXC-route exposure. It still does not prove exchange-internal sale execution, "
+    "sale price, depositing account owner, proceeds, or final beneficiary."
+)
+
+st.subheader("498208 MEXC-Referenced High-Activity Endpoint")
     e1, e2, e3, e4 = st.columns(4)
     e1.metric("Outbound captured", "2.103M CELL", "partial trace")
     e2.metric("Events captured", "737", "530 out / 207 in")
-    e3.metric("Unique recipients", "126", "high activity")
+    e3.metric("Unique recipients", "126", "MEXC-labelled / high activity")
     e4.metric("Balance at stop", "3.289M CELL", "trace cap reached")
 
     st.warning(
-        "0x498208 behaves like a high-activity custody/exchange-style endpoint candidate, not a passive reserve wallet. "
-        "The trace hit the change cap and should be treated as partial. Final exchange attribution requires label verification."
+        "0x498208 is publicly referenced by MEXC as a BSC withdrawal address and behaves like a high-activity exchange/custody endpoint, not a passive reserve wallet. "
+        "The trace hit the change cap and should be treated as partial. Exchange endpoint attribution is supported by public MEXC / explorer labels; sale execution still requires exchange-side records."
     )
 
     st.subheader("Direct 843b → 498208 Inflows")
@@ -646,6 +659,14 @@ with tabs[5]:
 
 with tabs[6]:
     st.header("Trust, Limits, and Verification Standard")
+
+    
+    st.info(
+        "Label note: 0x498208 is treated as MEXC-referenced because MEXC publicly identified it as a BSC withdrawal address, "
+        "and public explorer/label sources also label the address as MEXC 13. The dashboard still separates route exposure "
+        "from exchange-side sale execution."
+    )
+    
 
     t1, t2 = st.columns(2)
     with t1:
@@ -704,7 +725,7 @@ with tabs[7]:
         "circulating_supply_estimate.json",
         "circulating_supply_estimate.csv",
         "reserve_backing_reconciliation.json",
-        "reserve_backing_candidates.csv",
+        "reserve_backing_MEXC referenceds.csv",
         "auto_trace_c3b8_summary.json",
         "auto_trace_65def_summary.json",
         "auto_trace_da8a_summary.json",
