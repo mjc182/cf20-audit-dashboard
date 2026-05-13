@@ -77,7 +77,10 @@ def anchor(name: str):
 
 def show_df(df: pd.DataFrame, height=None):
     if df is not None and not df.empty:
-        st.dataframe(df, use_container_width=True, hide_index=True, height=height)
+        if height is None:
+            st.dataframe(df, use_container_width=True, hide_index=True)
+        else:
+            st.dataframe(df, use_container_width=True, hide_index=True, height=height)
 
 
 def file_present(path: str):
