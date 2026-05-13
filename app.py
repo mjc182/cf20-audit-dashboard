@@ -541,11 +541,13 @@ st.markdown(
   <div class="brand"><span class="brand-dot"></span> CELL / Cellframe Audit</div>
   <div class="nav">
     <a href="#overview">Overview</a>
+    <a href="#verdict">Verdict</a>
     <a href="#trust">Trust</a>
     <a href="#supply">Supply</a>
     <a href="#traces">Traces</a>
     <a href="#oldcell">Old-CELL Claim</a>
     <a href="#reserve">Reserve</a>
+    <a href="#methodology">Methodology</a>
     <a href="#circulating">Circulating</a>
     <a class="cta" href="#evidence">Evidence</a>
   </div>
@@ -631,6 +633,63 @@ with cols[3]:
     )
 
 
+
+# ==============================
+# EXECUTIVE VERDICT
+# ==============================
+
+anchor("verdict")
+
+st.markdown(
+    """
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Executive Verdict</h2>
+      <p>The current audit position in one page: what is verified, what is unresolved, and what should not be overclaimed.</p>
+    </div>
+    <span class="pill pill-green">Current audit stance</span>
+  </div>
+
+  <div class="claim-grid">
+    <div class="claim-card">
+      <h3>Verified</h3>
+      <p>
+        BSC mint creation, central BSC wallet routing, 0x65def and 0xc3b8 traces to zero,
+        downstream distribution traces, Gate.io-bound route exposure, and the 5M+ old-CELL bridge/unlock route.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Unresolved</h3>
+      <p>
+        Full reserve/backing reconciliation, exact CEX sale proceeds, exchange-internal trading,
+        official circulating supply, and the public MEXC dumping allegation.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Current finding</h3>
+      <p>
+        Distribution exposure is verified. Gate.io route exposure is verified. Reserve reconciliation remains open.
+        The MEXC dumping claim remains unverified by current public on-chain evidence.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Evidence standard</h3>
+      <p>
+        The dashboard classifies claims based on public on-chain proof, trace outputs, and public exchange labels.
+        It does not infer CEX sale execution without exchange/account records.
+      </p>
+    </div>
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 # ==============================
 # QUICK JUMP
 # ==============================
@@ -646,7 +705,9 @@ st.markdown(
     <span class="pill pill-blue">Evidence-first layout</span>
   </div>
   <div class="quick-grid">
+    <a class="quick-card" href="#verdict"><b>Executive Verdict</b><span>Verified, unresolved, and current audit stance.</span></a>
     <a class="quick-card" href="#trust"><b>Trust Standard</b><span>How findings are classified and what public data can prove.</span></a>
+    <a class="quick-card" href="#routes"><b>Route Map</b><span>Visual summary of supply, exchange, and claim paths.</span></a>
     <a class="quick-card" href="#supply"><b>Verified Supply</b><span>ETH/BSC supply, mint events, and supply accounting.</span></a>
     <a class="quick-card" href="#traces"><b>Central BSC Traces</b><span>0x65def, 0xc3b8, 0xda8a, 8bbf, and 35ce traces.</span></a>
     <a class="quick-card" href="#oldcell"><b>Old-CELL Claim Check</b><span>5M+ old-CELL bridge/unlock and MEXC allegation.</span></a>
@@ -654,7 +715,57 @@ st.markdown(
     <a class="quick-card" href="#circulating"><b>Circulating Estimate</b><span>Evidence-only circulating / distribution-exposed supply estimate.</span></a>
     <a class="quick-card" href="#gateio"><b>Exchange Exposure</b><span>Verified Gate.io-bound route exposure and caveats.</span></a>
     <a class="quick-card" href="#downstream"><b>Downstream Branches</b><span>8bbf, 35ce, and a2c1 distribution behavior.</span></a>
+    <a class="quick-card" href="#methodology"><b>Methodology</b><span>How scans, traces, labels, and estimates were produced.</span></a>
     <a class="quick-card" href="#evidence"><b>Evidence Files</b><span>CSV/JSON outputs and downloadable audit artifacts.</span></a>
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+# ==============================
+# EVIDENCE ROUTE MAP
+# ==============================
+
+anchor("routes")
+
+st.markdown(
+    """
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Evidence Route Map</h2>
+      <p>High-level route diagrams for the most important audit paths. Detailed CSV/JSON evidence is listed in the evidence section.</p>
+    </div>
+    <span class="pill pill-blue">Route overview</span>
+  </div>
+
+  <div class="claim-grid">
+    <div class="claim-card">
+      <h3>BSC Mint Path</h3>
+      <p><code>0x0000...</code> → <code>0x65def...</code> → <code>0xc3b8...</code> → downstream wallets</p>
+      <p><b>Status:</b> mint and central routing verified; 0x65def and 0xc3b8 traced to zero.</p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Gate.io Route Exposure</h3>
+      <p><code>0x65def...</code> / <code>0xda8a...</code> → <code>0x0d070...</code> Gate.io-labelled endpoint</p>
+      <p><b>Status:</b> at least 2,596,567.55 CELL verified as Gate.io-bound route exposure.</p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Old-CELL Claim Path</h3>
+      <p>Bridge/unlock → <code>0xc3b8...</code> → <code>0x8929...</code> → <code>0xa9ad...</code> / <code>0x458b...</code></p>
+      <p><b>Status:</b> bridge/unlock verified; MEXC dumping claim remains unverified.</p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Reserve / Circulating View</h3>
+      <p>Raw ETH+BSC supply − verified reserve/backing candidates = evidence-only circulating estimate.</p>
+      <p><b>Status:</b> ~62.61M CELL evidence-only circulating / distribution-exposed estimate.</p>
+    </div>
   </div>
 </div>
     """,
@@ -1280,6 +1391,69 @@ st.markdown(
 )
 
 
+
+# ==============================
+# METHODOLOGY
+# ==============================
+
+anchor("methodology")
+
+st.markdown(
+    """
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Methodology</h2>
+      <p>How the audit evidence was generated and how each result should be interpreted.</p>
+    </div>
+    <span class="pill pill-blue">Reproducible method</span>
+  </div>
+
+  <div class="claim-grid">
+    <div class="claim-card">
+      <h3>Supply verification</h3>
+      <p>
+        Contract totalSupply values and mint/burn Transfer events were scanned on Ethereum and BSC.
+        The BSC mint event was matched against contract supply to confirm event-implied supply.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Wallet tracing</h3>
+      <p>
+        Wallets were traced by probing balance changes over block ranges, then pulling Transfer logs around each change.
+        Completed traces reach zero balance or no further movement through the scan end block.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Reserve/backing classification</h3>
+      <p>
+        Only verified reserve/backing candidates are excluded from conservative circulating estimates.
+        Exchange, router, dead, market, high-activity, and unresolved wallets are not treated as backing.
+      </p>
+    </div>
+
+    <div class="claim-card">
+      <h3>Exchange-route classification</h3>
+      <p>
+        A transfer to a labelled CEX wallet is classified as exchange route exposure.
+        It is not classified as a completed sale unless there is exchange-side account or trade evidence.
+      </p>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="note">
+    <b>Reproducibility:</b> The audit outputs are stored as CSV/JSON files. Evidence hashes are generated with SHA-256 to make the artifact set tamper-evident.
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 # ==============================
 # EVIDENCE FILES
 # ==============================
@@ -1332,6 +1506,47 @@ st.markdown(
 )
 
 show_df(pd.DataFrame(evidence_rows))
+
+
+
+# ==============================
+# EVIDENCE HASHES
+# ==============================
+
+hash_path = ROOT / "evidence_hashes.txt"
+
+st.markdown(
+    """
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Evidence Hashes</h2>
+      <p>SHA-256 hashes make the evidence artifact set tamper-evident. Regenerate locally with <code>shasum -a 256 *.csv *.json *.py &gt; evidence_hashes.txt</code>.</p>
+    </div>
+    <span class="pill pill-green">Tamper-evident</span>
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if hash_path.exists():
+    hashes = []
+    for line in hash_path.read_text().splitlines():
+        parts = line.strip().split()
+        if len(parts) >= 2:
+            hashes.append({"sha256": parts[0], "file": parts[-1]})
+    if hashes:
+        show_df(pd.DataFrame(hashes).head(200), height=420)
+else:
+    st.markdown(
+        """
+<div class="warning-note">
+  <b>Missing evidence_hashes.txt:</b> Run <code>shasum -a 256 *.csv *.json *.py &gt; evidence_hashes.txt</code> and commit the file.
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ==============================
