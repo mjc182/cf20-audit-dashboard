@@ -1,3 +1,26 @@
+
+<div class="navbar">
+  <div class="logo-lockup">
+    <div class="logo-cube"></div>
+    <div><span class="brand">CELLFRAME</span><span class="light"> Audit</span></div>
+  </div>
+  <div class="navlinks">
+    <a href="#overview">Overview</a>
+    <a href="#findings">Findings</a>
+    <a href="#bridge">Bridge Model</a>
+    <a href="#routes">Routes</a>
+    <a href="#oldcell">Old-CELL</a>
+    <a href="#trace843b">843b</a>
+    <a href="#trace498208">498208</a>
+    <a href="#trust">Trust</a>
+    <a href="#methodology">
+anchor("methodology")
+Methodology</a>
+    <a href="#downloads">Downloads</a>
+  </div>
+  <div class="nav-pill">🛡 On-Chain Only</div>
+</div>
+
 import json
 from pathlib import Path
 from decimal import Decimal, InvalidOperation
@@ -71,8 +94,12 @@ def fmt(value, places=2):
     return f"{d:,.{places}f}"
 
 
-def anchor(name: str):
-    st.markdown(f'<a id="{name}"></a>', unsafe_allow_html=True)
+def anchor(name: str) -> None:
+    st.markdown(
+        f'<div id="{name}" class="anchor-target"></div>',
+        unsafe_allow_html=True,
+    )
+
 
 
 def show_df(df: pd.DataFrame, height=None):
@@ -524,6 +551,25 @@ a { color: inherit; text-decoration:none; }
   .quick-grid { grid-template-columns: 1fr; }
   .hero { padding:26px; }
 }
+
+.anchor-target {
+  display:block;
+  position:relative;
+  top:-92px;
+  height:0;
+  visibility:hidden;
+}
+.quick-toc a.card {
+  display:block;
+  color:inherit;
+  text-decoration:none;
+}
+.quick-toc a.card:hover {
+  border-color:rgba(32,244,232,.55);
+  background:rgba(32,244,232,.08);
+  transform:translateY(-1px);
+}
+
 </style>
 
     """,
@@ -941,3 +987,21 @@ if not trace_843b_recipients.empty:
 if not trace_843b_segments.empty:
     st.markdown("#### 843b Segment Trace Summary")
     table(trace_843b_segments, 320)
+
+
+anchor("bridge")
+
+
+anchor("routes")
+
+
+anchor("oldcell")
+
+
+anchor("trace498208")
+
+
+anchor("trust")
+
+
+anchor("downloads")
