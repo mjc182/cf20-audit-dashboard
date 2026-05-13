@@ -1,0 +1,60 @@
+{
+  "chain": "bsc",
+  "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+  "target_wallet": "0xc3b8a652e59d59a71b00808c1fb2432857080ab8",
+  "start_block": 92837258,
+  "end_block": 96716000,
+  "latest_processed_block": 93629305,
+  "current_balance_cell": "0",
+  "change_count": 2,
+  "event_count": 2,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 93628242,
+      "balance_before_raw": "5208005200000000000000000",
+      "balance_before_cell": "5208005.2",
+      "balance_after_raw": "4487005200000000000000000",
+      "balance_after_cell": "4487005.2",
+      "delta_cell": "-721000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 2,
+      "block_number": 93629304,
+      "balance_before_raw": "4487005200000000000000000",
+      "balance_before_cell": "4487005.2",
+      "balance_after_raw": "0",
+      "balance_after_cell": "0",
+      "delta_cell": "-4487005.2",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change.",
+  "complete_trace_result": {
+    "target_wallet": "0xc3b8a652e59d59a71b00808c1fb2432857080ab8",
+    "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+    "final_balance_cell": "0",
+    "outbound_events": 2,
+    "inbound_events": 0,
+    "total_outbound_cell": "5208005.2",
+    "total_inbound_cell": "0",
+    "unique_recipients": 2,
+    "top_recipients": [
+      {
+        "recipient": "0x8929e2e6eaf88e313d26fa2551ac5479807fd413",
+        "first_block": 93629304,
+        "amount_cell": "4487005.2",
+        "txs": 1,
+        "share_of_total_out_percent": "86.15592780130096644296745326"
+      },
+      {
+        "recipient": "0x0b88f2d704314099e089362a5965352ced8ff925",
+        "first_block": 93628242,
+        "amount_cell": "721000",
+        "txs": 1,
+        "share_of_total_out_percent": "13.84407219869903355703254674"
+      }
+    ]
+  }
+}

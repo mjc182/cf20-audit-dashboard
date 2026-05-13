@@ -1,0 +1,42 @@
+[
+  {
+    "wallet": "0x83492406ec56b85d1840b708b66255a2c15ef458",
+    "start_block": 94055014,
+    "current_balance_cell": "0",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94056225,
+    "events_file": "auto_trace_oldcell_secondary_8349_events.csv",
+    "summary_file": "auto_trace_oldcell_secondary_8349_summary.json"
+  },
+  {
+    "wallet": "0x03e2b199dc23f271007ce68ba26549130d103028",
+    "start_block": 94056661,
+    "current_balance_cell": "70",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94161740,
+    "events_file": "auto_trace_oldcell_secondary_03e2_events.csv",
+    "summary_file": "auto_trace_oldcell_secondary_03e2_summary.json"
+  },
+  {
+    "wallet": "0x21baf7475329d17434a0827ad1e5968ed441bc1f",
+    "start_block": 94161924,
+    "current_balance_cell": "0",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94331593,
+    "events_file": "auto_trace_oldcell_secondary_21ba_events.csv",
+    "summary_file": "auto_trace_oldcell_secondary_21ba_summary.json"
+  },
+  {
+    "wallet": "0x3cb0dd3dd55f32f94fc87992788e7196f563ac54",
+    "start_block": 94162074,
+    "current_balance_cell": "13013",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94331784,
+    "events_file": "auto_trace_oldcell_secondary_3cb0_events.csv",
+    "summary_file": "auto_trace_oldcell_secondary_3cb0_summary.json"
+  }
+]

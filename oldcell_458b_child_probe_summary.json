@@ -1,0 +1,92 @@
+[
+  {
+    "wallet": "0x2b3965bf98941fcf182be5a054b31ce97dff3575",
+    "events_file": "auto_trace_oldcell_child_2b39_events.csv",
+    "summary_file": "auto_trace_oldcell_child_2b39_summary.json",
+    "current_balance_cell": "43522",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94055015
+  },
+  {
+    "wallet": "0xcacdbc3f50b73ce847379865e6dc9fee3026d013",
+    "events_file": "auto_trace_oldcell_child_cacd_events.csv",
+    "summary_file": "auto_trace_oldcell_child_cacd_summary.json",
+    "current_balance_cell": "35248",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94055099
+  },
+  {
+    "wallet": "0x9d50c34e1a1fd8bea6b02aeb33c9dc7b40a4217a",
+    "events_file": "auto_trace_oldcell_child_9d50_events.csv",
+    "summary_file": "auto_trace_oldcell_child_9d50_summary.json",
+    "current_balance_cell": "100000",
+    "change_count": 0,
+    "event_count": 0,
+    "latest_processed_block": 93989481
+  },
+  {
+    "wallet": "0x3c479060afe2ddfa2c873bb5c9c00b5458b8adbc",
+    "events_file": "auto_trace_oldcell_child_3c47_events.csv",
+    "summary_file": "auto_trace_oldcell_child_3c47_summary.json",
+    "current_balance_cell": "0",
+    "change_count": 2,
+    "event_count": 2,
+    "latest_processed_block": 94056738
+  },
+  {
+    "wallet": "0x838bf83b33d18bc377997b4c0293afb6c99a5b50",
+    "events_file": "auto_trace_oldcell_child_838b_events.csv",
+    "summary_file": "auto_trace_oldcell_child_838b_summary.json",
+    "current_balance_cell": "0",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94161925
+  },
+  {
+    "wallet": "0xaeb5b7ee8231019b3443bf546aa38eaf4937cf51",
+    "events_file": "auto_trace_oldcell_child_aeb5_events.csv",
+    "summary_file": "auto_trace_oldcell_child_aeb5_summary.json",
+    "current_balance_cell": "0",
+    "change_count": 1,
+    "event_count": 1,
+    "latest_processed_block": 94162075
+  },
+  {
+    "wallet": "0xe1de032a7e99ed3cc6ca02b70ca760b50cb46337",
+    "events_file": "auto_trace_oldcell_child_e1de_events.csv",
+    "summary_file": "auto_trace_oldcell_child_e1de_summary.json",
+    "current_balance_cell": "100000",
+    "change_count": 0,
+    "event_count": 0,
+    "latest_processed_block": 93989481
+  },
+  {
+    "wallet": "0xd52f8fca137f5974d68bf4c79cb8aea1ee3d127e",
+    "events_file": "auto_trace_oldcell_child_d52f_events.csv",
+    "summary_file": "auto_trace_oldcell_child_d52f_summary.json",
+    "current_balance_cell": "100000",
+    "change_count": 0,
+    "event_count": 0,
+    "latest_processed_block": 93989481
+  },
+  {
+    "wallet": "0x68d350de0a4e35be14eba5542ec823a3f13168d4",
+    "events_file": "auto_trace_oldcell_child_68d3_events.csv",
+    "summary_file": "auto_trace_oldcell_child_68d3_summary.json",
+    "current_balance_cell": "100000",
+    "change_count": 0,
+    "event_count": 0,
+    "latest_processed_block": 93989481
+  },
+  {
+    "wallet": "0x3d1c85c85c54a0f6fd2d6da2d15dc80c86babca7",
+    "events_file": "auto_trace_oldcell_child_3d1c_events.csv",
+    "summary_file": "auto_trace_oldcell_child_3d1c_summary.json",
+    "current_balance_cell": "100000",
+    "change_count": 0,
+    "event_count": 0,
+    "latest_processed_block": 93989481
+  }
+]

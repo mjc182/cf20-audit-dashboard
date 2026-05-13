@@ -1,0 +1,70 @@
+{
+  "chain": "bsc",
+  "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+  "target_wallet": "0x8929e2e6eaf88e313d26fa2551ac5479807fd413",
+  "start_block": 93629304,
+  "end_block": 96716000,
+  "latest_processed_block": 94056391,
+  "current_balance_cell": "0",
+  "change_count": 3,
+  "event_count": 3,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 93989480,
+      "balance_before_raw": "4487005200000000000000000",
+      "balance_before_cell": "4487005.2",
+      "balance_after_raw": "3487005200000000000000000",
+      "balance_after_cell": "3487005.2",
+      "delta_cell": "-1000000",
+      "logs_found": 1
+    },
+    {
+      "change_number": 2,
+      "block_number": 94055098,
+      "balance_before_raw": "3487005200000000000000000",
+      "balance_before_cell": "3487005.2",
+      "balance_after_raw": "3551757200000000000000000",
+      "balance_after_cell": "3551757.2",
+      "delta_cell": "64752",
+      "logs_found": 1
+    },
+    {
+      "change_number": 3,
+      "block_number": 94056390,
+      "balance_before_raw": "3551757200000000000000000",
+      "balance_before_cell": "3551757.2",
+      "balance_after_raw": "0",
+      "balance_after_cell": "0",
+      "delta_cell": "-3551757.2",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change.",
+  "complete_trace_result": {
+    "target_wallet": "0x8929e2e6eaf88e313d26fa2551ac5479807fd413",
+    "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+    "final_balance_cell": "0",
+    "outbound_events": 2,
+    "inbound_events": 1,
+    "total_outbound_cell": "4551757.2",
+    "total_inbound_cell": "64752",
+    "unique_recipients": 2,
+    "top_recipients": [
+      {
+        "recipient": "0xa9ad874081775c3634d0e70192877942e245b9e8",
+        "first_block": 94056390,
+        "amount_cell": "3551757.2",
+        "txs": 1,
+        "share_of_total_out_percent": "78.03046260903371559449612119"
+      },
+      {
+        "recipient": "0x458b14915e651243acf89c05859a22d5cff976a6",
+        "first_block": 93989480,
+        "amount_cell": "1000000",
+        "txs": 1,
+        "share_of_total_out_percent": "21.96953739096628440550387881"
+      }
+    ]
+  }
+}

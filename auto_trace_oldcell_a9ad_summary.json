@@ -1,0 +1,64 @@
+{
+  "chain": "bsc",
+  "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+  "target_wallet": "0xa9ad874081775c3634d0e70192877942e245b9e8",
+  "start_block": 94056390,
+  "end_block": 96716000,
+  "latest_processed_block": 96557612,
+  "current_balance_cell": "2625551.2",
+  "change_count": 5,
+  "event_count": 5,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 95319038,
+      "balance_before_raw": "3551757200000000000000000",
+      "balance_before_cell": "3551757.2",
+      "balance_after_raw": "3400632200000000000000000",
+      "balance_after_cell": "3400632.2",
+      "delta_cell": "-151125",
+      "logs_found": 1
+    },
+    {
+      "change_number": 2,
+      "block_number": 95319196,
+      "balance_before_raw": "3400632200000000000000000",
+      "balance_before_cell": "3400632.2",
+      "balance_after_raw": "3260608200000000000000000",
+      "balance_after_cell": "3260608.2",
+      "delta_cell": "-140024",
+      "logs_found": 1
+    },
+    {
+      "change_number": 3,
+      "block_number": 96552074,
+      "balance_before_raw": "3260608200000000000000000",
+      "balance_before_cell": "3260608.2",
+      "balance_after_raw": "3000461200000000000000000",
+      "balance_after_cell": "3000461.2",
+      "delta_cell": "-260147",
+      "logs_found": 1
+    },
+    {
+      "change_number": 4,
+      "block_number": 96552157,
+      "balance_before_raw": "3000461200000000000000000",
+      "balance_before_cell": "3000461.2",
+      "balance_after_raw": "2812996200000000000000000",
+      "balance_after_cell": "2812996.2",
+      "delta_cell": "-187465",
+      "logs_found": 1
+    },
+    {
+      "change_number": 5,
+      "block_number": 96557611,
+      "balance_before_raw": "2812996200000000000000000",
+      "balance_before_cell": "2812996.2",
+      "balance_after_raw": "2625551200000000000000000",
+      "balance_after_cell": "2625551.2",
+      "delta_cell": "-187445",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change."
+}

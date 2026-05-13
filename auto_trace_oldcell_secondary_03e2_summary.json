@@ -1,0 +1,24 @@
+{
+  "chain": "bsc",
+  "token": "0xf3e1449ddb6b218da2c9463d4594ceccc8934346",
+  "target_wallet": "0x03e2b199dc23f271007ce68ba26549130d103028",
+  "start_block": 94056662,
+  "end_block": 96716000,
+  "latest_processed_block": 94161740,
+  "current_balance_cell": "70",
+  "change_count": 1,
+  "event_count": 1,
+  "changes": [
+    {
+      "change_number": 1,
+      "block_number": 94161739,
+      "balance_before_raw": "64785000000000000000000",
+      "balance_before_cell": "64785",
+      "balance_after_raw": "70000000000000000000",
+      "balance_after_cell": "70",
+      "delta_cell": "-64715",
+      "logs_found": 1
+    }
+  ],
+  "note": "Auto trace uses balance probes plus Transfer logs around each detected change."
+}
