@@ -81,10 +81,36 @@ def show_df(df, height=None):
     if df is None or df.empty:
         st.info("No artifact loaded for this table yet.")
         return
+
+    # Streamlit/PyArrow can overflow on very large blockchain integer fields
+    # such as amount_raw. Display tables are safer with object/string values.
+    display_df = df.copy()
+
+    for col in display_df.columns:
+        col_l = str(col).lower()
+        if (
+            "raw" in col_l
+            or "hash" in col_l
+            or "address" in col_l
+            or col_l in {"from", "to", "tx_hash", "token", "target_wallet"}
+            or display_df[col].dtype == "object"
+        ):
+            display_df[col] = display_df[col].astype(str)
+
+    # Also stringify Python ints that are too large for Arrow int64.
+    for col in display_df.columns:
+        try:
+            if pd.api.types.is_integer_dtype(display_df[col]):
+                max_abs = display_df[col].abs().max()
+                if pd.notna(max_abs) and max_abs > 9_000_000_000_000_000_000:
+                    display_df[col] = display_df[col].astype(str)
+        except Exception:
+            display_df[col] = display_df[col].astype(str)
+
     if height:
-        st.dataframe(df, use_container_width=True, hide_index=True, height=height)
+        st.dataframe(display_df, use_container_width=True, hide_index=True, height=height)
     else:
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.dataframe(display_df, use_container_width=True, hide_index=True)
 
 
 def artifact_table(files):
