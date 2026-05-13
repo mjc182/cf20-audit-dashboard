@@ -149,6 +149,8 @@ trace_843b_segments = load_csv(ROOT / "auto_trace_843b_segment_summary.csv")
 trace_498208_recipients = load_csv(ROOT / "auto_trace_498208_partial_recipient_summary.csv")
 inflows_843b_498208 = load_csv(ROOT / "inflows_843b_to_498208.csv")
 circ_csv = load_csv(ROOT / "circulating_supply_estimate.csv")
+mexc_market_corr = load_csv(ROOT / "mexc_cell_market_correlation_report.csv")
+
 
 
 # ==============================
@@ -675,6 +677,33 @@ with tabs[5]:
 
     st.subheader("Direct 843b → 498208 Inflows")
     show_df(inflows_843b_498208, 300)
+
+
+    st.divider()
+
+    st.subheader("MEXC Market Correlation")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Deposit windows analysed", "28", "843b → 498208")
+    c2.metric("Deposited to 0x498208", "3.227M CELL", "direct route")
+    c3.metric("Post-window MEXC volume", "7.624M CELL", "public market data")
+    c4.metric("Post/pre volume ratio", "6.46x", "average")
+
+    st.success(
+        "Public MEXC market data shows elevated CELL trading activity after the 843b → 498208 deposit windows. "
+        "Across 28 deposit windows, post-deposit MEXC volume totalled 7,624,148.89 CELL and averaged 6.46x "
+        "the pre-deposit window volume."
+    )
+
+    st.warning(
+        "Audit limit: this supports sale-likelihood / market-impact correlation, but it still does not prove "
+        "account-level exchange-internal sale execution, seller identity, sale price, proceeds, or final beneficiary "
+        "without authenticated MEXC account trade records."
+    )
+
+    st.subheader("MEXC Market Correlation Report")
+    show_df(mexc_market_corr, 420)
+
 
     st.subheader("498208 Partial Recipient Summary")
     show_df(trace_498208_recipients, 420)
