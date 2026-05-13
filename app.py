@@ -526,6 +526,7 @@ st.markdown(
     <a href="#traces">Traces</a>
     <a href="#oldcell">Old-CELL Claim</a>
     <a href="#reserve">Reserve</a>
+    <a href="#circulating">Circulating</a>
     <a class="cta" href="#evidence">Evidence</a>
   </div>
 </div>
@@ -630,6 +631,7 @@ st.markdown(
     <a class="quick-card" href="#traces"><b>Central BSC Traces</b><span>0x65def, 0xc3b8, 0xda8a, 8bbf, and 35ce traces.</span></a>
     <a class="quick-card" href="#oldcell"><b>Old-CELL Claim Check</b><span>5M+ old-CELL bridge/unlock and MEXC allegation.</span></a>
     <a class="quick-card" href="#reserve"><b>Reserve Backing</b><span>Current backing candidates and unresolved gap.</span></a>
+    <a class="quick-card" href="#circulating"><b>Circulating Estimate</b><span>Evidence-only circulating / distribution-exposed supply estimate.</span></a>
     <a class="quick-card" href="#gateio"><b>Exchange Exposure</b><span>Verified Gate.io-bound route exposure and caveats.</span></a>
     <a class="quick-card" href="#downstream"><b>Downstream Branches</b><span>8bbf, 35ce, and a2c1 distribution behavior.</span></a>
     <a class="quick-card" href="#evidence"><b>Evidence Files</b><span>CSV/JSON outputs and downloadable audit artifacts.</span></a>
@@ -1137,6 +1139,75 @@ if not mexc_pattern_report.empty:
     ] if c in mexc_pattern_report.columns]
     if cols_to_show:
         show_df(mexc_pattern_report[cols_to_show].head(40))
+
+
+
+# ==============================
+# CIRCULATING SUPPLY ESTIMATE
+# ==============================
+
+anchor("circulating")
+
+circ = load_json(ROOT / "circulating_supply_estimate.json")
+circ_csv = load_csv(ROOT / "circulating_supply_estimate.csv")
+
+circ_inputs = circ.get("inputs", {}) if isinstance(circ, dict) else {}
+circ_estimates = circ.get("estimates", {}) if isinstance(circ, dict) else {}
+
+circ_raw_supply = circ_inputs.get("raw_eth_plus_bsc_contract_supply_cell", "63600000")
+circ_backing = circ_estimates.get("conservative_non_circulating_cell", "990044.19498039")
+circ_estimate = circ_estimates.get("conservative_circulating_supply_estimate_cell", "62609955.80501961")
+circ_bsc_estimate = circ_estimates.get("bsc_conservative_circulating_supply_estimate_cell", "33300000")
+circ_bsc_gap = circ_estimates.get("bsc_supply_minus_verified_eth_backing_candidates_cell", "32309955.80501961")
+
+st.markdown(
+    f"""
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Circulating Supply Estimate</h2>
+      <p>This is an evidence-only circulating / distribution-exposed estimate. It is not an official circulating supply figure.</p>
+    </div>
+    <span class="pill pill-orange">Estimate / not official</span>
+  </div>
+
+  <div class="grid metrics-grid">
+    <div class="metric-card tone-blue">
+      <div class="metric-label">Raw ETH+BSC supply</div>
+      <div class="metric-value">{compact(circ_raw_supply)}</div>
+      <div class="metric-sub">{fmt(circ_raw_supply, 2)} CELL contract-level supply</div>
+    </div>
+    <div class="metric-card tone-green">
+      <div class="metric-label">Verified reserve/backing candidates</div>
+      <div class="metric-value">{compact(circ_backing)}</div>
+      <div class="metric-sub">{fmt(circ_backing, 2)} CELL excluded under conservative method</div>
+    </div>
+    <div class="metric-card tone-orange">
+      <div class="metric-label">Conservative circulating estimate</div>
+      <div class="metric-value">{compact(circ_estimate)}</div>
+      <div class="metric-sub">{fmt(circ_estimate, 2)} CELL distribution-exposed estimate</div>
+    </div>
+    <div class="metric-card tone-red">
+      <div class="metric-label">BSC unreconciled supply</div>
+      <div class="metric-value">{compact(circ_bsc_gap)}</div>
+      <div class="metric-sub">{fmt(circ_bsc_gap, 2)} CELL not reconciled by verified ETH backing candidates</div>
+    </div>
+  </div>
+
+  <div class="warning-note">
+    <b>Important:</b> This is not an official circulating supply number. It means that, under the current verified evidence set,
+    only <b>{fmt(circ_backing, 2)} CELL</b> is verified as backing/reserve candidate balance. The remaining ETH+BSC contract supply
+    should not be excluded from circulation unless additional locked, reserve, treasury, bridge, vesting, market-maker,
+    or exchange custody wallets are disclosed and verified.
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if not circ_csv.empty:
+    st.markdown("#### Circulating Supply Calculation")
+    show_df(circ_csv)
 
 
 # ==============================
