@@ -1,26 +1,3 @@
-
-<div class="navbar">
-  <div class="logo-lockup">
-    <div class="logo-cube"></div>
-    <div><span class="brand">CELLFRAME</span><span class="light"> Audit</span></div>
-  </div>
-  <div class="navlinks">
-    <a href="#overview">Overview</a>
-    <a href="#findings">Findings</a>
-    <a href="#bridge">Bridge Model</a>
-    <a href="#routes">Routes</a>
-    <a href="#oldcell">Old-CELL</a>
-    <a href="#trace843b">843b</a>
-    <a href="#trace498208">498208</a>
-    <a href="#trust">Trust</a>
-    <a href="#methodology">
-anchor("methodology")
-Methodology</a>
-    <a href="#downloads">Downloads</a>
-  </div>
-  <div class="nav-pill">🛡 On-Chain Only</div>
-</div>
-
 import json
 from pathlib import Path
 from decimal import Decimal, InvalidOperation
