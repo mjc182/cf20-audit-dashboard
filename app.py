@@ -1972,3 +1972,129 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+
+
+
+# ==============================
+# TRUST / VERIFICATION STANDARD
+# ==============================
+
+section_anchor("trust")
+
+st.markdown(
+    """
+<div class="section">
+  <div class="section-title">
+    <div>
+      <h2>Trust, Limits, and Verification Standard</h2>
+      <p>This audit is designed to separate what public on-chain evidence proves from what remains unresolved or requires off-chain records.</p>
+    </div>
+    <span class="pill pill-green">Evidence standard</span>
+  </div>
+
+  <div class="claim-grid">
+    <div class="claim-card">
+      <h3>What this audit proves</h3>
+      <p>
+        The audit verifies contract-level supply, mint events, token movements, traced wallet balances,
+        and routes into publicly labelled exchange custody where labels are available.
+      </p>
+    </div>
+    <div class="claim-card">
+      <h3>What this audit does not overclaim</h3>
+      <p>
+        It does not claim exact CEX sale proceeds, exchange-internal trading, final beneficiaries,
+        or private exchange-account activity without supporting records.
+      </p>
+    </div>
+    <div class="claim-card">
+      <h3>How findings are classified</h3>
+      <p>
+        Findings are treated as verified, supported, unresolved, or unverified depending on whether
+        transaction-level evidence, wallet traces, and public labels support them.
+      </p>
+    </div>
+    <div class="claim-card">
+      <h3>How to independently verify</h3>
+      <p>
+        Each major finding is backed by CSV/JSON trace outputs and transaction hashes.
+        Anyone can replay the RPC scans, inspect the evidence files, or check the transactions on BscScan/Etherscan.
+      </p>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="success-note">
+    <b>Verification principle:</b> A wallet path is only called “verified” when the token movement is supported by on-chain events.
+    A CEX route is only called “exchange exposure” unless there is separate evidence of actual exchange-side sale execution.
+  </div>
+
+  <br>
+
+  <div class="warning-note">
+    <b>Limitations:</b> Public blockchain data cannot see inside centralized exchanges.
+    A deposit to Gate.io, MEXC, Binance, or another CEX can prove exchange-custody routing,
+    but not the sale price, internal trade, account owner, or withdrawal beneficiary without exchange records.
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
+trust_rows = pd.DataFrame([
+    {
+        "Evidence type": "Token mint / burn / transfer event",
+        "Can prove": "Token creation, movement, amount, sender, recipient, block, transaction hash",
+        "Cannot prove alone": "Human intent, off-chain agreements, or final exchange outcome",
+    },
+    {
+        "Evidence type": "Wallet balance trace",
+        "Can prove": "Whether a wallet held, distributed, or reached zero balance over a block range",
+        "Cannot prove alone": "Who legally controlled the wallet unless attribution evidence exists",
+    },
+    {
+        "Evidence type": "Public exchange label",
+        "Can prove": "Route exposure to a labelled exchange custody endpoint",
+        "Cannot prove alone": "Whether the tokens were sold inside the exchange",
+    },
+    {
+        "Evidence type": "Unlabelled wallet",
+        "Can prove": "On-chain routing behavior",
+        "Cannot prove alone": "Whether the wallet is a private CEX deposit wallet",
+    },
+    {
+        "Evidence type": "Reserve/backing candidate",
+        "Can prove": "Current observed balance of identified candidate wallets",
+        "Cannot prove alone": "Full backing unless all reserve/custody wallets are disclosed and verified",
+    },
+])
+
+st.markdown("### Evidence Standard Matrix")
+show_df(trust_rows)
+
+confidence_rows = pd.DataFrame([
+    {
+        "Label": "Verified",
+        "Meaning": "Direct on-chain evidence supports the finding.",
+        "Example": "BSC mint event; 0xc3b8 traced to zero; Gate.io-labelled route exposure.",
+    },
+    {
+        "Label": "Supported",
+        "Meaning": "Evidence strongly supports the claim, but one step may rely on public labels or context.",
+        "Example": "A route into a labelled exchange custody wallet.",
+    },
+    {
+        "Label": "Unresolved",
+        "Meaning": "Evidence is incomplete or further wallet/custody disclosure is required.",
+        "Example": "Full reserve/backing reconciliation.",
+    },
+    {
+        "Label": "Unverified",
+        "Meaning": "The claim has not been proven by current public on-chain evidence.",
+        "Example": "Old-CELL dumping on MEXC.",
+    },
+])
+
+st.markdown("### Finding Confidence Labels")
+show_df(confidence_rows)
