@@ -11,7 +11,7 @@ import streamlit as st
 # ==============================
 
 st.set_page_config(
-    page_title="CELL / CF20 On-Chain Audit",
+    page_title="CELL / Cellframe On-Chain Audit",
     page_icon="🔎",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -518,7 +518,7 @@ a { color: inherit; text-decoration:none; }
 st.markdown(
     """
 <div class="topbar">
-  <div class="brand"><span class="brand-dot"></span> CELL / CF20 Audit</div>
+  <div class="brand"><span class="brand-dot"></span> CELL / Cellframe Audit</div>
   <div class="nav">
     <a href="#overview">Overview</a>
     <a href="#trust">Trust</a>
@@ -542,7 +542,7 @@ st.markdown(
   <div class="eyebrow">Independent on-chain audit dashboard</div>
   <h1>Supply creation, custody routing, exchange exposure, and reserve reconciliation.</h1>
   <p>
-    This site summarizes verified on-chain evidence for CELL / CF20 across Ethereum and BSC.
+    This site summarizes verified on-chain evidence for CELL / Cellframe across Ethereum and BSC.
     It separates verified facts from unresolved claims, including BSC mint routing, Gate.io-bound exposure,
     old-CELL bridge/unlock flows, and the public MEXC dumping allegation.
   </p>
