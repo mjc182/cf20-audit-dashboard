@@ -623,27 +623,28 @@ with tabs[5]:
 
     st.subheader("498208 MEXC-Referenced High-Activity Endpoint")
 
-st.success(
-    "Public label upgrade: 0x4982085c9e2f89f2ecb8131eca71afad896e89cb is publicly referenced by MEXC "
-    "as a BSC withdrawal address and is also labelled as MEXC 13 by public explorer/label sources. "
-    "This upgrades the 843b → 498208 route from an exchange/custody-style candidate to MEXC-referenced route exposure."
-)
+    st.success(
+        "Public label upgrade: 0x4982085c9e2f89f2ecb8131eca71afad896e89cb is publicly referenced by MEXC "
+        "as a BSC withdrawal address and is also labelled as MEXC 13 by public explorer/label sources. "
+        "This upgrades the 843b → 498208 route from an exchange/custody-style candidate to MEXC-referenced route exposure."
+    )
 
-st.warning(
-    "Important limit: this proves MEXC-route exposure. It still does not prove exchange-internal sale execution, "
-    "sale price, depositing account owner, proceeds, or final beneficiary."
-)
+    st.warning(
+        "Important limit: this proves MEXC-route exposure. It still does not prove exchange-internal sale execution, "
+        "sale price, depositing account owner, proceeds, or final beneficiary."
+    )
 
-st.subheader("498208 MEXC-Referenced High-Activity Endpoint")
     e1, e2, e3, e4 = st.columns(4)
     e1.metric("Outbound captured", "2.103M CELL", "partial trace")
     e2.metric("Events captured", "737", "530 out / 207 in")
-    e3.metric("Unique recipients", "126", "MEXC-labelled / high activity")
+    e3.metric("Unique recipients", "126", "high activity")
     e4.metric("Balance at stop", "3.289M CELL", "trace cap reached")
 
-    st.warning(
-        "0x498208 is publicly referenced by MEXC as a BSC withdrawal address and behaves like a high-activity exchange/custody endpoint, not a passive reserve wallet. "
-        "The trace hit the change cap and should be treated as partial. Exchange endpoint attribution is supported by public MEXC / explorer labels; sale execution still requires exchange-side records."
+    st.info(
+        "0x498208 is publicly referenced by MEXC as a BSC withdrawal address and behaves like a high-activity "
+        "exchange/custody endpoint, not a passive reserve wallet. The trace hit the change cap and should be treated "
+        "as partial. Exchange endpoint attribution is supported by public labels; sale execution still requires "
+        "exchange-side records."
     )
 
     st.subheader("Direct 843b → 498208 Inflows")
