@@ -1,6 +1,6 @@
-import json
 from pathlib import Path
 from decimal import Decimal, InvalidOperation
+import json
 
 import pandas as pd
 import streamlit as st
@@ -11,10 +11,10 @@ import streamlit as st
 # ==============================
 
 st.set_page_config(
-    page_title="CELL / Cellframe On-Chain Audit",
-    page_icon="🔎",
+    page_title="CELLFRAME On-Chain Audit",
+    page_icon="⬢",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 ROOT = Path(".")
@@ -44,17 +44,17 @@ def load_csv(path: Path):
     return pd.DataFrame()
 
 
-def dec(value, default="0"):
+def D(value, default="0"):
     try:
         if value is None or value == "":
             return Decimal(default)
-        return Decimal(str(value))
+        return Decimal(str(value).replace(",", ""))
     except (InvalidOperation, ValueError, TypeError):
         return Decimal(default)
 
 
 def compact(value):
-    d = dec(value)
+    d = D(value)
     sign = "-" if d < 0 else ""
     d = abs(d)
     if d >= Decimal("1000000000"):
@@ -67,29 +67,36 @@ def compact(value):
 
 
 def fmt(value, places=2):
-    d = dec(value)
-    return f"{d:,.{places}f}"
+    return f"{D(value):,.{places}f}"
 
 
-def anchor(name: str) -> None:
-    st.markdown(
-        f'<div id="{name}" class="anchor-target"></div>',
-        unsafe_allow_html=True,
-    )
+def pct(part, whole):
+    whole_d = D(whole)
+    if whole_d == 0:
+        return "0.00%"
+    return f"{(D(part) / whole_d * Decimal(100)):.2f}%"
 
 
+def show_df(df, height=None):
+    if df is None or df.empty:
+        st.info("No artifact loaded for this table yet.")
+        return
+    if height:
+        st.dataframe(df, use_container_width=True, hide_index=True, height=height)
+    else:
+        st.dataframe(df, use_container_width=True, hide_index=True)
 
-def show_df(df: pd.DataFrame, height=None):
-    if df is not None and not df.empty:
-        if height is None:
-            st.dataframe(df, use_container_width=True, hide_index=True)
-        else:
-            st.dataframe(df, use_container_width=True, hide_index=True, height=height)
 
-
-def file_present(path: str):
-    p = ROOT / path
-    return p.exists()
+def artifact_table(files):
+    rows = []
+    for f in files:
+        p = ROOT / f
+        rows.append({
+            "artifact": f,
+            "present": "yes" if p.exists() else "no",
+            "size_kb": round(p.stat().st_size / 1024, 2) if p.exists() else "",
+        })
+    return pd.DataFrame(rows)
 
 
 # ==============================
@@ -99,506 +106,242 @@ def file_present(path: str):
 reserve = load_json(ROOT / "reserve_backing_reconciliation.json")
 reserve_totals = reserve.get("totals", {}) if isinstance(reserve, dict) else {}
 
-trace_c3b8 = load_json(ROOT / "auto_trace_c3b8_summary.json")
-trace_c3b8_recipients = load_csv(ROOT / "auto_trace_c3b8_recipient_summary.csv")
+circ = load_json(ROOT / "circulating_supply_estimate.json")
+circ_inputs = circ.get("inputs", {}) if isinstance(circ, dict) else {}
+circ_estimates = circ.get("estimates", {}) if isinstance(circ, dict) else {}
 
-trace_65def = load_json(ROOT / "auto_trace_65def_summary.json")
-trace_da8a = load_json(ROOT / "auto_trace_da8a_summary.json")
+old_child = load_csv(ROOT / "oldcell_458b_child_probe_summary.csv")
+old_secondary = load_csv(ROOT / "oldcell_secondary_child_probe_summary.csv")
+mexc_label = load_csv(ROOT / "mexc_label_check_report.csv")
+mexc_pattern = load_csv(ROOT / "mexc_deposit_pattern_check_report.csv")
 
-trace_8bbf = load_json(ROOT / "auto_trace_8bbf_combined_summary.json")
 trace_8bbf_recipients = load_csv(ROOT / "auto_trace_8bbf_combined_recipient_summary.csv")
-
-trace_35ce = load_json(ROOT / "auto_trace_35ce_summary.json")
 trace_35ce_recipients = load_csv(ROOT / "auto_trace_35ce_recipient_summary.csv")
 
-trace_a2c1 = load_json(ROOT / "auto_trace_a2c1_combined_summary.json")
-
-oldcell_c3b8 = load_json(ROOT / "auto_trace_oldcell_c3b8_summary.json")
-oldcell_8929 = load_json(ROOT / "auto_trace_oldcell_8929_summary.json")
-oldcell_child_summary = load_csv(ROOT / "oldcell_458b_child_probe_summary.csv")
-oldcell_secondary_summary = load_csv(ROOT / "oldcell_secondary_child_probe_summary.csv")
-
-mexc_label_report = load_csv(ROOT / "mexc_label_check_report.csv")
-mexc_pattern_report = load_csv(ROOT / "mexc_deposit_pattern_check_report.csv")
+trace_843b_recipients = load_csv(ROOT / "auto_trace_843b_recipient_summary.csv")
+trace_843b_segments = load_csv(ROOT / "auto_trace_843b_segment_summary.csv")
+trace_498208_recipients = load_csv(ROOT / "auto_trace_498208_partial_recipient_summary.csv")
+inflows_843b_498208 = load_csv(ROOT / "inflows_843b_to_498208.csv")
+circ_csv = load_csv(ROOT / "circulating_supply_estimate.csv")
 
 
 # ==============================
-# CURRENT VERIFIED VALUES
+# VERIFIED VALUES
 # ==============================
 
-GATEIO_ROUTE_TOTAL = Decimal("2596567.55466338")
-BSC_TOTAL_SUPPLY = dec(
-    reserve_totals.get("bsc_total_supply_cell")
-    or reserve.get("bsc_total_supply_cell")
-    or "33300000"
-)
-ETH_BACKING_CANDIDATES = dec(
-    reserve_totals.get("eth_backing_candidate_included_cell")
-    or reserve.get("eth_backing_candidate_included_cell")
-    or "990044.19498039"
-)
-BACKING_GAP = dec(
-    reserve_totals.get("bsc_supply_minus_eth_backing_candidate_cell")
-    or reserve.get("bsc_supply_minus_eth_backing_candidate_cell")
-    or "32309955.80501961"
-)
+ETH_SUPPLY = D(reserve_totals.get("eth_total_supply_cell") or circ_inputs.get("eth_total_supply_cell") or "30300000")
+BSC_SUPPLY = D(reserve_totals.get("bsc_total_supply_cell") or circ_inputs.get("bsc_total_supply_cell") or "33300000")
+RAW_SUPPLY = D(circ_inputs.get("raw_eth_plus_bsc_contract_supply_cell") or "63600000")
+BACKING = D(circ_estimates.get("conservative_non_circulating_cell") or "990044.19498039")
+CIRC_EST = D(circ_estimates.get("conservative_circulating_supply_estimate_cell") or "62609955.80501961")
+BSC_GAP = D(circ_estimates.get("bsc_supply_minus_verified_eth_backing_candidates_cell") or "32309955.80501961")
 
-OLD_CELL_BRIDGE_UNLOCK = Decimal("5207505.2")
-OLD_CELL_A9AD_HELD = Decimal("2625551.2")
+GATEIO_EXPOSURE = D("2596567.55466338")
+OLD_CELL_UNLOCK = D("5207505.2")
+OLD_CELL_A9AD_HELD = D("2625551.2")
 
 PUBLIC_MEXC_HITS = 0
-if not mexc_label_report.empty and "status" in mexc_label_report.columns:
+if not mexc_label.empty and "status" in mexc_label.columns:
     PUBLIC_MEXC_HITS += int(
-        mexc_label_report["status"]
-        .isin(["known_mexc_label", "bscscan_page_contains_mexc_keyword"])
-        .sum()
+        mexc_label["status"].isin(["known_mexc_label", "bscscan_page_contains_mexc_keyword"]).sum()
     )
-if not mexc_pattern_report.empty and "status" in mexc_pattern_report.columns:
-    PUBLIC_MEXC_HITS += int(
-        (mexc_pattern_report["status"] == "known_mexc_route_detected").sum()
-    )
+if not mexc_pattern.empty and "status" in mexc_pattern.columns:
+    PUBLIC_MEXC_HITS += int((mexc_pattern["status"] == "known_mexc_route_detected").sum())
 
 
 # ==============================
-# CSS
+# STYLE
 # ==============================
 
 st.markdown(
     """
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
-:root {
-  --bg:#050b16;
-  --panel:#071525;
-  --panel2:#0a1f33;
-  --text:#f4fbff;
-  --muted:#9fb4c7;
-  --line:rgba(125,211,252,.16);
-
-  --cyan:#22d3ee;
-  --blue:#38bdf8;
-  --emerald:#10b981;
-  --lime:#84cc16;
-  --amber:#f59e0b;
-  --rose:#f43f5e;
-  --slate:#64748b;
-}
-
 html, body, [class*="css"] {
-  font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .stApp {
-  background:
-    radial-gradient(circle at 18% 0%, rgba(34,211,238,.20), transparent 26%),
-    radial-gradient(circle at 90% 12%, rgba(16,185,129,.14), transparent 30%),
-    radial-gradient(circle at 45% 92%, rgba(56,189,248,.08), transparent 28%),
-    linear-gradient(180deg, #050b16 0%, #06111f 48%, #020617 100%);
-  color: var(--text);
+    background:
+      radial-gradient(circle at 70% 0%, rgba(32,244,232,.22), transparent 28%),
+      radial-gradient(circle at 5% 8%, rgba(32,244,232,.11), transparent 28%),
+      linear-gradient(180deg, #02070f 0%, #061423 52%, #02070f 100%);
+    color: #f5fbff;
 }
 
 .block-container {
-  max-width: 1280px;
-  padding-top: 2rem;
-  padding-bottom: 5rem;
+    max-width: 1500px;
+    padding-top: 1.2rem;
+    padding-bottom: 4rem;
 }
 
-a { color: inherit; text-decoration:none; }
-
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  backdrop-filter: blur(18px);
-  background: rgba(5,11,22,.78);
-  border:1px solid rgba(34,211,238,.18);
-  border-radius: 999px;
-  padding: 10px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 14px;
-  margin-bottom: 22px;
-  box-shadow: 0 18px 60px rgba(0,0,0,.34);
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #061423 0%, #02070f 100%);
+    border-right: 1px solid rgba(32,244,232,.18);
 }
 
-.brand {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  letter-spacing:-.04em;
-  color:#ecfeff;
+h1, h2, h3 {
+    letter-spacing: -0.04em;
 }
 
-.brand-dot {
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--cyan),var(--emerald));
-  box-shadow:0 0 26px rgba(34,211,238,.95);
+div[data-testid="stMetric"] {
+    background: linear-gradient(145deg, rgba(7,25,41,.90), rgba(4,14,26,.78));
+    border: 1px solid rgba(32,244,232,.18);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 18px 70px rgba(0,0,0,.18);
 }
 
-.nav {
-  display:flex;
-  align-items:center;
-  gap: 6px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
+div[data-testid="stMetric"] label {
+    color: #a9bdce !important;
+    font-weight: 800;
 }
 
-.nav a {
-  font-size:.80rem;
-  font-weight:800;
-  color:#c7dbe8;
-  padding:8px 10px;
-  border-radius:999px;
+div[data-testid="stMetricValue"] {
+    color: #20f4e8;
+    font-weight: 900;
 }
 
-.nav a:hover {
-  color:white;
-  background:rgba(34,211,238,.12);
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    border-bottom: 1px solid rgba(32,244,232,.18);
 }
 
-.nav .cta {
-  background:linear-gradient(135deg, rgba(34,211,238,.22), rgba(16,185,129,.16));
-  border:1px solid rgba(34,211,238,.32);
+.stTabs [data-baseweb="tab"] {
+    background: rgba(7,25,41,.76);
+    border: 1px solid rgba(32,244,232,.14);
+    border-radius: 999px;
+    padding: 10px 16px;
+    color: #c9d8e5;
+    font-weight: 800;
+}
+
+.stTabs [aria-selected="true"] {
+    background: rgba(32,244,232,.14) !important;
+    border-color: rgba(32,244,232,.45) !important;
+    color: #ffffff !important;
+}
+
+.audit-card {
+    background: linear-gradient(145deg, rgba(7,25,41,.88), rgba(4,14,26,.72));
+    border: 1px solid rgba(32,244,232,.16);
+    border-radius: 18px;
+    padding: 18px;
+    min-height: 145px;
+}
+
+.audit-card h3 {
+    margin: 0 0 8px;
+    color: #f5fbff;
+}
+
+.audit-card p {
+    color: #a9bdce;
+    line-height: 1.5;
+}
+
+.good {
+    color: #67ffb3;
+    font-weight: 900;
+}
+
+.warn {
+    color: #ffe17a;
+    font-weight: 900;
+}
+
+.bad {
+    color: #ffa5b3;
+    font-weight: 900;
 }
 
 .hero {
-  border:1px solid rgba(34,211,238,.20);
-  border-radius: 32px;
-  padding: 38px;
-  overflow:hidden;
-  position:relative;
-  background:
-    linear-gradient(135deg, rgba(7,21,37,.94), rgba(5,11,22,.82)),
-    radial-gradient(circle at 76% 24%, rgba(34,211,238,.22), transparent 33%),
-    radial-gradient(circle at 20% 92%, rgba(16,185,129,.14), transparent 30%);
-  box-shadow:0 24px 80px rgba(0,0,0,.38);
-}
-
-.eyebrow {
-  display:inline-flex;
-  gap:8px;
-  align-items:center;
-  padding:7px 11px;
-  border-radius:999px;
-  border:1px solid rgba(34,211,238,.30);
-  color:#a5f3fc;
-  background:rgba(34,211,238,.08);
-  font-size:.78rem;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.08em;
+    background:
+      radial-gradient(circle at 80% 10%, rgba(32,244,232,.20), transparent 30%),
+      linear-gradient(135deg, rgba(7,25,41,.95), rgba(4,14,26,.80));
+    border: 1px solid rgba(32,244,232,.22);
+    border-radius: 28px;
+    padding: 34px;
+    margin-bottom: 22px;
+    box-shadow: 0 30px 120px rgba(0,0,0,.35);
 }
 
 .hero h1 {
-  margin:.85rem 0 .9rem;
-  font-size: clamp(2.4rem, 6vw, 5.2rem);
-  line-height:.92;
-  letter-spacing:-.08em;
-  max-width: 980px;
-  color:#f4fbff;
+    font-size: clamp(2.4rem, 5vw, 5.2rem);
+    line-height: .95;
+    margin: 0 0 12px;
+}
+
+.hero span {
+    color: #20f4e8;
 }
 
 .hero p {
-  color:#bdd2e3;
-  font-size:1.08rem;
-  line-height:1.75;
-  max-width: 930px;
+    color: #c3d1de;
+    max-width: 900px;
+    font-size: 1.08rem;
+    line-height: 1.65;
 }
 
-.hero-actions {
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top: 22px;
+.route-box {
+    border: 1px solid rgba(32,244,232,.18);
+    border-radius: 16px;
+    padding: 16px;
+    background: rgba(7,25,41,.64);
+    min-height: 150px;
 }
 
-.btn {
-  padding:11px 15px;
-  border-radius:999px;
-  border:1px solid rgba(125,211,252,.18);
-  color:#e0f7ff;
-  font-weight:900;
-  font-size:.86rem;
-  background:rgba(10,31,51,.72);
+.route-arrow {
+    text-align: center;
+    font-size: 2rem;
+    color: #20f4e8;
+    padding-top: 45px;
 }
 
-.btn:hover {
-  border-color:rgba(34,211,238,.45);
-  background:rgba(34,211,238,.10);
+hr {
+    border: none;
+    border-top: 1px solid rgba(32,244,232,.16);
+    margin: 1.4rem 0;
 }
-
-.btn-primary {
-  background:linear-gradient(135deg, rgba(34,211,238,.28), rgba(16,185,129,.20));
-  border-color:rgba(34,211,238,.40);
-}
-
-.grid {
-  display:grid;
-  gap:14px;
-}
-
-.metrics-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 18px 0 26px;
-}
-
-.metric-card, .section, .claim-card {
-  border:1px solid rgba(125,211,252,.15);
-  background:linear-gradient(145deg, rgba(7,21,37,.90), rgba(5,11,22,.74));
-  border-radius: 24px;
-  box-shadow:0 18px 60px rgba(0,0,0,.25);
-}
-
-.metric-card {
-  padding:18px;
-  min-height: 145px;
-}
-
-.metric-label {
-  color:#9fb4c7;
-  font-size:.78rem;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-}
-
-.metric-value {
-  color:#f4fbff;
-  font-weight:950;
-  font-size: clamp(1.6rem, 3vw, 2.5rem);
-  letter-spacing:-.06em;
-  margin: 10px 0 8px;
-}
-
-.metric-sub {
-  color:#9fb4c7;
-  font-size:.83rem;
-  line-height:1.45;
-}
-
-.tone-blue { border-color:rgba(56,189,248,.28); box-shadow:0 18px 60px rgba(56,189,248,.05); }
-.tone-green { border-color:rgba(16,185,129,.30); box-shadow:0 18px 60px rgba(16,185,129,.05); }
-.tone-orange { border-color:rgba(245,158,11,.30); box-shadow:0 18px 60px rgba(245,158,11,.045); }
-.tone-red { border-color:rgba(244,63,94,.32); box-shadow:0 18px 60px rgba(244,63,94,.045); }
-.tone-purple { border-color:rgba(34,211,238,.24); box-shadow:0 18px 60px rgba(34,211,238,.04); }
-
-.section {
-  padding: 26px;
-  margin: 22px 0;
-}
-
-.section-title {
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:20px;
-  margin-bottom: 16px;
-}
-
-.section h2 {
-  font-size: clamp(1.55rem, 3vw, 2.35rem);
-  letter-spacing:-.06em;
-  margin:0 0 6px;
-  color:#f4fbff;
-}
-
-.section p {
-  color:#9fb4c7;
-  line-height:1.65;
-  margin:0;
-}
-
-.pill {
-  display:inline-flex;
-  align-items:center;
-  white-space:nowrap;
-  border-radius:999px;
-  padding:7px 10px;
-  font-size:.76rem;
-  font-weight:950;
-  border:1px solid rgba(125,211,252,.18);
-}
-
-.pill-blue { color:#a5f3fc; background:rgba(34,211,238,.10); border-color:rgba(34,211,238,.30); }
-.pill-green { color:#bbf7d0; background:rgba(16,185,129,.11); border-color:rgba(16,185,129,.30); }
-.pill-orange { color:#fde68a; background:rgba(245,158,11,.11); border-color:rgba(245,158,11,.32); }
-.pill-red { color:#fecdd3; background:rgba(244,63,94,.11); border-color:rgba(244,63,94,.34); }
-.pill-purple { color:#a5f3fc; background:rgba(34,211,238,.10); border-color:rgba(34,211,238,.30); }
-
-.quick-grid {
-  display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap:12px;
-}
-
-.quick-card {
-  border:1px solid rgba(125,211,252,.16);
-  border-radius:18px;
-  padding:15px;
-  min-height:98px;
-  background:rgba(10,31,51,.48);
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.quick-card:hover {
-  border-color:rgba(34,211,238,.56);
-  background:rgba(34,211,238,.09);
-  transform:translateY(-1px);
-}
-
-.quick-card b {
-  color:#f4fbff;
-  letter-spacing:-.03em;
-}
-
-.quick-card span {
-  color:#9fb4c7;
-  font-size:.82rem;
-  line-height:1.45;
-}
-
-.note, .success-note, .warning-note {
-  border-radius:18px;
-  padding:16px 18px;
-  line-height:1.6;
-  color:#c7dbe8;
-  border:1px solid rgba(125,211,252,.16);
-  background:rgba(10,31,51,.50);
-}
-
-.success-note {
-  border-color:rgba(16,185,129,.30);
-  background:rgba(16,185,129,.09);
-}
-
-.warning-note {
-  border-color:rgba(245,158,11,.32);
-  background:rgba(245,158,11,.09);
-}
-
-.claim-grid {
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:14px;
-}
-
-.claim-card {
-  padding:20px;
-}
-
-.claim-card h3 {
-  margin:0 0 8px;
-  letter-spacing:-.04em;
-  color:#f4fbff;
-}
-
-.claim-card p {
-  color:#9fb4c7;
-  line-height:1.55;
-}
-
-[data-testid="stDataFrame"] {
-  border:1px solid rgba(125,211,252,.16);
-  border-radius:16px;
-  overflow:hidden;
-}
-
-[data-testid="stDataFrame"] * {
-  font-family: 'Inter', sans-serif;
-}
-
-@media(max-width: 1100px) {
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .quick-grid { grid-template-columns: repeat(2, 1fr); }
-  .claim-grid { grid-template-columns: 1fr; }
-}
-
-@media(max-width: 720px) {
-  .topbar { border-radius:24px; align-items:flex-start; flex-direction:column; }
-  .nav { justify-content:flex-start; }
-  .metrics-grid { grid-template-columns: 1fr; }
-  .quick-grid { grid-template-columns: 1fr; }
-  .hero { padding:26px; }
-}
-
-.anchor-target {
-  display:block;
-  position:relative;
-  top:-92px;
-  height:0;
-  visibility:hidden;
-}
-.quick-toc a.card {
-  display:block;
-  color:inherit;
-  text-decoration:none;
-}
-.quick-toc a.card:hover {
-  border-color:rgba(32,244,232,.55);
-  background:rgba(32,244,232,.08);
-  transform:translateY(-1px);
-}
-
 </style>
-
-    """,
+""",
     unsafe_allow_html=True,
 )
 
 
 # ==============================
-# NAV + HERO
+# SIDEBAR
 # ==============================
 
-st.markdown(
-    """
-<div class="topbar">
-  <div class="brand"><span class="brand-dot"></span> CELL / Cellframe Audit</div>
-  <div class="nav">
-    <a href="#overview">Overview</a>
-    <a href="#verdict">Verdict</a>
-    <a href="#trust">Trust</a>
-    <a href="#supply">Supply</a>
-    <a href="#traces">Traces</a>
-    <a href="#oldcell">Old-CELL Claim</a>
-    <a href="#reserve">Reserve</a>
-    <a href="#methodology">Methodology</a>
-    <a href="#circulating">Circulating</a>
-    <a class="cta" href="#evidence">Evidence</a>
-  </div>
-</div>
-    """,
-    unsafe_allow_html=True,
-)
+st.sidebar.title("⬢ CELLFRAME Audit")
+st.sidebar.caption("Native Streamlit tabs. No fragile anchor links.")
+st.sidebar.markdown("---")
+st.sidebar.markdown("**Current status**")
+st.sidebar.write("✅ BSC mint route verified")
+st.sidebar.write("✅ Gate.io exposure verified")
+st.sidebar.write("✅ 843b → 498208 traced")
+st.sidebar.write("⚠️ Reserve reconciliation open")
+st.sidebar.write("⚠️ MEXC claim unverified")
+st.sidebar.markdown("---")
+st.sidebar.caption("Public on-chain evidence only. Not financial advice.")
 
-anchor("overview")
+
+# ==============================
+# HERO
+# ==============================
 
 st.markdown(
     """
 <div class="hero">
-  <div class="eyebrow">Independent on-chain audit dashboard</div>
-  <h1>Supply creation, custody routing, exchange exposure, and reserve reconciliation.</h1>
+  <h1>CELLFRAME <span>On-Chain Audit</span></h1>
   <p>
-    This site summarizes verified on-chain evidence for CELL / Cellframe across Ethereum and BSC.
-    It separates verified facts from unresolved claims, including BSC mint routing, Gate.io-bound exposure,
-    old-CELL bridge/unlock flows, and the public MEXC dumping allegation.
+    Independent on-chain evidence dashboard for CELL / CELLFRAME: supply tracing,
+    bridge analysis, reserve candidates, downstream wallet routing, exchange route exposure,
+    and claim verification.
   </p>
-  <div class="hero-actions">
-    <a class="btn btn-primary" href="#findings">View key findings</a>
-    <a class="btn" href="#trust">Trust standard</a>
-    <a class="btn" href="#oldcell">Old-CELL claim</a>
-    <a class="btn" href="#reserve">Reserve reconciliation</a>
-  </div>
 </div>
-    """,
+""",
     unsafe_allow_html=True,
 )
 
@@ -607,378 +350,392 @@ st.markdown(
 # TOP METRICS
 # ==============================
 
-anchor("findings")
-
-cols = st.columns(4)
-with cols[0]:
-    st.markdown(
-        f"""
-<div class="metric-card tone-green">
-  <div class="metric-label">Verified Gate.io route</div>
-  <div class="metric-value">2.60M</div>
-  <div class="metric-sub">2,596,567.55 CELL verified traced BSC mint-path exposure</div>
-</div>
-        """,
-        unsafe_allow_html=True,
-    )
-with cols[1]:
-    st.markdown(
-        """
-<div class="metric-card tone-blue">
-  <div class="metric-label">Central BSC wallets</div>
-  <div class="metric-value">2</div>
-  <div class="metric-sub">0x65def and 0xc3b8 traced to zero balance</div>
-</div>
-        """,
-        unsafe_allow_html=True,
-    )
-with cols[2]:
-    st.markdown(
-        f"""
-<div class="metric-card tone-red">
-  <div class="metric-label">Backing gap</div>
-  <div class="metric-value">{compact(BACKING_GAP)}</div>
-  <div class="metric-sub">Conservative unresolved BSC backing gap</div>
-</div>
-        """,
-        unsafe_allow_html=True,
-    )
-with cols[3]:
-    st.markdown(
-        f"""
-<div class="metric-card tone-orange">
-  <div class="metric-label">Public MEXC label hits</div>
-  <div class="metric-value">{PUBLIC_MEXC_HITS}</div>
-  <div class="metric-sub">No publicly labelled MEXC endpoint found so far</div>
-</div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-
+m1, m2, m3, m4, m5 = st.columns(5)
+m1.metric("Raw ETH+BSC supply", f"{compact(RAW_SUPPLY)} CELL", "contract supply")
+m2.metric("Evidence-only circulating", f"{compact(CIRC_EST)} CELL", "estimate, not official")
+m3.metric("Gate.io route exposure", f"{compact(GATEIO_EXPOSURE)} CELL", "verified route")
+m4.metric("Backing candidates", f"{compact(BACKING)} CELL", "verified candidates")
+m5.metric("Public MEXC hits", f"{PUBLIC_MEXC_HITS}", "none detected")
 
 
 # ==============================
-# EXECUTIVE VERDICT
+# TABS
 # ==============================
 
-anchor("verdict")
-
-st.markdown("## Executive Verdict")
-st.caption("The current audit position: what is verified, what is unresolved, and what should not be overclaimed.")
-
-v1, v2, v3, v4 = st.columns(4)
-
-with v1:
-    st.markdown("### Verified")
-    st.write(
-        "BSC mint creation, central BSC wallet routing, 0x65def and 0xc3b8 traces to zero, "
-        "downstream distribution traces, Gate.io-bound route exposure, and the 5M+ old-CELL bridge/unlock route."
-    )
-
-with v2:
-    st.markdown("### Unresolved")
-    st.write(
-        "Full reserve/backing reconciliation, exact CEX sale proceeds, exchange-internal trading, "
-        "official circulating supply, and the public MEXC dumping allegation."
-    )
-
-with v3:
-    st.markdown("### Current finding")
-    st.write(
-        "Distribution exposure is verified. Gate.io route exposure is verified. Reserve reconciliation remains open. "
-        "The MEXC dumping claim remains unverified by current public on-chain evidence."
-    )
-
-with v4:
-    st.markdown("### Evidence standard")
-    st.write(
-        "The dashboard classifies claims based on public on-chain proof, trace outputs, and public exchange labels. "
-        "It does not infer CEX sale execution without exchange/account records."
-    )
-
-
-# ==============================
-# QUICK JUMP
-# ==============================
-
-st.info("This section has been converted to Streamlit-native rendering to avoid raw HTML display.")
-
-trust_rows = pd.DataFrame([
-    {
-        "Evidence type": "Token mint / burn / transfer event",
-        "Can prove": "Token creation, movement, amount, sender, recipient, block, transaction hash",
-        "Cannot prove alone": "Human intent, off-chain agreements, or final exchange outcome",
-    },
-    {
-        "Evidence type": "Wallet balance trace",
-        "Can prove": "Whether a wallet held, distributed, or reached zero balance over a block range",
-        "Cannot prove alone": "Who legally controlled the wallet unless attribution evidence exists",
-    },
-    {
-        "Evidence type": "Public exchange label",
-        "Can prove": "Route exposure to a labelled exchange custody endpoint",
-        "Cannot prove alone": "Whether the tokens were sold inside the exchange",
-    },
-    {
-        "Evidence type": "Unlabelled wallet",
-        "Can prove": "On-chain routing behavior",
-        "Cannot prove alone": "Whether the wallet is a private CEX deposit wallet",
-    },
-    {
-        "Evidence type": "Reserve/backing candidate",
-        "Can prove": "Current observed balance of identified candidate wallets",
-        "Cannot prove alone": "Full backing unless all reserve/custody wallets are disclosed and verified",
-    },
+tabs = st.tabs([
+    "Overview",
+    "Findings",
+    "Supply",
+    "Routes",
+    "Old-CELL / MEXC",
+    "843b → 498208",
+    "Trust",
+    "Downloads",
 ])
-st.markdown("### Evidence Standard Matrix")
-show_df(trust_rows)
-
-confidence_rows = pd.DataFrame([
-    {
-        "Label": "Verified",
-        "Meaning": "Direct on-chain evidence supports the finding.",
-        "Example": "BSC mint event; 0xc3b8 traced to zero; Gate.io-labelled route exposure.",
-    },
-    {
-        "Label": "Supported",
-        "Meaning": "Evidence strongly supports the claim, but one step may rely on public labels or context.",
-        "Example": "A route into a labelled exchange custody wallet.",
-    },
-    {
-        "Label": "Unresolved",
-        "Meaning": "Evidence is incomplete or further wallet/custody disclosure is required.",
-        "Example": "Full reserve/backing reconciliation.",
-    },
-    {
-        "Label": "Unverified",
-        "Meaning": "The claim has not been proven by current public on-chain evidence.",
-        "Example": "Old-CELL dumping on MEXC.",
-    },
-])
-st.markdown("### Finding Confidence Labels")
-show_df(confidence_rows)
 
 
 # ==============================
-# CLAIMS VS EVIDENCE
+# OVERVIEW
 # ==============================
 
-anchor("claims")
+with tabs[0]:
+    st.header("Executive Overview")
 
-st.info("This section has been converted to Streamlit-native rendering to avoid raw HTML display.")
-
-
-# ==============================
-# EVIDENCE FILES
-# ==============================
-
-anchor("evidence")
-
-evidence_files = [
-    "reserve_backing_reconciliation.json",
-    "reserve_backing_candidates.csv",
-    "reserve_backing_manual_labels.csv",
-    "auto_trace_c3b8_summary.json",
-    "auto_trace_c3b8_recipient_summary.csv",
-    "auto_trace_65def_summary.json",
-    "auto_trace_da8a_summary.json",
-    "auto_trace_8bbf_combined_summary.json",
-    "auto_trace_8bbf_combined_recipient_summary.csv",
-    "auto_trace_35ce_summary.json",
-    "auto_trace_35ce_recipient_summary.csv",
-    "auto_trace_a2c1_combined_summary.json",
-    "auto_trace_oldcell_c3b8_summary.json",
-    "auto_trace_oldcell_8929_summary.json",
-    "oldcell_458b_child_probe_summary.csv",
-    "oldcell_secondary_child_probe_summary.csv",
-    "mexc_label_check_report.csv",
-    "mexc_deposit_pattern_check_report.csv",
-]
-
-evidence_rows = []
-for f in evidence_files:
-    p = ROOT / f
-    evidence_rows.append({
-        "File": f,
-        "Present": "Yes" if p.exists() else "No",
-        "Size KB": round(p.stat().st_size / 1024, 2) if p.exists() else "",
-    })
-
-st.markdown(
-    """
-<div class="section">
-  <div class="section-title">
-    <div>
-      <h2>Evidence files</h2>
-      <p>Generated CSV and JSON files supporting the audit findings. Missing files simply mean that trace section has not been generated in this deployment environment.</p>
-    </div>
-    <span class="pill pill-blue">Artifacts</span>
-  </div>
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown(
+            """
+<div class="audit-card">
+<h3>Verified</h3>
+<p>BSC mint creation, central BSC wallet routing, downstream distribution traces, Gate.io-bound route exposure, and old-CELL bridge/unlock.</p>
+<p class="good">Evidence-backed</p>
 </div>
-    """,
-    unsafe_allow_html=True,
-)
+""",
+            unsafe_allow_html=True,
+        )
+    with c2:
+        st.markdown(
+            """
+<div class="audit-card">
+<h3>Unresolved</h3>
+<p>Full reserve/backing reconciliation, exact CEX sale proceeds, official circulating supply, and the public MEXC dumping claim.</p>
+<p class="warn">Open</p>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+    with c3:
+        st.markdown(
+            """
+<div class="audit-card">
+<h3>Current finding</h3>
+<p>Distribution exposure is verified. Gate.io route exposure is verified. Reserve reconciliation remains open.</p>
+<p class="good">Current audit stance</p>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+    with c4:
+        st.markdown(
+            """
+<div class="audit-card">
+<h3>Evidence standard</h3>
+<p>Claims are classified by public on-chain proof, trace outputs, and public exchange labels. CEX sales are not inferred.</p>
+<p class="good">Audit-safe</p>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
 
-show_df(pd.DataFrame(evidence_rows))
-
+    st.subheader("Current Bridge Model")
+    b1, a1, b2, a2, b3, a3, b4 = st.columns([2, .35, 2, .35, 2, .35, 2])
+    with b1:
+        st.markdown("### Bridge-facing wallets")
+        st.write("Initial wallets interacting with bridge / lock infrastructure.")
+        st.code("0x65def... / 0xc3b8...")
+    with a1:
+        st.markdown('<div class="route-arrow">→</div>', unsafe_allow_html=True)
+    with b2:
+        st.markdown("### Lock / unlock routes")
+        st.write("Bridge and lock/unlock contracts on BSC and Ethereum.")
+        st.code("0x35ce... / 0x7e9d...")
+    with a2:
+        st.markdown('<div class="route-arrow">→</div>', unsafe_allow_html=True)
+    with b3:
+        st.markdown("### Distribution layer")
+        st.write("Downstream wallets and intermittent top-up branches.")
+        st.code("0x8c85... / 0x843b...")
+    with a3:
+        st.markdown('<div class="route-arrow">→</div>', unsafe_allow_html=True)
+    with b4:
+        st.markdown("### Market endpoints")
+        st.write("Labelled or high-activity custody/exchange-style endpoints.")
+        st.code("Gate.io / 0x498208...")
 
 
 # ==============================
-# EVIDENCE HASHES
+# FINDINGS
 # ==============================
 
-hash_path = ROOT / "evidence_hashes.txt"
+with tabs[1]:
+    st.header("Claims vs Evidence")
 
-st.markdown(
-    """
-<div class="section">
-  <div class="section-title">
-    <div>
-      <h2>Evidence Hashes</h2>
-      <p>SHA-256 hashes make the evidence artifact set tamper-evident. Regenerate locally with <code>shasum -a 256 *.csv *.json *.py &gt; evidence_hashes.txt</code>.</p>
-    </div>
-    <span class="pill pill-green">Tamper-evident</span>
-  </div>
-</div>
-    """,
-    unsafe_allow_html=True,
-)
+    findings = pd.DataFrame([
+        {
+            "finding": "ETH/BSC supply creation",
+            "status": "verified",
+            "evidence": "ETH totalSupply 30.3M and BSC totalSupply 33.3M; BSC mint event identified.",
+        },
+        {
+            "finding": "Central BSC wallets traced",
+            "status": "verified",
+            "evidence": "0x65def and 0xc3b8 traced to zero; downstream branches identified.",
+        },
+        {
+            "finding": "Gate.io route exposure",
+            "status": "verified route exposure",
+            "evidence": "At least 2,596,567.55 CELL routed to Gate.io-labelled custody.",
+        },
+        {
+            "finding": "843b → 498208 branch",
+            "status": "verified direct route",
+            "evidence": "3.227M CELL routed from 0x843b to 0x498208 across 28 transfers.",
+        },
+        {
+            "finding": "498208 endpoint behaviour",
+            "status": "partial high-activity endpoint trace",
+            "evidence": "737 events captured, 126 unique recipients, 2.103M CELL outbound before trace cap.",
+        },
+        {
+            "finding": "Old-CELL MEXC dumping claim",
+            "status": "unverified",
+            "evidence": "Bridge/unlock supported; zero publicly labelled MEXC endpoints found so far.",
+        },
+        {
+            "finding": "Reserve/backing reconciliation",
+            "status": "open",
+            "evidence": "Verified candidates do not reconcile BSC supply; unresolved gap remains.",
+        },
+    ])
+    show_df(findings)
 
-if hash_path.exists():
-    hashes = []
-    for line in hash_path.read_text().splitlines():
-        parts = line.strip().split()
-        if len(parts) >= 2:
-            hashes.append({"sha256": parts[0], "file": parts[-1]})
-    if hashes:
-        show_df(pd.DataFrame(hashes).head(200), height=420)
-else:
-    st.markdown(
-        """
-<div class="warning-note">
-  <b>Missing evidence_hashes.txt:</b> Run <code>shasum -a 256 *.csv *.json *.py &gt; evidence_hashes.txt</code> and commit the file.
-</div>
-        """,
-        unsafe_allow_html=True,
+
+# ==============================
+# SUPPLY
+# ==============================
+
+with tabs[2]:
+    st.header("Supply and Circulating Estimate")
+
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("ETH supply", f"{fmt(ETH_SUPPLY, 0)} CELL")
+    s2.metric("BSC supply", f"{fmt(BSC_SUPPLY, 0)} CELL")
+    s3.metric("Raw total", f"{fmt(RAW_SUPPLY, 0)} CELL")
+    s4.metric("Backing candidates", f"{fmt(BACKING, 2)} CELL")
+
+    st.warning(
+        "The circulating estimate is evidence-only and not an official circulating supply figure. "
+        "It excludes only verified reserve/backing candidates."
     )
 
+    s5, s6 = st.columns(2)
+    s5.metric("Evidence-only circulating estimate", f"{fmt(CIRC_EST, 2)} CELL")
+    s6.metric("BSC unreconciled / backing gap", f"{fmt(BSC_GAP, 2)} CELL")
 
-# ==============================
-# FINAL STANCE
-# ==============================
-
-st.markdown(
-    """
-<div class="section">
-  <div class="section-title">
-    <div>
-      <h2>Final audit stance</h2>
-      <p>
-        The audit verifies supply creation, core BSC custody routing, multiple completed downstream traces,
-        and Gate.io-bound route exposure. It does not overclaim CEX sale proceeds or unverified MEXC dumping.
-      </p>
-    </div>
-    <span class="pill pill-green">Current conclusion</span>
-  </div>
-  <div class="note">
-    <b>Current headline:</b> Supply creation and BSC distribution routes are verified.
-    Central BSC supply wallets and several downstream branches have been traced to zero.
-    Gate.io-bound route exposure is verified for at least 2,596,567.55 CELL.
-    Conservative reserve/backing reconciliation remains open with a ~32.31M CELL gap.
-    The old-CELL bridge/unlock claim is supported, but the MEXC dumping claim remains unverified.
-  </div>
-</div>
-    """,
-    unsafe_allow_html=True,
-)
-
+    st.subheader("Circulating Supply Calculation")
+    show_df(circ_csv)
 
 
 # ==============================
-# 843B DOWNSTREAM BRANCH
+# ROUTES
 # ==============================
 
-anchor("trace843b")
+with tabs[3]:
+    st.header("Route Evidence")
 
-trace_843b_summary = load_json(ROOT / "auto_trace_843b_combined_summary.json")
-trace_843b_recipients = load_csv(ROOT / "auto_trace_843b_recipient_summary.csv")
-trace_843b_segments = load_csv(ROOT / "auto_trace_843b_segment_summary.csv")
+    st.subheader("BSC Mint and Gate.io Exposure Route")
+    r1, r2, r3, r4, r5, r6 = st.columns(6)
+    r1.markdown("### Mint\n33.3M CELL\n`0x0000 → 0x65def`")
+    r2.markdown("### Custody\n30M CELL\n`0x65def → 0xc3b8`")
+    r3.markdown("### Distribution\nMultiple branches\n`0xc3b8 → recipients`")
+    r4.markdown("### Consolidation\n`0xda8a` / `0x65def`")
+    r5.markdown("### Gate.io\n`0x0d070...`")
+    r6.markdown(f"### Exposure\n{fmt(GATEIO_EXPOSURE, 2)} CELL")
 
-html(
-    f"""
-<section class="panel">
-  <div class="panel-head">
-    <div>
-      <h2>843b Downstream Branch</h2>
-      <p>
-        The <code>0x843b...</code> branch was funded intermittently by <code>0xc3b8...</code>.
-        A segmented trace was required because the wallet repeatedly received top-ups and emptied between funding cycles.
-      </p>
-    </div>
-    <div class="badge green">Segmented trace complete</div>
-  </div>
+    st.success(
+        f"Verified Gate.io-bound route exposure: {fmt(GATEIO_EXPOSURE, 2)} CELL. "
+        "This proves route exposure, not exchange-side sale proceeds."
+    )
 
-  <div class="card-grid">
-    <div class="card">
-      <h3>Total received from 0xc3b8</h3>
-      <p>3,317,000 CELL across 33 inbound transfers.</p>
-      <span class="status ok">✓ Source verified</span>
-    </div>
-
-    <div class="card">
-      <h3>Outbound captured</h3>
-      <p>3,227,000 CELL captured across the segmented trace.</p>
-      <span class="status ok">✓ Routed onward</span>
-    </div>
-
-    <div class="card">
-      <h3>Main endpoint</h3>
-      <p><code>0x4982085c9e2f89f2ecb8131eca71afad896e89cb</code></p>
-      <span class="status open">Exchange / custody candidate</span>
-    </div>
-
-    <div class="card">
-      <h3>Audit interpretation</h3>
-      <p>
-        <code>0x843b...</code> behaves as an intermittent downstream distribution wallet,
-        not a reserve endpoint. Final exchange attribution for <code>0x498208...</code> should be label-verified before naming an exchange.
-      </p>
-      <span class="status info">Label check required</span>
-    </div>
-  </div>
-
-  <div class="callout">
-    New finding: 3.227M CELL from the <code>0x843b...</code> branch routed to <code>0x498208...</code>,
-    a high-priority exchange/custody endpoint candidate.
-  </div>
-</section>
-    """
-)
-
-if not trace_843b_recipients.empty:
-    st.markdown("#### 843b Recipient Summary")
-    table(trace_843b_recipients, 260)
-
-if not trace_843b_segments.empty:
-    st.markdown("#### 843b Segment Trace Summary")
-    table(trace_843b_segments, 320)
+    st.subheader("8bbf Downstream Top Recipients")
+    if not trace_8bbf_recipients.empty:
+        df = trace_8bbf_recipients.copy()
+        if "amount_cell" in df.columns:
+            df["amount_cell_num"] = pd.to_numeric(df["amount_cell"], errors="coerce")
+            df = df.sort_values("amount_cell_num", ascending=False).head(25)
+            df = df.drop(columns=["amount_cell_num"], errors="ignore")
+        show_df(df, 420)
+    else:
+        st.info("8bbf recipient summary not loaded.")
 
 
-anchor("bridge")
+# ==============================
+# OLD-CELL / MEXC
+# ==============================
+
+with tabs[4]:
+    st.header("Old-CELL / MEXC Claim Check")
+
+    o1, o2, o3, o4 = st.columns(4)
+    o1.metric("Old-CELL bridge/unlock", f"{compact(OLD_CELL_UNLOCK)} old CELL", "supported")
+    o2.metric("0xc3b8 old-CELL final", "0", "routed onward")
+    o3.metric("Largest held branch", f"{compact(OLD_CELL_A9AD_HELD)} old CELL", "0xa9ad")
+    o4.metric("Public MEXC label hits", f"{PUBLIC_MEXC_HITS}", "none found")
+
+    st.success("Supported: 5M+ old CELL was bridged/unlocked into 0xc3b8 and routed onward.")
+    st.warning(
+        "Not proven: the traced paths do not currently identify a publicly labelled MEXC endpoint. "
+        "A private/unlabelled MEXC deposit address cannot be ruled out from public data alone."
+    )
+
+    st.subheader("Ten 100k Old-CELL Child Wallet Probe")
+    show_df(old_child, 280)
+
+    st.subheader("Secondary Child Wallet Probe")
+    show_df(old_secondary, 260)
+
+    st.subheader("Public MEXC Label Check")
+    if not mexc_label.empty and {"address", "status", "bscscan_title"}.issubset(mexc_label.columns):
+        show_df(mexc_label[["address", "status", "bscscan_title"]], 360)
+    else:
+        show_df(mexc_label, 360)
+
+    st.subheader("MEXC Deposit-Pattern Check")
+    show_df(mexc_pattern, 360)
 
 
-anchor("routes")
+# ==============================
+# 843B / 498208
+# ==============================
+
+with tabs[5]:
+    st.header("843b → 498208 Endpoint Trace")
+
+    st.subheader("843b Downstream Branch")
+    t1, t2, t3, t4 = st.columns(4)
+    t1.metric("Received from 0xc3b8", "3.317M CELL", "33 inbound transfers")
+    t2.metric("Routed to 0x498208", "3.227M CELL", "28 transfers")
+    t3.metric("Endpoint candidate", "0x498208", "high activity")
+    t4.metric("Label status", "candidate", "verify before naming exchange")
+
+    st.info(
+        "0x843b was an intermittent downstream distribution wallet. Segmented tracing shows "
+        "3.227M CELL routed to 0x498208 across 28 transfers."
+    )
+
+    st.subheader("843b Recipient Summary")
+    show_df(trace_843b_recipients, 260)
+
+    st.subheader("843b Segment Summary")
+    show_df(trace_843b_segments, 320)
+
+    st.divider()
+
+    st.subheader("498208 High-Activity Endpoint Candidate")
+    e1, e2, e3, e4 = st.columns(4)
+    e1.metric("Outbound captured", "2.103M CELL", "partial trace")
+    e2.metric("Events captured", "737", "530 out / 207 in")
+    e3.metric("Unique recipients", "126", "high activity")
+    e4.metric("Balance at stop", "3.289M CELL", "trace cap reached")
+
+    st.warning(
+        "0x498208 behaves like a high-activity custody/exchange-style endpoint candidate, not a passive reserve wallet. "
+        "The trace hit the change cap and should be treated as partial. Final exchange attribution requires label verification."
+    )
+
+    st.subheader("Direct 843b → 498208 Inflows")
+    show_df(inflows_843b_498208, 300)
+
+    st.subheader("498208 Partial Recipient Summary")
+    show_df(trace_498208_recipients, 420)
 
 
-anchor("oldcell")
+# ==============================
+# TRUST
+# ==============================
+
+with tabs[6]:
+    st.header("Trust, Limits, and Verification Standard")
+
+    t1, t2 = st.columns(2)
+    with t1:
+        st.subheader("What this audit can prove")
+        st.write(
+            "Token creation, transfers, wallet balances, route exposure to public labelled addresses, "
+            "and whether wallets behave like reserves, distributors, or high-activity endpoints."
+        )
+        st.subheader("What this audit does not overclaim")
+        st.write(
+            "CEX sale proceeds, exchange-internal trading, account owner, final beneficiary, "
+            "or private/unlabelled CEX deposit attribution."
+        )
+    with t2:
+        st.subheader("Classification standard")
+        st.write("Verified = direct on-chain proof.")
+        st.write("Supported = strong on-chain evidence with contextual support.")
+        st.write("Unresolved = incomplete evidence or requires disclosure.")
+        st.write("Unverified = not proven by current public evidence.")
+
+    matrix = pd.DataFrame([
+        {
+            "evidence_type": "Token Transfer event",
+            "can_prove": "movement, amount, sender, recipient, block, tx hash",
+            "cannot_prove": "human intent or off-chain agreements",
+        },
+        {
+            "evidence_type": "Wallet balance trace",
+            "can_prove": "held, distributed, or reached zero",
+            "cannot_prove": "legal controller without attribution evidence",
+        },
+        {
+            "evidence_type": "Public exchange label",
+            "can_prove": "exchange custody route exposure",
+            "cannot_prove": "sale execution or trade price",
+        },
+        {
+            "evidence_type": "Unlabelled wallet",
+            "can_prove": "on-chain routing behaviour",
+            "cannot_prove": "private CEX deposit identity",
+        },
+    ])
+    show_df(matrix)
 
 
-anchor("trace498208")
+# ==============================
+# DOWNLOADS
+# ==============================
 
+with tabs[7]:
+    st.header("Evidence Downloads and Audit Artifacts")
 
-anchor("trust")
+    artifact_files = [
+        "AUDIT_SUMMARY.md",
+        "evidence_hashes.txt",
+        "circulating_supply_estimate.json",
+        "circulating_supply_estimate.csv",
+        "reserve_backing_reconciliation.json",
+        "reserve_backing_candidates.csv",
+        "auto_trace_c3b8_summary.json",
+        "auto_trace_65def_summary.json",
+        "auto_trace_da8a_summary.json",
+        "auto_trace_8bbf_combined_summary.json",
+        "auto_trace_35ce_summary.json",
+        "auto_trace_oldcell_c3b8_summary.json",
+        "auto_trace_oldcell_8929_summary.json",
+        "oldcell_458b_child_probe_summary.csv",
+        "oldcell_secondary_child_probe_summary.csv",
+        "mexc_label_check_report.csv",
+        "mexc_deposit_pattern_check_report.csv",
+        "auto_trace_843b_combined_summary.json",
+        "auto_trace_843b_recipient_summary.csv",
+        "auto_trace_843b_segment_summary.csv",
+        "inflows_843b_to_498208.csv",
+        "auto_trace_498208_partial_summary.json",
+        "auto_trace_498208_partial_recipient_summary.csv",
+        "auto_trace_498208_partial_events.csv",
+    ]
 
+    show_df(artifact_table(artifact_files), 420)
 
-anchor("downloads")
+    hash_path = ROOT / "evidence_hashes.txt"
+    if hash_path.exists():
+        rows = []
+        for line in hash_path.read_text().splitlines():
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                rows.append({"sha256": parts[0], "file": parts[-1]})
+        if rows:
+            st.subheader("Evidence Hashes")
+            show_df(pd.DataFrame(rows), 420)
+    else:
+        st.warning("Missing evidence_hashes.txt. Generate it with: shasum -a 256 *.csv *.json *.py > evidence_hashes.txt")
