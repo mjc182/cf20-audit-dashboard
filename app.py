@@ -710,6 +710,62 @@ div[data-testid="stMetric"] {
     border-radius: 16px;
     padding: 14px 16px;
 }
+
+.quick-jump-section {
+    margin-top: 22px;
+}
+.quick-grid {
+    display:grid;
+    grid-template-columns: repeat(4, minmax(190px, 1fr));
+    gap:12px;
+}
+@media (max-width: 1100px) {
+    .quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 650px) {
+    .quick-grid { grid-template-columns: 1fr; }
+}
+.quick-card {
+    border:1px solid rgba(56,189,248,.22);
+    background:linear-gradient(145deg, rgba(8,20,36,.72), rgba(2,8,23,.44));
+    border-radius:16px;
+    padding:15px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-height:92px;
+    box-shadow:0 16px 36px rgba(0,0,0,.18);
+}
+.quick-card:hover {
+    border-color:rgba(56,189,248,.65);
+    background:linear-gradient(145deg, rgba(14,165,233,.14), rgba(2,8,23,.54));
+    transform: translateY(-1px);
+}
+.quick-card b {
+    color:#f8fafc;
+    font-size:.96rem;
+    letter-spacing:-.015em;
+}
+.quick-card span {
+    color:#94a3b8;
+    font-size:.78rem;
+    line-height:1.45;
+}
+.navlinks {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+}
+.navlinks a {
+    color:#cbd5e1;
+    font-weight:850;
+    font-size:.82rem;
+    padding:8px 10px;
+    border-radius:999px;
+}
+
 </style>
 """,
     unsafe_allow_html=True,
@@ -725,24 +781,10 @@ st.markdown(
   <div class="brand"><div class="logo">CF<br>20</div><span>CF20 Audit</span></div>
   <div class="navlinks">
     <a href="#overview">Overview</a>
-    <a href="#bridge-model">Bridge Model</a>
-    <a href="#verified-supply">Verified Supply</a>
-    <a href="#bsc-path">BSC Supply Path</a>
-    <a href="#primary-custody-trace">Custody Trace</a>
-    <a href="#trace-8bbf">8bbf Trace</a>
-    <a href="#oldcell-claim-check">Old-CELL Claim</a>
-    <a href="#trace-35ce">35ce Trace</a>
-    <a href="#oldcell-claim-check">Old-CELL Claim</a>
-    <a href="#central-wallet-traces">Central Traces</a>
-    <a href="#trace-35ce">35ce Trace</a>
-    <a href="#oldcell-claim-check">Old-CELL Claim</a>
-    <a href="#trace-8bbf">8bbf Trace</a>
-    <a href="#oldcell-claim-check">Old-CELL Claim</a>
-    <a href="#trace-35ce">35ce Trace</a>
-    <a href="#oldcell-claim-check">Old-CELL Claim</a>
-    <a href="#reserve-backing">Reserve Backing</a>
+    <a href="#verified-supply">Supply</a>
     <a href="#evidence">Evidence</a>
-    <a class="nav-cta" href="#downloads">Download Evidence</a>
+    <a href="#oldcell-claim-check">Claims</a>
+    <a class="nav-cta" href="#downloads">Downloads</a>
   </div>
 </div>
 """,
@@ -807,6 +849,62 @@ with cols[4]:
 with cols[5]:
     kpi_card("DEX / MEV exposure", f"{compact(float(route_dex) + float(route_mev))}", "Router + MEV route exposure", "↔", "orange")
 st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ==============================
+# QUICK JUMP
+# ==============================
+
+st.markdown(
+    """
+<div class="section quick-jump-section">
+  <div class="section-title">
+    <div>
+      <h2>Audit Sections</h2>
+      <p>Jump to the core evidence areas without overcrowding the main navigation.</p>
+    </div>
+    <div class="badge blue">Quick navigation</div>
+  </div>
+
+  <div class="quick-grid">
+    <a href="#verified-supply" class="quick-card">
+      <b>Verified Supply</b>
+      <span>ETH/BSC contract supply and mint evidence</span>
+    </a>
+    <a href="#bsc-path" class="quick-card">
+      <b>BSC Supply Path</b>
+      <span>Mint path and verified route evidence</span>
+    </a>
+    <a href="#central-wallet-traces" class="quick-card">
+      <b>Central Traces</b>
+      <span>0x65def, 0xc3b8, and core BSC wallets</span>
+    </a>
+    <a href="#primary-custody-trace" class="quick-card">
+      <b>Custody Trace</b>
+      <span>Primary 0xc3b8 wallet traced to zero</span>
+    </a>
+    <a href="#trace-8bbf" class="quick-card">
+      <b>8bbf Distribution</b>
+      <span>High-volume downstream branch trace</span>
+    </a>
+    <a href="#trace-35ce" class="quick-card">
+      <b>35ce Aggregator</b>
+      <span>Bridge/aggregator pass-through trace</span>
+    </a>
+    <a href="#oldcell-claim-check" class="quick-card">
+      <b>Old-CELL Claim Check</b>
+      <span>5M+ old-CELL and MEXC claim review</span>
+    </a>
+    <a href="#reserve-backing" class="quick-card">
+      <b>Reserve Backing</b>
+      <span>Backing gap and reconciliation status</span>
+    </a>
+  </div>
+</div>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # ==============================
 # BRIDGE MODEL
