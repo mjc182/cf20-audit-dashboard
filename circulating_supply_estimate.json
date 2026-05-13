@@ -1,0 +1,21 @@
+{
+  "methodology": {
+    "conservative_circulating_definition": "Raw contract supply minus only verified reserve/backing/locked candidates. Exchange-routed, distributor, high-activity, unresolved, or unlabelled wallets are not excluded.",
+    "important_caveat": "This is an on-chain estimate, not an official circulating supply. A definitive circulating supply requires verified lockups, reserve wallets, treasury wallets, market-maker wallets, exchange balances, and vesting schedules."
+  },
+  "inputs": {
+    "eth_total_supply_cell": "30300000",
+    "bsc_total_supply_cell": "33300000",
+    "raw_eth_plus_bsc_contract_supply_cell": "63600000",
+    "eth_verified_backing_candidate_balances_cell": "990044.194980390198616311",
+    "bsc_verified_backing_candidate_balances_cell": "0",
+    "verified_gateio_route_exposure_cell": "2596567.55466338"
+  },
+  "estimates": {
+    "conservative_non_circulating_cell": "990044.194980390198616311",
+    "conservative_circulating_supply_estimate_cell": "62609955.805019609801383689",
+    "bsc_conservative_circulating_supply_estimate_cell": "33300000",
+    "bsc_supply_minus_verified_eth_backing_candidates_cell": "32309955.805019609801383689"
+  },
+  "audit_interpretation": "Under the current verified evidence set, only a small amount of ETH-side candidate backing is verified. The BSC supply remains largely unreconciled by verified backing candidates, so most BSC supply should be treated as potentially circulating or distribution-exposed unless additional locked/reserve wallets are verified."
+}

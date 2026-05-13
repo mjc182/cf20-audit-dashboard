@@ -1,0 +1,9 @@
+metric,amount_cell,classification,notes
+ETH totalSupply,30300000,contract_supply,Ethereum CELL contract supply.
+BSC totalSupply,33300000,contract_supply,BSC CELL v2 contract supply.
+Raw ETH+BSC contract supply,63600000,raw_supply,Simple sum of contract-level supplies across ETH and BSC.
+Verified backing/reserve candidates,990044.194980390198616311,excluded_non_circulating_conservative,Only verified reserve/backing candidates are excluded.
+Conservative circulating supply estimate,62609955.805019609801383689,circulating_estimate,Raw supply minus verified backing/reserve candidates.
+BSC conservative circulating estimate,33300000,bsc_circulating_estimate,BSC supply minus verified BSC backing candidates.
+BSC supply minus verified ETH backing candidates,32309955.805019609801383689,unreconciled_bsc_supply,BSC supply not reconciled by currently verified ETH backing candidates.
+Verified Gate.io route exposure,2596567.55466338,exchange_route_exposure_not_excluded,"Not excluded from circulating supply; this is route exposure, not locked supply."
